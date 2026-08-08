@@ -49,7 +49,7 @@ export async function POST(request: Request) {
         full_name: parsed.data.fullName,
         role: parsed.data.role,
       },
-      redirectTo: `${origin}/staff/aceptar-invitacion`,
+      redirectTo: `${origin}/auth/confirm?next=/staff/aceptar-invitacion`,
     },
   );
 
