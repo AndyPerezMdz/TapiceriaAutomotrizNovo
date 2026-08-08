@@ -109,11 +109,11 @@ export function GalleryItemForm({ services }: { services: Service[] }) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClassName}>Foto "Antes"</label>
+          <label className={labelClassName}>Foto &quot;Antes&quot;</label>
           <PhotoPicker file={beforeFile} onChange={setBeforeFile} disabled={isSaving} />
         </div>
         <div>
-          <label className={labelClassName}>Foto "Después"</label>
+          <label className={labelClassName}>Foto &quot;Después&quot;</label>
           <PhotoPicker file={afterFile} onChange={setAfterFile} disabled={isSaving} />
         </div>
       </div>
