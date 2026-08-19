@@ -83,17 +83,24 @@ export function OrderStaffPanel({
     }
 
     if (note.trim()) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      await supabase
+      const { data: lastHistoryEntry } = await supabase
         .from("order_status_history")
-        .update({ note: note.trim() })
+        .select("id")
         .eq("order_id", orderId)
-        .eq("changed_by", user?.id)
         .order("created_at", { ascending: false })
-        .limit(1);
+        .limit(1)
+        .single();
+
+      if (lastHistoryEntry) {
+        const { error: noteError } = await supabase
+          .from("order_status_history")
+          .update({ note: note.trim() })
+          .eq("id", lastHistoryEntry.id);
+
+        if (noteError) {
+          console.error("Error guardando nota:", noteError.message);
+        }
+      }
     }
 
     router.refresh();
