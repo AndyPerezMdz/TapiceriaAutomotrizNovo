@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
 import {
   ClipboardList,
+  History,
   ImageIcon,
   LayoutDashboard,
   MessageSquare,
@@ -78,6 +79,12 @@ export default async function AdminLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <ImageIcon size={16} /> Galería
+          </Link>
+          <Link
+            href="/admin/historial"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <History size={16} /> Historial
           </Link>
           {profile?.role === "admin" ? (
             <Link
