@@ -4,6 +4,7 @@ import { BrandLogo } from "@/components/auth/BrandLogo";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
+import { Link } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -129,6 +130,12 @@ export function StaffLoginForm() {
             {fieldErrors.password ? (
               <p className="mt-1 text-sm text-brand-red">{fieldErrors.password}</p>
             ) : null}
+          </div>
+
+          <div className="text-right">
+            <Link href="/recuperar" className="text-sm font-medium text-foreground underline-offset-4 hover:underline">
+              ¿Olvidaste tu contraseña?
+            </Link>
           </div>
 
           <button

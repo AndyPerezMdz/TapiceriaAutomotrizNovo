@@ -99,6 +99,10 @@ export function LoginForm() {
           />
         </AuthField>
 
+        <div className="text-right">
+          <AuthLink href="/recuperar">¿Olvidaste tu contraseña?</AuthLink>
+        </div>
+
         <button type="submit" disabled={isLoading} className={submitButtonClassName}>
           {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>

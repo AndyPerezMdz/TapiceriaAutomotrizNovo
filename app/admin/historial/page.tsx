@@ -1,5 +1,6 @@
+import { Pagination } from "@/components/shared/Pagination";
 import { createClient } from "@/lib/supabase/server";
-import { Clock } from "lucide-react";
+import { Clock, Search } from "lucide-react";
 
 const actionColors: Record<string, string> = {
   "Cambio de estado": "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
@@ -13,65 +14,103 @@ const actionColors: Record<string, string> = {
   "Cambio de rol": "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
 };
 
-export default async function AdminHistorialPage() {
+const PAGE_SIZE = 20;
+
+interface Props {
+  searchParams: Promise<{ page?: string; q?: string }>;
+}
+
+export default async function AdminHistorialPage({ searchParams }: Props) {
+  const { page: pageParam, q } = await searchParams;
+  const page = Math.max(1, Number(pageParam) || 1);
+
   const supabase = await createClient();
-  const { data: entries } = await supabase
+  let query = supabase
     .from("audit_log")
-    .select("id, actor_name, action, entity_type, entity_label, details, created_at")
-    .order("created_at", { ascending: false })
-    .limit(100);
+    .select("id, actor_name, action, entity_type, entity_label, details, created_at", {
+      count: "exact",
+    })
+    .order("created_at", { ascending: false });
+
+  if (q) {
+    query = query.or(`actor_name.ilike.%${q}%,entity_label.ilike.%${q}%,action.ilike.%${q}%`);
+  }
+
+  const start = (page - 1) * PAGE_SIZE;
+  query = query.range(start, start + PAGE_SIZE - 1);
+
+  const { data: entries, count } = await query;
+  const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
+
+  function buildHref(targetPage: number) {
+    const params = new URLSearchParams();
+    if (q) params.set("q", q);
+    params.set("page", String(targetPage));
+    return `/admin/historial?${params.toString()}`;
+  }
 
   return (
     <div>
-      <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
         Historial de cambios
       </h1>
 
+      <form className="relative mb-6">
+        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+        <input
+          type="text"
+          name="q"
+          defaultValue={q}
+          placeholder="Buscar por persona, acción o elemento..."
+          className="w-full rounded-md border border-black/15 bg-surface py-2.5 pl-9 pr-3 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
+        />
+      </form>
+
       {!entries || entries.length === 0 ? (
         <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-          <p className="text-muted">Aún no hay actividad registrada.</p>
+          <p className="text-muted">No hay resultados.</p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {entries.map((entry) => (
-            <div
-              key={entry.id}
-              className="flex items-start justify-between gap-4 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
-            >
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      actionColors[entry.action] ?? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                    }`}
-                  >
-                    {entry.action}
-                  </span>
-                  <span className="text-sm font-medium text-foreground">
-                    {entry.entity_type}: {entry.entity_label}
-                  </span>
+        <>
+          <div className="space-y-2">
+            {entries.map((entry) => (
+              <div
+                key={entry.id}
+                className="flex items-start justify-between gap-4 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        actionColors[entry.action] ?? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                      }`}
+                    >
+                      {entry.action}
+                    </span>
+                    <span className="text-sm font-medium text-foreground">
+                      {entry.entity_type}: {entry.entity_label}
+                    </span>
+                  </div>
+                  {entry.details ? (
+                    <p className="mt-1 break-words text-sm text-muted">{entry.details}</p>
+                  ) : null}
+                  <p className="mt-1 text-xs text-muted">Por {entry.actor_name ?? "Sistema"}</p>
                 </div>
-                {entry.details ? (
-                  <p className="mt-1 break-words text-sm text-muted">{entry.details}</p>
-                ) : null}
-                <p className="mt-1 text-xs text-muted">
-                  Por {entry.actor_name ?? "Sistema"}
-                </p>
+                <div className="flex shrink-0 items-center gap-1 text-xs text-muted">
+                  <Clock size={12} />
+                  {new Date(entry.created_at).toLocaleString("es-MX", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    timeZone: "America/Merida",
+                  })}
+                </div>
               </div>
-
-              <div className="flex shrink-0 items-center gap-1 text-xs text-muted">
-                <Clock size={12} />
-                {new Date(entry.created_at).toLocaleString("es-MX", {
-                  day: "numeric",
-                  month: "short",
-                  hour: "numeric",
-                  minute: "2-digit",
-                  timeZone: "America/Merida",
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          <Pagination currentPage={page} totalPages={totalPages} buildHref={buildHref} />
+        </>
       )}
     </div>
   );

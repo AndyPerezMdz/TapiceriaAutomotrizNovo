@@ -1,4 +1,6 @@
 import { AdminOrderRow } from "@/components/admin/AdminOrderRow";
+import { OrderFilters } from "@/components/shared/OrderFilters";
+import { Pagination } from "@/components/shared/Pagination";
 import { createClient } from "@/lib/supabase/server";
 
 const statusFilters = [
@@ -11,27 +13,52 @@ const statusFilters = [
   { value: "entregado", label: "Entregados" },
 ];
 
+const PAGE_SIZE = 10;
+
 interface Props {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{
+    status?: string;
+    page?: string;
+    q?: string;
+    from?: string;
+    to?: string;
+    min_price?: string;
+    max_price?: string;
+  }>;
 }
 
 export default async function AdminPedidosPage({ searchParams }: Props) {
-  const { status } = await searchParams;
+  const { status, page: pageParam, q, from, to, min_price, max_price } = await searchParams;
   const activeFilter = status ?? "all";
+  const page = Math.max(1, Number(pageParam) || 1);
 
   const supabase = await createClient();
   let query = supabase
     .from("orders")
     .select(
       "id, vehicle_make, vehicle_model, status, created_at, deleted_at, profiles!orders_client_id_fkey(full_name)",
+      { count: "exact" },
     )
     .order("created_at", { ascending: false });
 
   if (activeFilter !== "all") {
     query = query.eq("status", activeFilter);
   }
+  if (q) {
+    query = query.or(
+      `vehicle_make.ilike.%${q}%,vehicle_model.ilike.%${q}%,service_description.ilike.%${q}%`,
+    );
+  }
+  if (from) query = query.gte("created_at", from);
+  if (to) query = query.lte("created_at", `${to}T23:59:59`);
+  if (min_price) query = query.gte("estimated_price", Number(min_price));
+  if (max_price) query = query.lte("estimated_price", Number(max_price));
 
-  const { data: orders } = await query;
+  const start = (page - 1) * PAGE_SIZE;
+  query = query.range(start, start + PAGE_SIZE - 1);
+
+  const { data: orders, count } = await query;
+  const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
 
   const formattedOrders =
     orders?.map((o) => ({
@@ -41,9 +68,21 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
       status: o.status,
       created_at: o.created_at,
       deleted_at: o.deleted_at,
-      client_name: (o.profiles as unknown as { full_name: string } | null)
-        ?.full_name ?? null,
+      client_name:
+        (o.profiles as unknown as { full_name: string } | null)?.full_name ?? null,
     })) ?? [];
+
+  function buildHref(targetPage: number) {
+    const params = new URLSearchParams();
+    if (activeFilter !== "all") params.set("status", activeFilter);
+    if (q) params.set("q", q);
+    if (from) params.set("from", from);
+    if (to) params.set("to", to);
+    if (min_price) params.set("min_price", min_price);
+    if (max_price) params.set("max_price", max_price);
+    params.set("page", String(targetPage));
+    return `/admin/pedidos?${params.toString()}`;
+  }
 
   return (
     <div>
@@ -53,11 +92,17 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
         </h1>
       </div>
 
+      <OrderFilters showPriceFilter />
+
       <div className="mb-6 flex flex-wrap gap-2">
         {statusFilters.map((filter) => (
           <a
             key={filter.value}
-            href={filter.value === "all" ? "/admin/pedidos" : `/admin/pedidos?status=${filter.value}`}
+            href={
+              filter.value === "all"
+                ? "/admin/pedidos"
+                : `/admin/pedidos?status=${filter.value}`
+            }
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
               activeFilter === filter.value
                 ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
@@ -71,14 +116,17 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
 
       {formattedOrders.length === 0 ? (
         <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-          <p className="text-muted">No hay pedidos en este filtro.</p>
+          <p className="text-muted">No hay pedidos con estos filtros.</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {formattedOrders.map((order) => (
-            <AdminOrderRow key={order.id} order={order} />
-          ))}
-        </div>
+        <>
+          <div className="space-y-3">
+            {formattedOrders.map((order) => (
+              <AdminOrderRow key={order.id} order={order} />
+            ))}
+          </div>
+          <Pagination currentPage={page} totalPages={totalPages} buildHref={buildHref} />
+        </>
       )}
     </div>
   );
