@@ -11,7 +11,7 @@ function getAllowedStatuses(current: string): string[] {
   const transitions: Record<string, string[]> = {
     pendiente_revision: ["pendiente_revision", "cotizado", "cancelado"],
     cotizado: ["cotizado", "cancelado"],
-    aprobado: ["aprobado", "en_proceso", "cancelado"],
+    aprobado: ["aprobado", "en_proceso", "cotizado", "cancelado"],
     rechazado: ["rechazado", "cancelado"],
     en_proceso: ["en_proceso", "listo_para_entrega", "cancelado"],
     listo_para_entrega: ["listo_para_entrega", "entregado", "cancelado"],
