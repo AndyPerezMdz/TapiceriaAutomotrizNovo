@@ -29,7 +29,7 @@ export default async function PedidoDetallePage({ params }: Props) {
     supabase
       .from("orders")
       .select(
-        "*, material_types(name), material_colors(name, hex_color), deleted_at",
+        "*, services(title), material_types(name), material_colors(name, hex_color), deleted_at",
       )
       .eq("id", id)
       .single(),
@@ -106,6 +106,11 @@ export default async function PedidoDetallePage({ params }: Props) {
             <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
               <Car size={16} /> Descripción
             </h2>
+            {order.services ? (
+              <p className="mb-1 text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
+                {(order.services as unknown as { title: string }).title}
+              </p>
+            ) : null}
             <p className="break-words text-sm text-muted">
               {order.service_description}
             </p>

@@ -115,6 +115,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         vehicle_model: parsed.data.vehicleModel,
         vehicle_year: Number(parsed.data.vehicleYear),
         service_description: parsed.data.serviceDescription,
+        service_id: selection.serviceId,
         material_type_id: selection.materialTypeId,
         material_color_id: selection.materialColorId,
       })
