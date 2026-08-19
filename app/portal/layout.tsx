@@ -1,4 +1,4 @@
-import { BrandLogo } from "@/components/auth/BrandLogo";
+import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
@@ -24,7 +24,7 @@ export default async function PortalLayout({
       <header className="border-b border-black/10 bg-surface dark:border-white/10">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <Link href="/portal">
-            <BrandLogo />
+            <FooterLogo />
           </Link>
 
           <div className="flex items-center gap-4">
