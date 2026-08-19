@@ -3,7 +3,7 @@
 import { statusLabels, orderStatusValues } from "@/lib/validations/admin-order";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
-import { MessageCircle } from "lucide-react";
+import { AlertTriangle, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -11,7 +11,7 @@ function getAllowedStatuses(current: string): string[] {
   const transitions: Record<string, string[]> = {
     pendiente_revision: ["pendiente_revision", "cotizado", "cancelado"],
     cotizado: ["cotizado", "cancelado"],
-    aprobado: ["aprobado", "en_proceso", "cotizado", "cancelado"],
+    aprobado: ["aprobado", "en_proceso", "cancelado"],
     rechazado: ["rechazado", "cancelado"],
     en_proceso: ["en_proceso", "listo_para_entrega", "cancelado"],
     listo_para_entrega: ["listo_para_entrega", "entregado", "cancelado"],
@@ -45,15 +45,15 @@ export function OrderStaffPanel({
   vehicleLabel,
 }: Props) {
   const router = useRouter();
+  const originalPrice = finalPrice?.toString() ?? estimatedPrice?.toString() ?? "";
   const [status, setStatus] = useState(currentStatus);
-  const [price, setPrice] = useState(
-    finalPrice?.toString() ?? estimatedPrice?.toString() ?? "",
-  );
+  const [price, setPrice] = useState(originalPrice);
   const [note, setNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const isLocked = currentStatus === "cancelado" || currentStatus === "entregado";
+  const priceChanged = isAdmin && price !== originalPrice;
 
   async function handleSave() {
     setIsSaving(true);
@@ -61,12 +61,17 @@ export function OrderStaffPanel({
 
     const supabase = createClient();
 
-    const updatePayload: Record<string, unknown> = { status };
+    // Si el precio cambió, el pedido SIEMPRE regresa a "cotizado" para
+    // que el cliente vuelva a aceptar o rechazar, sin importar el estado
+    // que el staff haya seleccionado en el dropdown.
+    const finalStatus = priceChanged ? "cotizado" : status;
+
+    const updatePayload: Record<string, unknown> = { status: finalStatus };
 
     if (isAdmin) {
       const numericPrice = price ? Number(price) : null;
       updatePayload.estimated_price = numericPrice;
-      if (status === "entregado") {
+      if (finalStatus === "entregado") {
         updatePayload.final_price = numericPrice;
       }
     }
@@ -92,14 +97,10 @@ export function OrderStaffPanel({
         .single();
 
       if (lastHistoryEntry) {
-        const { error: noteError } = await supabase
+        await supabase
           .from("order_status_history")
           .update({ note: note.trim() })
           .eq("id", lastHistoryEntry.id);
-
-        if (noteError) {
-          console.error("Error guardando nota:", noteError.message);
-        }
       }
     }
 
@@ -110,7 +111,9 @@ export function OrderStaffPanel({
 
   const whatsappHref = clientPhone
     ? buildWhatsAppLink(
-        `Hola ${clientName ?? ""}, tu pedido de ${vehicleLabel} cambió de estado a: ${statusLabels[status]}.`,
+        priceChanged
+          ? `Hola ${clientName ?? ""}, actualizamos el precio de tu pedido de ${vehicleLabel}. Revísalo y confírmanos si lo aceptas.`
+          : `Hola ${clientName ?? ""}, tu pedido de ${vehicleLabel} cambió de estado a: ${statusLabels[status]}.`,
       ).replace(/wa\.me\/52\d{10}/, `wa.me/52${clientPhone}`)
     : null;
 
@@ -132,6 +135,17 @@ export function OrderStaffPanel({
         </div>
       ) : null}
 
+      {priceChanged ? (
+        <div className="mb-4 flex items-start gap-2 rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+          <span>
+            Cambiaste el precio. Al guardar, el pedido regresará a
+            &quot;Cotizado&quot; para que el cliente vuelva a aceptar o
+            rechazar.
+          </span>
+        </div>
+      ) : null}
+
       <div className="space-y-4">
         <div>
           <label className="mb-1.5 block text-sm font-medium text-foreground">
@@ -140,7 +154,7 @@ export function OrderStaffPanel({
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            disabled={isLocked}
+            disabled={isLocked || priceChanged}
             className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
           >
             {getAllowedStatuses(currentStatus).map((s) => (
@@ -149,6 +163,11 @@ export function OrderStaffPanel({
               </option>
             ))}
           </select>
+          {priceChanged ? (
+            <p className="mt-1 text-xs text-muted">
+              Deshabilitado mientras haya un cambio de precio pendiente de guardar.
+            </p>
+          ) : null}
         </div>
 
         {isAdmin ? (
