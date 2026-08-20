@@ -1,6 +1,7 @@
 import { Pagination } from "@/components/shared/Pagination";
+import { SearchBar } from "@/components/shared/SearchBar";
 import { createClient } from "@/lib/supabase/server";
-import { Clock, Search } from "lucide-react";
+import { Clock } from "lucide-react";
 
 const actionColors: Record<string, string> = {
   "Cambio de estado": "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
@@ -55,16 +56,9 @@ export default async function AdminHistorialPage({ searchParams }: Props) {
         Historial de cambios
       </h1>
 
-      <form className="relative mb-6">
-        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
-        <input
-          type="text"
-          name="q"
-          defaultValue={q}
-          placeholder="Buscar por persona, acción o elemento..."
-          className="w-full rounded-md border border-black/15 bg-surface py-2.5 pl-9 pr-3 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
-        />
-      </form>
+      <div className="mb-6">
+        <SearchBar placeholder="Buscar por persona, acción o elemento..." />
+      </div>
 
       {!entries || entries.length === 0 ? (
         <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">

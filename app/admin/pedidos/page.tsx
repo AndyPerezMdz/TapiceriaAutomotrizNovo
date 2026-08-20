@@ -1,6 +1,7 @@
 import { AdminOrderRow } from "@/components/admin/AdminOrderRow";
-import { OrderFilters } from "@/components/shared/OrderFilters";
+import { AdvancedFilters } from "@/components/shared/AdvancedFilters";
 import { Pagination } from "@/components/shared/Pagination";
+import { SearchBar } from "@/components/shared/SearchBar";
 import { createClient } from "@/lib/supabase/server";
 
 const statusFilters = [
@@ -33,6 +34,18 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
   const page = Math.max(1, Number(pageParam) || 1);
 
   const supabase = await createClient();
+
+  // Si hay búsqueda, primero buscamos clientes cuyo nombre coincida,
+  // para poder incluir sus pedidos aunque el vehículo/descripción no matcheen.
+  let matchingClientIds: string[] = [];
+  if (q) {
+    const { data: matchingProfiles } = await supabase
+      .from("profiles")
+      .select("id")
+      .ilike("full_name", `%${q}%`);
+    matchingClientIds = matchingProfiles?.map((p) => p.id) ?? [];
+  }
+
   let query = supabase
     .from("orders")
     .select(
@@ -44,11 +57,19 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
   if (activeFilter !== "all") {
     query = query.eq("status", activeFilter);
   }
+
   if (q) {
-    query = query.or(
-      `vehicle_make.ilike.%${q}%,vehicle_model.ilike.%${q}%,service_description.ilike.%${q}%`,
-    );
+    const orConditions = [
+      `vehicle_make.ilike.%${q}%`,
+      `vehicle_model.ilike.%${q}%`,
+      `service_description.ilike.%${q}%`,
+    ];
+    if (matchingClientIds.length > 0) {
+      orConditions.push(`client_id.in.(${matchingClientIds.join(",")})`);
+    }
+    query = query.or(orConditions.join(","));
   }
+
   if (from) query = query.gte("created_at", from);
   if (to) query = query.lte("created_at", `${to}T23:59:59`);
   if (min_price) query = query.gte("estimated_price", Number(min_price));
@@ -92,7 +113,12 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
         </h1>
       </div>
 
-      <OrderFilters showPriceFilter />
+      <div className="mb-6 flex gap-2">
+        <div className="flex-1">
+          <SearchBar placeholder="Buscar por vehículo, cliente o descripción..." />
+        </div>
+        <AdvancedFilters showPrice />
+      </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
         {statusFilters.map((filter) => (

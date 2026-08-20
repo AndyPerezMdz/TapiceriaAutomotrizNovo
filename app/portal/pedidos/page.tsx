@@ -1,6 +1,6 @@
 import { OrderCard } from "@/components/portal/OrderCard";
-import { OrderFilters } from "@/components/shared/OrderFilters";
 import { Pagination } from "@/components/shared/Pagination";
+import { SearchBar } from "@/components/shared/SearchBar";
 import { createClient } from "@/lib/supabase/server";
 
 const statusLabels: Record<string, string> = {
@@ -17,11 +17,11 @@ const statusLabels: Record<string, string> = {
 const PAGE_SIZE = 10;
 
 interface Props {
-  searchParams: Promise<{ page?: string; q?: string; from?: string; to?: string }>;
+  searchParams: Promise<{ page?: string; q?: string }>;
 }
 
 export default async function HistorialPedidosPage({ searchParams }: Props) {
-  const { page: pageParam, q, from, to } = await searchParams;
+  const { page: pageParam, q } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
 
   const supabase = await createClient();
@@ -42,8 +42,6 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
       `vehicle_make.ilike.%${q}%,vehicle_model.ilike.%${q}%,service_description.ilike.%${q}%`,
     );
   }
-  if (from) query = query.gte("created_at", from);
-  if (to) query = query.lte("created_at", `${to}T23:59:59`);
 
   const start = (page - 1) * PAGE_SIZE;
   query = query.range(start, start + PAGE_SIZE - 1);
@@ -54,8 +52,6 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
   function buildHref(targetPage: number) {
     const params = new URLSearchParams();
     if (q) params.set("q", q);
-    if (from) params.set("from", from);
-    if (to) params.set("to", to);
     params.set("page", String(targetPage));
     return `/portal/pedidos?${params.toString()}`;
   }
@@ -71,11 +67,13 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
         </p>
       </div>
 
-      <OrderFilters />
+      <div className="mb-6">
+        <SearchBar placeholder="Buscar por vehículo o descripción..." />
+      </div>
 
       {!orders || orders.length === 0 ? (
         <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-          <p className="text-muted">No se encontraron pedidos con estos filtros.</p>
+          <p className="text-muted">No se encontraron pedidos con esa búsqueda.</p>
         </div>
       ) : (
         <>
