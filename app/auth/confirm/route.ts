@@ -9,6 +9,12 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type") as EmailOtpType | null;
   const next = searchParams.get("next") ?? "/";
 
+  // El destino de error depende de a dónde iba dirigido el flujo:
+  // si "next" apunta al panel de staff, el error también manda a su login.
+  const errorRedirect = next.startsWith("/staff")
+    ? `${origin}/staff/login?error=link_invalido`
+    : `${origin}/login?error=link_invalido`;
+
   const supabase = await createClient();
 
   if (code) {
@@ -28,5 +34,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/staff/login?error=invitacion_invalida`);
+  return NextResponse.redirect(errorRedirect);
 }

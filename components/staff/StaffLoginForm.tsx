@@ -4,18 +4,18 @@ import { BrandLogo } from "@/components/auth/BrandLogo";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
-import { Link } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15 dark:focus:border-white dark:focus:ring-white";
+  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 
 export function StaffLoginForm() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof LoginFormData, string>>
+  const [fieldErrors, setFieldErrors] = useState
+    < Partial<Record<keyof LoginFormData, string>>
   >({});
   const [isLoading, setIsLoading] = useState(false);
 
@@ -133,7 +133,10 @@ export function StaffLoginForm() {
           </div>
 
           <div className="text-right">
-            <Link href="/recuperar" className="text-sm font-medium text-foreground underline-offset-4 hover:underline">
+            <Link
+              href="/staff/recuperar"
+              className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+            >
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
