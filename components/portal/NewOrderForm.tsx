@@ -1,9 +1,10 @@
 "use client";
 
 import { ServiceMaterialSelector } from "@/components/portal/ServiceMaterialSelector";
+import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
 import { newOrderSchema, type NewOrderFormData } from "@/lib/validations/order";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, MessageCircle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -27,12 +28,18 @@ export function NewOrderForm({ services }: { services: Service[] }) {
     serviceId: string | null;
     materialTypeId: string | null;
     materialColorId: string | null;
-  }>({ serviceId: null, materialTypeId: null, materialColorId: null });
+    requiresVisit: boolean;
+  }>({
+    serviceId: null,
+    materialTypeId: null,
+    materialColorId: null,
+    requiresVisit: false,
+  });
 
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof NewOrderFormData, string>>
+  const [fieldErrors, setFieldErrors] = useState
+    <Partial<Record<keyof NewOrderFormData, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -173,128 +180,153 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         <p className="text-sm text-brand-red">{fieldErrors.serviceId}</p>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor="vehicleMake" className={labelClassName}>
-            Marca
-          </label>
-          <input
-            id="vehicleMake"
-            name="vehicleMake"
-            placeholder="Nissan"
-            className={fieldClassName}
-            disabled={isLoading}
-          />
-          {fieldErrors.vehicleMake ? (
-            <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleMake}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="vehicleModel" className={labelClassName}>
-            Modelo
-          </label>
-          <input
-            id="vehicleModel"
-            name="vehicleModel"
-            placeholder="Versa"
-            className={fieldClassName}
-            disabled={isLoading}
-          />
-          {fieldErrors.vehicleModel ? (
-            <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleModel}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="vehicleYear" className={labelClassName}>
-            Año
-          </label>
-          <input
-            id="vehicleYear"
-            name="vehicleYear"
-            inputMode="numeric"
-            placeholder="2020"
-            className={fieldClassName}
-            disabled={isLoading}
-          />
-          {fieldErrors.vehicleYear ? (
-            <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleYear}</p>
-          ) : null}
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="serviceDescription" className={labelClassName}>
-          Detalles adicionales
-        </label>
-        <textarea
-          id="serviceDescription"
-          name="serviceDescription"
-          rows={4}
-          placeholder="Cuéntanos cualquier detalle extra que debamos saber..."
-          className={fieldClassName}
-          disabled={isLoading}
-        />
-        {fieldErrors.serviceDescription ? (
-          <p className="mt-1 text-sm text-brand-red">
-            {fieldErrors.serviceDescription}
+      {selection.requiresVisit ? (
+        <div className="rounded-lg border border-brand-yellow/30 bg-brand-yellow/10 p-5">
+          <p className="font-medium text-foreground">
+            Este color necesita una visita al taller
           </p>
-        ) : null}
-      </div>
-
-      <div>
-        <label className={labelClassName}>Fotos (opcional, máx. {MAX_PHOTOS})</label>
-
-        <div className="flex flex-wrap gap-3">
-          {photos.map((photo, index) => (
-            <div
-              key={index}
-              className="relative h-20 w-20 overflow-hidden rounded-md border border-black/10 dark:border-white/10"
-            >
-              <img
-                src={URL.createObjectURL(photo)}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => removePhoto(index)}
-                className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
-              >
-                <X size={12} />
-              </button>
-            </div>
-          ))}
-
-          {photos.length < MAX_PHOTOS ? (
-            <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-black/20 text-muted transition hover:border-black/40 dark:border-white/20">
-              <ImagePlus size={20} />
-              <span className="text-[10px]">Agregar</span>
+          <p className="mt-1 text-sm text-muted">
+            Para colores de piel distintos al negro de fábrica, necesitamos
+            tomar una muestra de tu asiento para igualar el tono exacto.
+            Contáctanos por WhatsApp para agendar tu visita.
+          </p>
+          <a
+            href={buildWhatsAppLink(
+              "Hola, quiero agendar una visita al taller para cotizar un color de piel personalizado.",
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
+          >
+            <MessageCircle size={16} /> Agendar por WhatsApp
+          </a>
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <label htmlFor="vehicleMake" className={labelClassName}>
+                Marca
+              </label>
               <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handlePhotoChange}
+                id="vehicleMake"
+                name="vehicleMake"
+                placeholder="Nissan"
+                className={fieldClassName}
                 disabled={isLoading}
               />
+              {fieldErrors.vehicleMake ? (
+                <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleMake}</p>
+              ) : null}
+            </div>
+
+            <div>
+              <label htmlFor="vehicleModel" className={labelClassName}>
+                Modelo
+              </label>
+              <input
+                id="vehicleModel"
+                name="vehicleModel"
+                placeholder="Versa"
+                className={fieldClassName}
+                disabled={isLoading}
+              />
+              {fieldErrors.vehicleModel ? (
+                <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleModel}</p>
+              ) : null}
+            </div>
+
+            <div>
+              <label htmlFor="vehicleYear" className={labelClassName}>
+                Año
+              </label>
+              <input
+                id="vehicleYear"
+                name="vehicleYear"
+                inputMode="numeric"
+                placeholder="2020"
+                className={fieldClassName}
+                disabled={isLoading}
+              />
+              {fieldErrors.vehicleYear ? (
+                <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleYear}</p>
+              ) : null}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="serviceDescription" className={labelClassName}>
+              Detalles adicionales
             </label>
-          ) : null}
-        </div>
+            <textarea
+              id="serviceDescription"
+              name="serviceDescription"
+              rows={4}
+              placeholder="Cuéntanos cualquier detalle extra que debamos saber..."
+              className={fieldClassName}
+              disabled={isLoading}
+            />
+            {fieldErrors.serviceDescription ? (
+              <p className="mt-1 text-sm text-brand-red">
+                {fieldErrors.serviceDescription}
+              </p>
+            ) : null}
+          </div>
 
-        {photoError ? (
-          <p className="mt-2 text-sm text-brand-red">{photoError}</p>
-        ) : null}
-      </div>
+          <div>
+            <label className={labelClassName}>Fotos (opcional, máx. {MAX_PHOTOS})</label>
 
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-brand-black dark:hover:bg-white/85 sm:w-auto"
-      >
-        {isLoading ? "Enviando pedido..." : "Solicitar cotización"}
-      </button>
+            <div className="flex flex-wrap gap-3">
+              {photos.map((photo, index) => (
+                <div
+                  key={index}
+                  className="relative h-20 w-20 overflow-hidden rounded-md border border-black/10 dark:border-white/10"
+                >
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(index)}
+                    className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ))}
+
+              {photos.length < MAX_PHOTOS ? (
+                <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-black/20 text-muted transition hover:border-black/40 dark:border-white/20">
+                  <ImagePlus size={20} />
+                  <span className="text-[10px]">Agregar</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                    disabled={isLoading}
+                  />
+                </label>
+              ) : null}
+            </div>
+
+            {photoError ? (
+              <p className="mt-2 text-sm text-brand-red">{photoError}</p>
+            ) : null}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-brand-black dark:hover:bg-white/85 sm:w-auto"
+          >
+            {isLoading ? "Enviando pedido..." : "Solicitar cotización"}
+          </button>
+        </>
+      )}
     </form>
   );
 }

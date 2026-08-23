@@ -19,6 +19,7 @@ interface MaterialColor {
   id: string;
   name: string;
   hex_color: string | null;
+  requires_visit: boolean;
 }
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
     serviceId: string | null;
     materialTypeId: string | null;
     materialColorId: string | null;
+    requiresVisit: boolean;
   }) => void;
 }
 
@@ -71,7 +73,7 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
     const supabase = createClient();
     supabase
       .from("material_colors")
-      .select("id, name, hex_color")
+      .select("id, name, hex_color, requires_visit")
       .eq("material_type_id", materialTypeId)
       .eq("is_active", true)
       .order("order", { ascending: true })
@@ -79,13 +81,15 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
   }, [materialTypeId]);
 
   useEffect(() => {
+    const selectedColor = colors.find((c) => c.id === materialColorId);
     onSelectionChange({
       serviceId: serviceId || null,
       materialTypeId: materialTypeId || null,
       materialColorId: materialColorId || null,
+      requiresVisit: selectedColor?.requires_visit ?? false,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serviceId, materialTypeId, materialColorId]);
+  }, [serviceId, materialTypeId, materialColorId, colors]);
 
   const selectedMaterial = materialTypes.find((m) => m.id === materialTypeId);
 
