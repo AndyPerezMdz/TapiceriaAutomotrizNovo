@@ -1,4 +1,5 @@
 import { InviteStaffForm } from "@/components/admin/InviteStaffForm";
+import { StaffMemberRow } from "@/components/admin/StaffMemberRow";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -18,9 +19,16 @@ export default async function AdminUsuariosPage() {
 
   const { data: staff } = await supabase
     .from("profiles")
-    .select("id, full_name, email, role")
+    .select("id, full_name, email, role, is_active, created_at")
     .in("role", ["admin", "empleado"])
     .order("full_name", { ascending: true });
+
+  // last_sign_in_at vive en auth.users, no en profiles — lo consultamos aparte
+  // usando una vista si existiera; por simplicidad, lo omitimos por ahora si
+  // no hay una forma directa desde el cliente RLS. Se puede agregar después
+  // con una función RPC si se necesita ese dato exacto.
+  const staffWithDefaults =
+    staff?.map((s) => ({ ...s, last_sign_in_at: null as string | null })) ?? [];
 
   return (
     <div>
@@ -40,19 +48,8 @@ export default async function AdminUsuariosPage() {
           Personal actual
         </h2>
         <div className="space-y-2">
-          {staff?.map((person) => (
-            <div
-              key={person.id}
-              className="flex items-center justify-between rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
-            >
-              <div>
-                <p className="font-medium text-foreground">{person.full_name}</p>
-                <p className="text-xs text-muted">{person.email}</p>
-              </div>
-              <span className="rounded-full bg-brand-yellow/20 px-3 py-1 text-xs font-medium capitalize text-brand-yellow-dark dark:text-brand-yellow">
-                {person.role}
-              </span>
-            </div>
+          {staffWithDefaults.map((person) => (
+            <StaffMemberRow key={person.id} member={person} />
           ))}
         </div>
       </div>
