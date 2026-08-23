@@ -13,6 +13,8 @@ const actionColors: Record<string, string> = {
   "Foto agregada": "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
   "Foto eliminada": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
   "Cambio de rol": "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
+  "Usuario desactivado": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+"Usuario reactivado": "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
 };
 
 const PAGE_SIZE = 20;
