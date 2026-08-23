@@ -11,7 +11,7 @@ export default async function ServiciosPage() {
   const supabase = await createClient();
   const { data: services } = await supabase
     .from("services")
-    .select("slug, title, short_description")
+    .select("slug, title, short_description, image_url")
     .eq("is_active", true)
     .order("order", { ascending: true });
 
@@ -33,6 +33,13 @@ export default async function ServiciosPage() {
             href={`/servicios/${service.slug}`}
             className="group rounded-lg border border-black/10 bg-surface p-6 shadow-sm transition hover:border-brand-yellow-dark hover:shadow-md dark:border-white/10 dark:hover:border-brand-yellow"
           >
+            {service.image_url ? (
+              <img
+                src={service.image_url}
+                alt=""
+                className="mb-3 h-32 w-full rounded-md object-cover"
+              />
+            ) : null}
             <h2 className="font-semibold text-foreground">{service.title}</h2>
             <p className="mt-2 text-sm text-muted">{service.short_description}</p>
             <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand-yellow-dark transition group-hover:gap-2 dark:text-brand-yellow">
