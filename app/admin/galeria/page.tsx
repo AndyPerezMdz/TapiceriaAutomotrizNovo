@@ -17,6 +17,14 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
 
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: myProfile } = user
+    ? await supabase.from("profiles").select("role").eq("id", user.id).single()
+    : { data: null };
+  const isAdmin = myProfile?.role === "admin";
+
   const { data: services } = await supabase
     .from("services")
     .select("id, title")
@@ -56,12 +64,14 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Galería
         </h1>
-        <Link
-          href="/admin/galeria/nueva"
-          className="flex items-center gap-1.5 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
-        >
-          <Plus size={16} /> Agregar foto
-        </Link>
+        {isAdmin ? (
+          <Link
+            href="/admin/galeria/nueva"
+            className="flex items-center gap-1.5 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+          >
+            <Plus size={16} /> Agregar foto
+          </Link>
+        ) : null}
       </div>
 
       <div className="mb-4 flex gap-2">
@@ -71,7 +81,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        <a
+        
           href="/admin/galeria"
           className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
             !service
@@ -82,7 +92,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
           Todos
         </a>
         {services?.map((s) => (
-          <a
+          
             key={s.id}
             href={`/admin/galeria?service=${s.id}`}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
@@ -96,7 +106,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
         ))}
       </div>
 
-      <GalleryAdminGrid items={items ?? []} />
+      <GalleryAdminGrid items={items ?? []} isAdmin={isAdmin} />
 
       <Pagination currentPage={page} totalPages={totalPages} buildHref={buildHref} />
     </div>

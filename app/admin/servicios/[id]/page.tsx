@@ -3,7 +3,7 @@ import { ServiceImageUploader } from "@/components/admin/ServiceImageUploader";
 import { ServiceMaterialsManager } from "@/components/admin/ServiceMaterialsManager";
 import { createClient } from "@/lib/supabase/server";
 import { ClipboardList, ImageIcon } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -12,6 +12,17 @@ interface Props {
 export default async function EditarServicioPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: myProfile } = user
+    ? await supabase.from("profiles").select("role").eq("id", user.id).single()
+    : { data: null };
+
+  if (myProfile?.role !== "admin") {
+    redirect("/admin/servicios");
+  }
 
   const [{ data: service }, { count: ordersCount }, { count: galleryCount }] =
     await Promise.all([

@@ -12,7 +12,13 @@ interface GalleryItem {
   caption: string | null;
 }
 
-export function GalleryAdminGrid({ items }: { items: GalleryItem[] }) {
+export function GalleryAdminGrid({
+  items,
+  isAdmin,
+}: {
+  items: GalleryItem[];
+  isAdmin: boolean;
+}) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -68,13 +74,15 @@ export function GalleryAdminGrid({ items }: { items: GalleryItem[] }) {
             <p className="truncate text-sm text-muted">
               {item.caption ?? "Sin descripción"}
             </p>
-            <button
-              onClick={() => handleDelete(item.id)}
-              disabled={deletingId === item.id}
-              className="shrink-0 text-muted transition hover:text-brand-red disabled:opacity-50"
-            >
-              <Trash2 size={16} />
-            </button>
+            {isAdmin ? (
+              <button
+                onClick={() => handleDelete(item.id)}
+                disabled={deletingId === item.id}
+                className="shrink-0 text-muted transition hover:text-brand-red disabled:opacity-50"
+              >
+                <Trash2 size={16} />
+              </button>
+            ) : null}
           </div>
         </div>
       ))}
