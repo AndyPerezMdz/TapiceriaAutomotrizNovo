@@ -1,4 +1,4 @@
-import { ServiceOrderButton } from "@/components/admin/ServiceOrderButton";
+import { ServiceOrderButton } from "@/components/admin/ServiceOrderButtons";
 import { createClient } from "@/lib/supabase/server";
 import { Plus } from "lucide-react";
 import Link from "next/link";

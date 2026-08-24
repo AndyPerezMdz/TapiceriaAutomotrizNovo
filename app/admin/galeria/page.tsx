@@ -81,7 +81,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
-        
+        <a
           href="/admin/galeria"
           className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
             !service
@@ -92,7 +92,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
           Todos
         </a>
         {services?.map((s) => (
-          
+          <a
             key={s.id}
             href={`/admin/galeria?service=${s.id}`}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
