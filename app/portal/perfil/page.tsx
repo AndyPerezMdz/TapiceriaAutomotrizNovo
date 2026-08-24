@@ -1,3 +1,4 @@
+import { AvatarUploader } from "@/components/portal/AvatarUploader";
 import { ChangePasswordForm } from "@/components/portal/ChangePasswordForm";
 import { ProfileForm } from "@/components/portal/ProfileForm";
 import { createClient } from "@/lib/supabase/server";
@@ -11,7 +12,7 @@ export default async function PerfilPage() {
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("full_name, phone, email")
+        .select("full_name, phone, email, avatar_url")
         .eq("id", user.id)
         .single()
     : { data: null };
@@ -21,6 +22,13 @@ export default async function PerfilPage() {
       <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
         Mi perfil
       </h1>
+
+      <div className="mb-10">
+        <AvatarUploader
+          currentAvatarUrl={profile?.avatar_url ?? null}
+          fullName={profile?.full_name ?? ""}
+        />
+      </div>
 
       <div className="mb-10">
         <h2 className="mb-4 text-sm font-semibold text-foreground">

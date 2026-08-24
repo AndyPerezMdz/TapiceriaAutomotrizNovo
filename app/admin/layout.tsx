@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Users,
+  Users2,
   Wrench,
 } from "lucide-react";
 import Link from "next/link";
@@ -67,6 +68,12 @@ export default async function AdminLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <MessageSquare size={16} /> Contactos
+          </Link>
+          <Link
+            href="/admin/clientes"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+          <Users2 size={16} /> Clientes
           </Link>
           <Link
             href="/admin/servicios"
