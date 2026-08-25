@@ -7,6 +7,7 @@ import { QuoteResponse } from "@/components/portal/QuoteResponse";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
 import { AddPhotoButton } from "@/components/portal/AddPhotoButton";
 import { MarkAsViewed } from "@/components/portal/MarkAsViewed";
+import { ReviewForm } from "@/components/portal/ReviewForm";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -27,21 +28,23 @@ export default async function PedidoDetallePage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: order }, { data: photos }, { data: history }] = await Promise.all([
-    supabase
-      .from("orders")
-      .select(
-        "*, services(title), material_types(name), material_colors(name, hex_color), deleted_at",
-      )
-      .eq("id", id)
-      .single(),
-    supabase.from("order_photos").select("id, url").eq("order_id", id),
-    supabase
-      .from("order_status_history")
-      .select("id, status, note, created_at")
-      .eq("order_id", id)
-      .order("created_at", { ascending: true }),
-  ]);
+  const [{ data: order }, { data: photos }, { data: history }, { data: review }] =
+    await Promise.all([
+      supabase
+        .from("orders")
+        .select(
+          "*, services(title), material_types(name), material_colors(name, hex_color), deleted_at",
+        )
+        .eq("id", id)
+        .single(),
+      supabase.from("order_photos").select("id, url").eq("order_id", id),
+      supabase
+        .from("order_status_history")
+        .select("id, status, note, created_at")
+        .eq("order_id", id)
+        .order("created_at", { ascending: true }),
+      supabase.from("reviews").select("id, rating, comment").eq("order_id", id).maybeSingle(),
+    ]);
 
   if (!order) {
     notFound();
@@ -106,6 +109,33 @@ export default async function PedidoDetallePage({ params }: Props) {
         <div className="min-w-0 space-y-6">
           {order.status === "cotizado" ? (
             <QuoteResponse orderId={order.id} estimatedPrice={order.estimated_price} />
+          ) : null}
+
+          {order.status === "entregado" && !review ? (
+            <ReviewForm orderId={order.id} />
+          ) : null}
+
+          {review ? (
+            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
+              <p className="mb-1 text-sm font-semibold text-foreground">Tu reseña</p>
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    className={
+                      star <= review.rating
+                        ? "text-brand-yellow"
+                        : "text-black/15 dark:text-white/15"
+                    }
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              {review.comment ? (
+                <p className="mt-2 break-words text-sm text-muted">{review.comment}</p>
+              ) : null}
+            </div>
           ) : null}
 
           <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">

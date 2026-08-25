@@ -12,7 +12,12 @@ export default async function HomePage() {
     .eq("is_active", true)
     .order("order", { ascending: true })
     .limit(3);
-
+  const { data: reviews } = await supabase
+    .from("reviews")
+    .select("id, rating, comment, profiles!reviews_client_id_fkey(full_name)")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(3);
   const whatsappHref = buildWhatsAppLink(
     "Hola, me gustaría más información sobre sus servicios",
   );
@@ -106,6 +111,44 @@ export default async function HomePage() {
           Ver todos los servicios <ArrowRight size={14} />
         </Link>
       </section>
+
+      {reviews && reviews.length > 0 ? (
+      <section className="border-t border-black/10 bg-surface py-16 dark:border-white/10">
+        <div className="mx-auto max-w-6xl px-6">
+          <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Lo que dicen nuestros clientes
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {reviews.map((r, i) => {
+              const client = r.profiles as unknown as { full_name: string } | null;
+              return (
+                <div
+                  key={i}
+                  className="rounded-lg border border-black/10 bg-background p-6 dark:border-white/10"
+                >
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className={star <= r.rating ? "text-brand-yellow" : "text-black/15 dark:text-white/15"}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  {r.comment ? (
+                    <p className="mt-3 text-sm text-muted">&quot;{r.comment}&quot;</p>
+                  ) : null}
+                  <p className="mt-3 text-sm font-medium text-foreground">
+                    {client?.full_name}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+) : null}
 
       {/* CTA final */}
       <section className="border-t border-black/10 bg-surface dark:border-white/10">

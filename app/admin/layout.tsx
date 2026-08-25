@@ -8,6 +8,7 @@ import {
   ImageIcon,
   LayoutDashboard,
   MessageSquare,
+  Star,
   Users,
   Users2,
   Wrench,
@@ -74,6 +75,12 @@ export default async function AdminLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
           <Users2 size={16} /> Clientes
+          </Link>
+          <Link
+            href="/admin/resenas"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+          <Star size={16} /> Reseñas
           </Link>
           <Link
             href="/admin/servicios"
