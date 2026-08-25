@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { QuoteResponse } from "@/components/portal/QuoteResponse";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
+import { AddPhotoButton } from "@/components/portal/AddPhotoButton";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -67,6 +68,8 @@ export default async function PedidoDetallePage({ params }: Props) {
   const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
     .filter(Boolean)
     .join(" ");
+
+  const isFinalState = order.status === "entregado" || order.status === "cancelado";
 
   return (
     <div className="mx-auto max-w-3xl overflow-x-hidden">
@@ -143,9 +146,12 @@ export default async function PedidoDetallePage({ params }: Props) {
             </div>
           ) : null}
 
-          {photos && photos.length > 0 ? (
-            <div>
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Fotos</h2>
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-foreground">Fotos</h2>
+              {!isFinalState ? <AddPhotoButton orderId={order.id} /> : null}
+            </div>
+            {photos && photos.length > 0 ? (
               <div className="grid grid-cols-3 gap-2">
                 {photos.map((photo) => (
                   <a
@@ -163,8 +169,10 @@ export default async function PedidoDetallePage({ params }: Props) {
                   </a>
                 ))}
               </div>
-            </div>
-          ) : null}
+            ) : (
+              <p className="text-sm text-muted">Aún no hay fotos en este pedido.</p>
+            )}
+          </div>
 
           <DeleteOrderButton orderId={order.id} redirectTo="/portal/pedidos" />
         </div>
