@@ -26,7 +26,9 @@ export default async function PortalDashboardPage() {
 
   const { data: orders } = await supabase
     .from("orders")
-    .select("id, vehicle_make, vehicle_model, status, created_at, deleted_at, estimated_price")
+    .select(
+      "id, vehicle_make, vehicle_model, status, created_at, deleted_at, estimated_price, updated_at, client_last_viewed_at",
+    )
     .eq("client_id", user?.id)
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
@@ -58,7 +60,6 @@ export default async function PortalDashboardPage() {
         </Link>
       </div>
 
-      {/* Aviso destacado: cotizaciones esperando respuesta */}
       {awaitingResponse.length > 0 ? (
         <div className="mb-6 space-y-2">
           {awaitingResponse.map((order) => {
@@ -92,7 +93,6 @@ export default async function PortalDashboardPage() {
         </div>
       ) : null}
 
-      {/* Resumen rápido */}
       {activeOrders && activeOrders.length > 0 ? (
         <div className="mb-8 grid grid-cols-3 gap-3">
           <div className="rounded-lg border border-black/10 bg-surface p-4 text-center dark:border-white/10">
@@ -114,7 +114,6 @@ export default async function PortalDashboardPage() {
         </div>
       ) : null}
 
-      {/* Lista de pedidos activos */}
       <div>
         <h2 className="mb-4 text-sm font-semibold text-foreground">Mis pedidos</h2>
 

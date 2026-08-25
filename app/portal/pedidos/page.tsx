@@ -43,9 +43,10 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
 
   let query = supabase
     .from("orders")
-    .select("id, vehicle_make, vehicle_model, status, created_at, deleted_at", {
-      count: "exact",
-    })
+    .select(
+      "id, vehicle_make, vehicle_model, status, created_at, deleted_at, updated_at, client_last_viewed_at",
+      { count: "exact" },
+    )
     .eq("client_id", user?.id)
     .is("deleted_at", null)
     .order("created_at", { ascending: false });

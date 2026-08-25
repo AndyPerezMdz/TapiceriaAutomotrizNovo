@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { QuoteResponse } from "@/components/portal/QuoteResponse";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
 import { AddPhotoButton } from "@/components/portal/AddPhotoButton";
+import { MarkAsViewed } from "@/components/portal/MarkAsViewed";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -73,6 +74,8 @@ export default async function PedidoDetallePage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl overflow-x-hidden">
+      <MarkAsViewed orderId={order.id} />
+
       <Link
         href="/portal"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-foreground"

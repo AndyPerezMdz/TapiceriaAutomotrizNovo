@@ -9,6 +9,8 @@ interface Order {
   status: string;
   created_at: string;
   deleted_at: string | null;
+  updated_at?: string;
+  client_last_viewed_at?: string | null;
 }
 
 export function OrderCard({
@@ -25,11 +27,21 @@ export function OrderCard({
     year: "numeric",
   });
 
+  const hasUpdate =
+    !order.deleted_at &&
+    order.updated_at &&
+    (!order.client_last_viewed_at ||
+      new Date(order.updated_at) > new Date(order.client_last_viewed_at));
+
   return (
     <Link
       href={`/portal/pedidos/${order.id}`}
-      className="flex items-center justify-between rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+      className="relative flex items-center justify-between rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
     >
+      {hasUpdate ? (
+        <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-brand-red" />
+      ) : null}
+
       <div>
         <p className="font-medium text-foreground">
           {vehicle || "Pedido sin detalle de vehículo"}

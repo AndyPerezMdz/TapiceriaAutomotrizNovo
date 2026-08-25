@@ -19,6 +19,23 @@ export default async function PortalLayout({
     ? await supabase.from("profiles").select("full_name").eq("id", user.id).single()
     : { data: null };
 
+  let unreadCount = 0;
+  if (user) {
+    const { data: orders } = await supabase
+      .from("orders")
+      .select("updated_at, client_last_viewed_at")
+      .eq("client_id", user.id)
+      .is("deleted_at", null)
+      .not("status", "in", "(entregado,cancelado,rechazado)");
+
+    unreadCount =
+      orders?.filter(
+        (o) =>
+          o.updated_at &&
+          (!o.client_last_viewed_at || new Date(o.updated_at) > new Date(o.client_last_viewed_at)),
+      ).length ?? 0;
+  }
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
       <header className="border-b border-black/10 bg-surface dark:border-white/10">
@@ -39,9 +56,14 @@ export default async function PortalLayout({
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <Link
             href="/portal"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            className="relative flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <LayoutDashboard size={16} /> Mis pedidos
+            {unreadCount > 0 ? (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-semibold text-white">
+                {unreadCount}
+              </span>
+            ) : null}
           </Link>
           <Link
             href="/portal/pedidos"
