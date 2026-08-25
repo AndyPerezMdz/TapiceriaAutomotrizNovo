@@ -1,6 +1,6 @@
 import { businessInfo } from "@/lib/constants/business";
 import { FooterLogo } from "@/components/FooterLogo";
-import { Link as LinkIcon, MapPin, MessageCircle } from "lucide-react";
+import { Link, Link as LinkIcon, MapPin, MessageCircle } from "lucide-react";
 
 export function Footer() {
   return (
@@ -65,7 +65,17 @@ export function Footer() {
         </div>
 
         <div className="mt-10 border-t border-black/10 pt-6 text-center text-xs text-muted dark:border-white/10">
-          © {new Date().getFullYear()} Tapicería Automotriz by NOVO. Todos los derechos reservados.
+          <p>
+            © {new Date().getFullYear()} Tapicería Automotriz by NOVO. Todos los derechos reservados.
+          </p>
+          <p className="mt-2 flex justify-center gap-4">
+            <Link href="/privacidad" className="hover:text-foreground hover:underline">
+              Aviso de Privacidad
+            </Link>
+            <Link href="/terminos" className="hover:text-foreground hover:underline">
+              Términos y Condiciones
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
