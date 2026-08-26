@@ -3,7 +3,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/server";
-import { MessageCircle, Phone } from "lucide-react";
+import { Download, MessageCircle, Phone } from "lucide-react";
 
 const PAGE_SIZE = 20;
 
@@ -40,9 +40,17 @@ export default async function AdminContactosPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
-        Mensajes de contacto
-      </h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          Mensajes de contacto
+        </h1>
+        <a
+          href="/api/admin/export/contactos"
+          className="flex items-center gap-1.5 rounded-md border border-black/15 px-3 py-2 text-sm font-medium text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+        >
+          <Download size={15} /> Exportar CSV
+        </a>
+      </div>
 
       <div className="mb-6">
         <SearchBar placeholder="Buscar por nombre o mensaje..." />
@@ -96,7 +104,7 @@ export default async function AdminContactosPage({ searchParams }: Props) {
                     href={whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 flex w-fit items-center gap-2 rounded-md bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
+                    className="mt-3 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
                   >
                     <MessageCircle size={16} /> Contactar por WhatsApp
                   </a>

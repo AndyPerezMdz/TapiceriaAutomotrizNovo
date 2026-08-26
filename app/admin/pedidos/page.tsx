@@ -3,6 +3,7 @@ import { AdvancedFilters } from "@/components/shared/AdvancedFilters";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
 import { createClient } from "@/lib/supabase/server";
+import { Download } from "lucide-react";
 
 const statusFilters = [
   { value: "all", label: "Todos" },
@@ -35,8 +36,6 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
 
   const supabase = await createClient();
 
-  // Si hay búsqueda, primero buscamos clientes cuyo nombre coincida,
-  // para poder incluir sus pedidos aunque el vehículo/descripción no matcheen.
   let matchingClientIds: string[] = [];
   if (q) {
     const { data: matchingProfiles } = await supabase
@@ -107,10 +106,16 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
 
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Todos los pedidos
         </h1>
+        <a
+          href="/api/admin/export/pedidos"
+          className="flex items-center gap-1.5 rounded-md border border-black/15 px-3 py-2 text-sm font-medium text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+        >
+          <Download size={15} /> Exportar CSV
+        </a>
       </div>
 
       <div className="mb-6 flex gap-2">

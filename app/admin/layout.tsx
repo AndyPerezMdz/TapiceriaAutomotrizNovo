@@ -33,6 +33,12 @@ export default async function AdminLayout({
         .single()
     : { data: null };
 
+  const { count: pendingCount } = await supabase
+    .from("orders")
+    .select("*", { count: "exact", head: true })
+    .in("status", ["pendiente_revision", "cotizado"])
+    .is("deleted_at", null);
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
       <header className="border-b border-black/10 bg-surface dark:border-white/10">
@@ -60,27 +66,26 @@ export default async function AdminLayout({
           </Link>
           <Link
             href="/admin/pedidos"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            className="relative flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <ClipboardList size={16} /> Pedidos
+            {pendingCount && pendingCount > 0 ? (
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-semibold text-white">
+                {pendingCount}
+              </span>
+            ) : null}
+          </Link>
+          <Link
+            href="/admin/clientes"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <Users2 size={16} /> Clientes
           </Link>
           <Link
             href="/admin/contactos"
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <MessageSquare size={16} /> Contactos
-          </Link>
-          <Link
-            href="/admin/clientes"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
-          >
-          <Users2 size={16} /> Clientes
-          </Link>
-          <Link
-            href="/admin/resenas"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
-          >
-          <Star size={16} /> Reseñas
           </Link>
           <Link
             href="/admin/servicios"
@@ -93,6 +98,12 @@ export default async function AdminLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <ImageIcon size={16} /> Galería
+          </Link>
+          <Link
+            href="/admin/resenas"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <Star size={16} /> Reseñas
           </Link>
           <Link
             href="/admin/historial"
