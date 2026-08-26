@@ -16,6 +16,7 @@ export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle",
   );
+  const [formLoadedAt] = useState(() => Date.now());
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,6 +25,22 @@ export function ContactForm() {
     setStatus("loading");
 
     const formData = new FormData(form);
+
+    // Honeypot: campo invisible que solo un bot llenaría
+    const honeypot = String(formData.get("company") ?? "");
+    if (honeypot) {
+      // Fingimos éxito sin guardar nada, para no delatar la trampa al bot
+      setStatus("success");
+      return;
+    }
+
+    // Trampa de tiempo: menos de 3 segundos es sospechosamente rápido
+    const elapsed = Date.now() - formLoadedAt;
+    if (elapsed < 3000) {
+      setStatus("error");
+      return;
+    }
+
     const values = {
       name: String(formData.get("name") ?? ""),
       phone: String(formData.get("phone") ?? ""),
@@ -77,6 +94,18 @@ export function ContactForm() {
           Hubo un problema al enviar tu mensaje. Intenta de nuevo.
         </div>
       ) : null}
+
+      {/* Honeypot: invisible para humanos, tentador para bots */}
+      <div className="absolute left-[-9999px]" aria-hidden="true">
+        <label htmlFor="company">No llenar este campo</label>
+        <input
+          type="text"
+          id="company"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
 
       <div>
         <label htmlFor="name" className={labelClassName}>

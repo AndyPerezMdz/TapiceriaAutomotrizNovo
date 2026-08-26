@@ -17,10 +17,11 @@ import { useState } from "react";
 export function RegisterForm() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof RegisterFormData, string>>
+  const [fieldErrors, setFieldErrors] = useState
+    <Partial<Record<keyof RegisterFormData, string>>
   >({});
   const [isLoading, setIsLoading] = useState(false);
+  const [formLoadedAt] = useState(() => Date.now());
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,6 +30,22 @@ export function RegisterForm() {
     setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
+
+    // Honeypot: campo invisible que solo un bot llenaría
+    const honeypot = String(formData.get("company") ?? "");
+    if (honeypot) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Trampa de tiempo
+    const elapsed = Date.now() - formLoadedAt;
+    if (elapsed < 3000) {
+      setFormError("Ocurrió un problema. Intenta de nuevo.");
+      setIsLoading(false);
+      return;
+    }
+
     const values = {
       fullName: String(formData.get("fullName") ?? ""),
       email: String(formData.get("email") ?? ""),
@@ -70,7 +87,6 @@ export function RegisterForm() {
       return;
     }
 
-
     if (data.user && data.user.identities && data.user.identities.length === 0) {
       setFormError("Ya existe una cuenta con este correo. Intenta iniciar sesión.");
       setIsLoading(false);
@@ -104,12 +120,23 @@ export function RegisterForm() {
           <div className={formErrorClassName}>{formError}</div>
         ) : null}
 
+        {/* Honeypot: invisible para humanos, tentador para bots */}
+        <div className="absolute left-[-9999px]" aria-hidden="true">
+          <label htmlFor="company">No llenar este campo</label>
+          <input
+            type="text"
+            id="company"
+            name="company"
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+
         <AuthField id="fullName" label="Nombre completo" error={fieldErrors.fullName}>
           <input
             id="fullName"
             name="fullName"
             type="text"
-            placeholder="Juan Pérez"
             autoComplete="name"
             className={inputClassName}
             disabled={isLoading}
@@ -121,7 +148,6 @@ export function RegisterForm() {
             id="email"
             name="email"
             type="email"
-            placeholder="ejemplo@correo.com"
             autoComplete="email"
             className={inputClassName}
             disabled={isLoading}
@@ -146,7 +172,6 @@ export function RegisterForm() {
             id="password"
             name="password"
             type="password"
-            placeholder="********"
             autoComplete="new-password"
             className={inputClassName}
             disabled={isLoading}
@@ -162,7 +187,6 @@ export function RegisterForm() {
             id="confirmPassword"
             name="confirmPassword"
             type="password"
-            placeholder="********"
             autoComplete="new-password"
             className={inputClassName}
             disabled={isLoading}
