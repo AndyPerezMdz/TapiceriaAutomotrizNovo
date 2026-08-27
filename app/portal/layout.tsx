@@ -16,7 +16,11 @@ export default async function PortalLayout({
   } = await supabase.auth.getUser();
 
   const { data: profile } = user
-    ? await supabase.from("profiles").select("full_name").eq("id", user.id).single()
+    ? await supabase
+        .from("profiles")
+        .select("full_name, avatar_url")
+        .eq("id", user.id)
+        .single()
     : { data: null };
 
   let unreadCount = 0;
@@ -32,7 +36,8 @@ export default async function PortalLayout({
       orders?.filter(
         (o) =>
           o.updated_at &&
-          (!o.client_last_viewed_at || new Date(o.updated_at) > new Date(o.client_last_viewed_at)),
+          (!o.client_last_viewed_at ||
+            new Date(o.updated_at) > new Date(o.client_last_viewed_at)),
       ).length ?? 0;
   }
 
@@ -44,10 +49,24 @@ export default async function PortalLayout({
             <FooterLogo />
           </Link>
 
-          <div className="flex items-center gap-4">
-            <span className="hidden text-sm text-muted sm:inline">
-              {profile?.full_name}
-            </span>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/portal/perfil"
+              className="hidden items-center gap-2 sm:flex"
+            >
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                  {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
+                </div>
+              )}
+              <span className="text-sm text-muted">{profile?.full_name}</span>
+            </Link>
             <ThemeToggle />
             <SignOutButton />
           </div>

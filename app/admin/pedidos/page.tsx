@@ -48,7 +48,7 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
   let query = supabase
     .from("orders")
     .select(
-      "id, vehicle_make, vehicle_model, status, created_at, deleted_at, profiles!orders_client_id_fkey(full_name)",
+      "id, vehicle_make, vehicle_model, status, created_at, deleted_at, profiles!orders_client_id_fkey(full_name, avatar_url)",
       { count: "exact" },
     )
     .order("created_at", { ascending: false });
@@ -81,16 +81,19 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
   const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
 
   const formattedOrders =
-    orders?.map((o) => ({
+  orders?.map((o) => {
+    const client = o.profiles as unknown as { full_name: string; avatar_url: string | null } | null;
+    return {
       id: o.id,
       vehicle_make: o.vehicle_make,
       vehicle_model: o.vehicle_model,
       status: o.status,
       created_at: o.created_at,
       deleted_at: o.deleted_at,
-      client_name:
-        (o.profiles as unknown as { full_name: string } | null)?.full_name ?? null,
-    })) ?? [];
+      client_name: client?.full_name ?? null,
+      client_avatar_url: client?.avatar_url ?? null,
+    };
+  }) ?? [];
 
   function buildHref(targetPage: number) {
     const params = new URLSearchParams();

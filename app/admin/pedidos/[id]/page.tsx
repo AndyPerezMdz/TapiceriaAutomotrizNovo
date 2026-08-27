@@ -29,7 +29,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
     supabase
       .from("orders")
       .select(
-        "*, profiles!orders_client_id_fkey(full_name, phone), services(title), material_types(name), material_colors(name, hex_color), deleted_at",
+        "*, profiles!orders_client_id_fkey(full_name, phone, avatar_url), services(title), material_types(name), material_colors(name, hex_color), deleted_at",
       )
       .eq("id", id)
       .single(),
@@ -67,6 +67,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
   const client = order.profiles as unknown as {
     full_name: string;
     phone: string;
+    avatar_url: string | null;
   } | null;
 
   const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
@@ -83,6 +84,13 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       </Link>
 
       <div className="mb-8 flex items-start justify-between">
+        {client?.avatar_url ? (
+          <img src={client.avatar_url} alt="" className="h-10 w-10 rounded-full object-cover" />
+        ) : (
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-yellow/20 text-sm font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+            {client?.full_name?.charAt(0).toUpperCase() ?? "?"}
+          </div>
+        )}
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {client?.full_name ?? "Cliente"}

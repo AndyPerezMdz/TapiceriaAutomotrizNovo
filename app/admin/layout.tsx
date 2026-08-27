@@ -2,8 +2,8 @@ import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
-import { BarChart3 } from "lucide-react";
 import {
+  BarChart3,
   ClipboardList,
   History,
   ImageIcon,
@@ -29,7 +29,7 @@ export default async function AdminLayout({
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("full_name, role")
+        .select("full_name, role, avatar_url")
         .eq("id", user.id)
         .single()
     : { data: null };
@@ -48,10 +48,23 @@ export default async function AdminLayout({
             <FooterLogo />
           </Link>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-foreground">{profile?.full_name}</p>
-              <p className="text-xs capitalize text-muted">{profile?.role}</p>
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-2 sm:flex">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                  {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
+                </div>
+              )}
+              <div className="text-right">
+                <p className="text-sm font-medium text-foreground">{profile?.full_name}</p>
+                <p className="text-xs capitalize text-muted">{profile?.role}</p>
+              </div>
             </div>
             <ThemeToggle />
             <SignOutButton />
@@ -69,7 +82,7 @@ export default async function AdminLayout({
             href="/admin/reportes"
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
-          <BarChart3 size={16} /> Reportes
+            <BarChart3 size={16} /> Reportes
           </Link>
           <Link
             href="/admin/pedidos"
