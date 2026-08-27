@@ -2,6 +2,7 @@ import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
+import { BarChart3 } from "lucide-react";
 import {
   ClipboardList,
   History,
@@ -63,6 +64,12 @@ export default async function AdminLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <LayoutDashboard size={16} /> Dashboard
+          </Link>
+          <Link
+            href="/admin/reportes"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+          <BarChart3 size={16} /> Reportes
           </Link>
           <Link
             href="/admin/pedidos"
