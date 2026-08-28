@@ -22,14 +22,20 @@ interface MaterialColor {
   requires_visit: boolean;
 }
 
+export interface MaterialSelection {
+  serviceId: string | null;
+  serviceName: string | null;
+  materialTypeId: string | null;
+  materialName: string | null;
+  materialColorId: string | null;
+  colorName: string | null;
+  priceHint: string | null;
+  requiresVisit: boolean;
+}
+
 interface Props {
   services: Service[];
-  onSelectionChange: (selection: {
-    serviceId: string | null;
-    materialTypeId: string | null;
-    materialColorId: string | null;
-    requiresVisit: boolean;
-  }) => void;
+  onSelectionChange: (selection: MaterialSelection) => void;
 }
 
 export function ServiceMaterialSelector({ services, onSelectionChange }: Props) {
@@ -81,17 +87,22 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
   }, [materialTypeId]);
 
   useEffect(() => {
+    const selectedService = services.find((s) => s.id === serviceId);
+    const selectedMaterial = materialTypes.find((m) => m.id === materialTypeId);
     const selectedColor = colors.find((c) => c.id === materialColorId);
+
     onSelectionChange({
       serviceId: serviceId || null,
+      serviceName: selectedService?.title ?? null,
       materialTypeId: materialTypeId || null,
+      materialName: selectedMaterial?.name ?? null,
       materialColorId: materialColorId || null,
+      colorName: selectedColor?.name ?? null,
+      priceHint: selectedMaterial?.price_hint ?? null,
       requiresVisit: selectedColor?.requires_visit ?? false,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serviceId, materialTypeId, materialColorId, colors]);
-
-  const selectedMaterial = materialTypes.find((m) => m.id === materialTypeId);
+  }, [serviceId, materialTypeId, materialColorId, colors, materialTypes]);
 
   return (
     <div className="space-y-4">
@@ -161,13 +172,6 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
             ))}
           </div>
         </div>
-      ) : null}
-
-      {selectedMaterial?.price_hint ? (
-        <p className="text-xs text-muted">
-          Precio de referencia: {selectedMaterial.price_hint}. El precio final se
-          confirma al revisar tu solicitud.
-        </p>
       ) : null}
     </div>
   );

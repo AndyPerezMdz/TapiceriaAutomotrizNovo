@@ -68,21 +68,21 @@ export function AvatarUploader({
   const initial = fullName.trim().charAt(0).toUpperCase() || "?";
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center">
       <div className="relative">
         {currentAvatarUrl ? (
           <img
             src={currentAvatarUrl}
             alt=""
-            className="h-16 w-16 rounded-full border border-black/10 object-cover dark:border-white/10"
+            className="h-24 w-24 rounded-full border border-black/10 object-cover dark:border-white/10"
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-black/10 bg-brand-yellow/20 text-lg font-semibold text-brand-yellow-dark dark:border-white/10 dark:text-brand-yellow">
-            {initial !== "?" ? initial : <User size={22} />}
+          <div className="flex h-24 w-24 items-center justify-center rounded-full border border-black/10 bg-brand-yellow/20 text-2xl font-semibold text-brand-yellow-dark dark:border-white/10 dark:text-brand-yellow">
+            {initial !== "?" ? initial : <User size={32} />}
           </div>
         )}
-        <label className="absolute -bottom-1 -right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-brand-black text-white shadow dark:bg-white dark:text-brand-black">
-          <Camera size={12} />
+        <label className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-brand-black text-white shadow dark:bg-white dark:text-brand-black">
+          <Camera size={15} />
           <input
             type="file"
             accept="image/*"
@@ -92,10 +92,10 @@ export function AvatarUploader({
           />
         </label>
       </div>
-      <div>
-        <p className="text-sm font-medium text-foreground">Foto de perfil</p>
+      <div className="text-center sm:text-left">
+        <p className="text-lg font-semibold text-foreground">{fullName || "Sin nombre"}</p>
         <p className="text-xs text-muted">
-          {isUploading ? "Subiendo..." : "Click en el ícono para cambiarla"}
+          {isUploading ? "Subiendo..." : "Click en la cámara para cambiar tu foto"}
         </p>
         {error ? <p className="text-xs text-brand-red">{error}</p> : null}
       </div>
