@@ -1,5 +1,5 @@
-import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
@@ -27,12 +27,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ServicioDetallePage({ params }: Props) {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: service } = await supabase
-    .from("services")
-    .select("*")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
+  const [{ data: service }, settings] = await Promise.all([
+    supabase
+      .from("services")
+      .select("*")
+      .eq("slug", slug)
+      .eq("is_active", true)
+      .single(),
+    getBusinessSettings(),
+  ]);
 
   if (!service) {
     notFound();
@@ -40,6 +43,7 @@ export default async function ServicioDetallePage({ params }: Props) {
 
   const whatsappHref = buildWhatsAppLink(
     `Hola, me interesa el servicio de ${service.title}`,
+    settings.whatsapp,
   );
 
   return (

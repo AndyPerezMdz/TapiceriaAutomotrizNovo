@@ -17,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const fieldClassName =
   "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15 dark:focus:border-white dark:focus:ring-white";
@@ -60,6 +60,19 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("business_settings")
+      .select("whatsapp")
+      .eq("id", 1)
+      .single()
+      .then(({ data }) => {
+        if (data) setWhatsappNumber(data.whatsapp);
+      });
+  }, []);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
@@ -208,9 +221,14 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               Contáctanos por WhatsApp para agendar tu visita.
             </p>
             <a
-              href={buildWhatsAppLink(
-                "Hola, quiero agendar una visita al taller para cotizar un color de piel personalizado.",
-              )}
+              href={
+                whatsappNumber
+                  ? buildWhatsAppLink(
+                      "Hola, quiero agendar una visita al taller para cotizar un color de piel personalizado.",
+                      whatsappNumber,
+                    )
+                  : "#"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"

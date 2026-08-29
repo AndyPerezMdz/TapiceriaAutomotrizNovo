@@ -32,9 +32,9 @@ export default async function AdminClienteDetallePage({ params }: Props) {
   }
 
   const whatsappHref = client.phone
-    ? buildWhatsAppLink(`Hola ${client.full_name}, te contactamos de Tapicería NOVO.`).replace(
-        /wa\.me\/52\d{10}/,
-        `wa.me/52${client.phone}`,
+    ? buildWhatsAppLink(
+        `Hola ${client.full_name}, te contactamos de Tapicería NOVO.`,
+        client.phone,
       )
     : null;
 
