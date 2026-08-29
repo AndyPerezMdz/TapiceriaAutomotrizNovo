@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 const rangeOptions = [
   { value: "3", label: "Últimos 3 meses" },
   { value: "6", label: "Últimos 6 meses" },
@@ -25,10 +27,11 @@ export default async function AdminReportesPage({ searchParams }: Props) {
   const [{ data: deliveredOrders }, { data: serviceCounts }] = await Promise.all([
     supabase
       .from("orders")
-      .select("final_price, updated_at")
+      .select("final_price, delivered_at")
       .eq("status", "entregado")
       .is("deleted_at", null)
-      .gte("updated_at", startDate.toISOString()),
+      .not("delivered_at", "is", null)
+      .gte("delivered_at", startDate.toISOString()),
     supabase
       .from("orders")
       .select("services(title)")
@@ -43,6 +46,7 @@ export default async function AdminReportesPage({ searchParams }: Props) {
 
   for (let i = months - 1; i >= 0; i--) {
     const d = new Date();
+    d.setDate(1);
     d.setMonth(d.getMonth() - i);
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     const label = d.toLocaleDateString("es-MX", { month: "short", year: "2-digit" });
@@ -51,7 +55,8 @@ export default async function AdminReportesPage({ searchParams }: Props) {
   }
 
   deliveredOrders?.forEach((o) => {
-    const d = new Date(o.updated_at);
+    if (!o.delivered_at) return;
+    const d = new Date(o.delivered_at);
     const key = `${d.getFullYear()}-${d.getMonth()}`;
     if (key in monthlyRevenue) {
       monthlyRevenue[key] += o.final_price ?? 0;
@@ -142,7 +147,7 @@ export default async function AdminReportesPage({ searchParams }: Props) {
       {/* Gráfica de barras (CSS puro) */}
       <div className="mb-8 rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
         <h2 className="mb-4 text-sm font-semibold text-foreground">
-          Ingresos por mes
+          Ingresos por mes (según fecha de entrega)
         </h2>
         <div className="flex h-40 items-end gap-2">
           {revenueValues.map((value, i) => (

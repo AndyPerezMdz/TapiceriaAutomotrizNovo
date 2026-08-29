@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const supabase = await createClient();
 
@@ -52,11 +54,12 @@ export default async function AdminDashboardPage() {
       .select("final_price")
       .eq("status", "entregado")
       .is("deleted_at", null)
-      .gte("updated_at", startOfMonth.toISOString()),
+      .not("delivered_at", "is", null)
+      .gte("delivered_at", startOfMonth.toISOString()),
     supabase
       .from("orders")
       .select(
-        "id, vehicle_make, vehicle_model, status, created_at, deleted_at, profiles!orders_client_id_fkey(full_name)",
+        "id, vehicle_make, vehicle_model, status, created_at, deleted_at, profiles!orders_client_id_fkey(full_name, avatar_url)",
       )
       .in("status", ["pendiente_revision", "cotizado"])
       .is("deleted_at", null)
@@ -72,16 +75,22 @@ export default async function AdminDashboardPage() {
     deliveredThisMonth?.reduce((sum, o) => sum + (o.final_price ?? 0), 0) ?? 0;
 
   const formattedAttention =
-    attentionOrders?.map((o) => ({
-      id: o.id,
-      vehicle_make: o.vehicle_make,
-      vehicle_model: o.vehicle_model,
-      status: o.status,
-      created_at: o.created_at,
-      deleted_at: o.deleted_at,
-      client_name:
-        (o.profiles as unknown as { full_name: string } | null)?.full_name ?? null,
-    })) ?? [];
+    attentionOrders?.map((o) => {
+      const client = o.profiles as unknown as {
+        full_name: string;
+        avatar_url: string | null;
+      } | null;
+      return {
+        id: o.id,
+        vehicle_make: o.vehicle_make,
+        vehicle_model: o.vehicle_model,
+        status: o.status,
+        created_at: o.created_at,
+        deleted_at: o.deleted_at,
+        client_name: client?.full_name ?? null,
+        client_avatar_url: client?.avatar_url ?? null,
+      };
+    }) ?? [];
 
   const stats = [
     {
