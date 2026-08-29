@@ -40,18 +40,20 @@ export default async function AdminReportesPage({ searchParams }: Props) {
       .not("service_id", "is", null),
   ]);
 
-  // Agrupar ingresos por mes
   const monthlyRevenue: Record<string, number> = {};
-  const monthLabels: string[] = [];
+  const monthMeta: { key: string; label: string; year: number }[] = [];
 
   for (let i = months - 1; i >= 0; i--) {
     const d = new Date();
     d.setDate(1);
     d.setMonth(d.getMonth() - i);
     const key = `${d.getFullYear()}-${d.getMonth()}`;
-    const label = d.toLocaleDateString("es-MX", { month: "short", year: "2-digit" });
     monthlyRevenue[key] = 0;
-    monthLabels.push(label);
+    monthMeta.push({
+      key,
+      label: d.toLocaleDateString("es-MX", { month: "short" }),
+      year: d.getFullYear(),
+    });
   }
 
   deliveredOrders?.forEach((o) => {
@@ -63,7 +65,7 @@ export default async function AdminReportesPage({ searchParams }: Props) {
     }
   });
 
-  const revenueValues = Object.values(monthlyRevenue);
+  const revenueValues = monthMeta.map((m) => monthlyRevenue[m.key]);
   const maxRevenue = Math.max(...revenueValues, 1);
   const totalRevenue = revenueValues.reduce((sum, v) => sum + v, 0);
 
@@ -72,7 +74,6 @@ export default async function AdminReportesPage({ searchParams }: Props) {
   const monthChange =
     previousMonth > 0 ? ((currentMonth - previousMonth) / previousMonth) * 100 : 0;
 
-  // Servicio más solicitado
   const serviceFrequency: Record<string, number> = {};
   serviceCounts?.forEach((o) => {
     const title = (o.services as unknown as { title: string } | null)?.title;
@@ -83,6 +84,8 @@ export default async function AdminReportesPage({ searchParams }: Props) {
   const topServices = Object.entries(serviceFrequency)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
+
+  let lastYearShown: number | null = null;
 
   return (
     <div>
@@ -107,7 +110,6 @@ export default async function AdminReportesPage({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Tarjetas resumen */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
           <p className="text-xs font-medium text-muted">
@@ -144,30 +146,40 @@ export default async function AdminReportesPage({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* Gráfica de barras (CSS puro) */}
       <div className="mb-8 rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
         <h2 className="mb-4 text-sm font-semibold text-foreground">
           Ingresos por mes (según fecha de entrega)
         </h2>
+
         <div className="flex h-40 items-end gap-2">
-          {revenueValues.map((value, i) => (
-            <div key={i} className="flex flex-1 flex-col items-center gap-2">
-              <div className="flex w-full flex-1 items-end">
+          {revenueValues.map((value, i) => {
+            const heightPct = Math.max((value / maxRevenue) * 100, value > 0 ? 4 : 0);
+            return (
+              <div key={i} className="flex h-40 flex-1 items-end">
                 <div
                   className="w-full rounded-t bg-brand-yellow transition-all"
-                  style={{
-                    height: `${Math.max((value / maxRevenue) * 100, value > 0 ? 4 : 0)}%`,
-                  }}
+                  style={{ height: `${heightPct}%` }}
                   title={`$${value.toLocaleString("es-MX")}`}
                 />
               </div>
-              <span className="text-[10px] text-muted">{monthLabels[i]}</span>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+
+        <div className="mt-2 flex gap-2">
+          {monthMeta.map((m, i) => {
+            const showYear = m.year !== lastYearShown;
+            lastYearShown = m.year;
+            return (
+              <span key={i} className="flex-1 text-center text-[10px] text-muted">
+                {m.label}
+                {showYear ? ` '${String(m.year).slice(-2)}` : ""}
+              </span>
+            );
+          })}
         </div>
       </div>
 
-      {/* Servicios más solicitados */}
       <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
         <h2 className="mb-4 text-sm font-semibold text-foreground">
           Servicios más solicitados
