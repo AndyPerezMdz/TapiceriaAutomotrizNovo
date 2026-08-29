@@ -8,12 +8,21 @@ export async function GET(request: NextRequest) {
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
   const next = searchParams.get("next") ?? "/";
+  const incomingError = searchParams.get("error_description") ?? searchParams.get("error");
 
-  // El destino de error depende de a dónde iba dirigido el flujo:
-  // si "next" apunta al panel de staff, el error también manda a su login.
-  const errorRedirect = next.startsWith("/staff")
-    ? `${origin}/staff/login?error=link_invalido`
-    : `${origin}/login?error=link_invalido`;
+  const loginPath = next.startsWith("/staff") ? "/staff/login" : "/login";
+
+  function errorRedirect(reason: string) {
+    const url = new URL(`${origin}${loginPath}`);
+    url.searchParams.set("error", "link_invalido");
+    url.searchParams.set("reason", reason);
+    return NextResponse.redirect(url);
+  }
+
+  // Si Supabase ya mandó un error explícito antes de llegar aquí
+  if (incomingError) {
+    return errorRedirect(`supabase: ${incomingError}`);
+  }
 
   const supabase = await createClient();
 
@@ -22,6 +31,8 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
+    console.error("exchangeCodeForSession error:", error.message);
+    return errorRedirect(`code: ${error.message}`);
   }
 
   if (tokenHash && type) {
@@ -32,7 +43,9 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
+    console.error("verifyOtp error:", error.message);
+    return errorRedirect(`otp: ${error.message}`);
   }
 
-  return NextResponse.redirect(errorRedirect);
+  return errorRedirect("sin_code_ni_token_hash");
 }
