@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Star,
+  User,
   Users,
   Users2,
   Wrench,
@@ -34,6 +35,8 @@ export default async function AdminLayout({
         .single()
     : { data: null };
 
+  const isAdmin = profile?.role === "admin";
+
   const { count: pendingCount } = await supabase
     .from("orders")
     .select("*", { count: "exact", head: true })
@@ -49,7 +52,7 @@ export default async function AdminLayout({
           </Link>
 
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 sm:flex">
+            <Link href="/admin/perfil" className="hidden items-center gap-2 sm:flex">
               {profile?.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -65,7 +68,7 @@ export default async function AdminLayout({
                 <p className="text-sm font-medium text-foreground">{profile?.full_name}</p>
                 <p className="text-xs capitalize text-muted">{profile?.role}</p>
               </div>
-            </div>
+            </Link>
             <ThemeToggle />
             <SignOutButton />
           </div>
@@ -78,12 +81,14 @@ export default async function AdminLayout({
           >
             <LayoutDashboard size={16} /> Dashboard
           </Link>
-          <Link
-            href="/admin/reportes"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
-          >
-            <BarChart3 size={16} /> Reportes
-          </Link>
+          {isAdmin ? (
+            <Link
+              href="/admin/reportes"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            >
+              <BarChart3 size={16} /> Reportes
+            </Link>
+          ) : null}
           <Link
             href="/admin/pedidos"
             className="relative flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
@@ -131,7 +136,7 @@ export default async function AdminLayout({
           >
             <History size={16} /> Historial
           </Link>
-          {profile?.role === "admin" ? (
+          {isAdmin ? (
             <Link
               href="/admin/usuarios"
               className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
@@ -139,6 +144,12 @@ export default async function AdminLayout({
               <Users size={16} /> Usuarios
             </Link>
           ) : null}
+          <Link
+            href="/admin/perfil"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <User size={16} /> Mi perfil
+          </Link>
         </nav>
       </header>
 

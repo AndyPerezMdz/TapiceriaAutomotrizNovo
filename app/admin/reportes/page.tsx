@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ChevronLeft, ChevronRight, TrendingDown, TrendingUp } from "lucide-react";
 import Link from "next/link";
 export const dynamic = "force-dynamic";
+import { redirect } from "next/navigation";
 
 const rangeOptions = [
   { value: "3", label: "Últimos 3 meses" },
@@ -19,6 +20,16 @@ export default async function AdminReportesPage({ searchParams }: Props) {
   const activeView = view === "dia" ? "dia" : "mes";
 
   const supabase = await createClient();
+  const {
+  data: { user },
+  } = await supabase.auth.getUser();
+  const { data: myProfile } = user
+  ? await supabase.from("profiles").select("role").eq("id", user.id).single()
+  : { data: null };
+
+  if (myProfile?.role !== "admin") {
+    redirect("/admin");
+  }
 
   // ---------- Vista MES ----------
   const startDate = new Date();
