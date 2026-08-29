@@ -1,11 +1,13 @@
-import { businessInfo } from "@/lib/constants/business";
+import { businessInfo, formatWhatsApp } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Aviso de Privacidad | Tapicería Automotriz by NOVO",
 };
 
-export default function PrivacidadPage() {
+export default async function PrivacidadPage() {
+  const settings = await getBusinessSettings();
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
@@ -76,7 +78,7 @@ export default function PrivacidadPage() {
             Tienes derecho a acceder, rectificar, cancelar u oponerte al uso
             de tus datos personales. Puedes ejercer estos derechos
             actualizando tu información directamente en tu perfil, o
-            contactándonos por WhatsApp al {businessInfo.whatsappFormatted}.
+            contactándonos por WhatsApp al {formatWhatsApp(settings.whatsapp)}.
           </p>
         </section>
 
