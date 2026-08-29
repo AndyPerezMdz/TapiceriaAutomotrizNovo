@@ -1,5 +1,6 @@
 import { ContactForm } from "@/components/contact/ContactForm";
-import { businessInfo } from "@/lib/constants/business";
+import { businessInfo, formatWhatsApp } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import { Clock, MapPin, MessageCircle } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -7,7 +8,8 @@ export const metadata: Metadata = {
   title: "Contacto | Tapicería Automotriz by NOVO",
 };
 
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const settings = await getBusinessSettings();
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(
     `${businessInfo.name}, ${businessInfo.address}`,
   )}&output=embed`;
@@ -44,11 +46,8 @@ export default function ContactoPage() {
               <Clock size={20} className="mt-0.5 shrink-0 text-brand-yellow-dark dark:text-brand-yellow" />
               <div>
                 <p className="font-medium text-foreground">Horario</p>
-                {businessInfo.hours.map((h) => (
-                  <p key={h.days} className="text-sm text-muted">
-                    {h.days}: {h.time}
-                  </p>
-                ))}
+                <p className="text-sm text-muted">Lunes a Viernes: {settings.hoursWeekday}</p>
+                <p className="text-sm text-muted">Sábado: {settings.hoursSaturday}</p>
               </div>
             </div>
 
@@ -56,7 +55,7 @@ export default function ContactoPage() {
               <MessageCircle size={20} className="mt-0.5 shrink-0 text-brand-yellow-dark dark:text-brand-yellow" />
               <div>
                 <p className="font-medium text-foreground">WhatsApp</p>
-                <p className="text-sm text-muted">{businessInfo.whatsappFormatted}</p>
+                <p className="text-sm text-muted">{formatWhatsApp(settings.whatsapp)}</p>
               </div>
             </div>
           </div>

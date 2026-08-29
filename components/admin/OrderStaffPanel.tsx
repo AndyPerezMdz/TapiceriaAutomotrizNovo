@@ -3,9 +3,9 @@
 import { statusLabels, orderStatusValues } from "@/lib/validations/admin-order";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
-import { AlertTriangle, MessageCircle } from "lucide-react";
+import { MessageCircle, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function getAllowedStatuses(current: string): string[] {
   const transitions: Record<string, string[]> = {
@@ -51,6 +51,19 @@ export function OrderStaffPanel({
   const [note, setNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("business_settings")
+      .select("whatsapp")
+      .eq("id", 1)
+      .single()
+      .then(({ data }) => {
+        if (data) setWhatsappNumber(data.whatsapp);
+      });
+  }, []);
 
   const isLocked = currentStatus === "cancelado" || currentStatus === "entregado";
   const priceChanged = isAdmin && price !== originalPrice;
@@ -61,9 +74,6 @@ export function OrderStaffPanel({
 
     const supabase = createClient();
 
-    // Si el precio cambió, el pedido SIEMPRE regresa a "cotizado" para
-    // que el cliente vuelva a aceptar o rechazar, sin importar el estado
-    // que el staff haya seleccionado en el dropdown.
     const finalStatus = priceChanged ? "cotizado" : status;
 
     const updatePayload: Record<string, unknown> = { status: finalStatus };
@@ -109,13 +119,15 @@ export function OrderStaffPanel({
     setNote("");
   }
 
-  const whatsappHref = clientPhone
-    ? buildWhatsAppLink(
-        priceChanged
-          ? `Hola ${clientName ?? ""}, actualizamos el precio de tu pedido de ${vehicleLabel}. Revísalo y confírmanos si lo aceptas.`
-          : `Hola ${clientName ?? ""}, tu pedido de ${vehicleLabel} cambió de estado a: ${statusLabels[status]}.`,
-      ).replace(/wa\.me\/52\d{10}/, `wa.me/52${clientPhone}`)
-    : null;
+  const whatsappHref =
+    clientPhone && whatsappNumber
+      ? buildWhatsAppLink(
+          priceChanged
+            ? `Hola ${clientName ?? ""}, actualizamos el precio de tu pedido de ${vehicleLabel}. Revísalo y confírmanos si lo aceptas.`
+            : `Hola ${clientName ?? ""}, tu pedido de ${vehicleLabel} cambió de estado a: ${statusLabels[status]}.`,
+          clientPhone,
+        )
+      : null;
 
   return (
     <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">

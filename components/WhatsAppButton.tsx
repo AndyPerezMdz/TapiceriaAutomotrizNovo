@@ -1,11 +1,12 @@
-"use client";
-
 import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import { MessageCircle } from "lucide-react";
 
-export function WhatsAppButton() {
+export async function WhatsAppButton() {
+  const settings = await getBusinessSettings();
   const href = buildWhatsAppLink(
     "Hola, me gustaría más información sobre sus servicios",
+    settings.whatsapp,
   );
 
   return (

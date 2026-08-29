@@ -1,4 +1,5 @@
-import { businessInfo, buildWhatsAppLink } from "@/lib/constants/business";
+import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import Image from "next/image";
@@ -6,20 +7,26 @@ import Link from "next/link";
 
 export default async function HomePage() {
   const supabase = await createClient();
-  const { data: services } = await supabase
-    .from("services")
-    .select("slug, title, short_description")
-    .eq("is_active", true)
-    .order("order", { ascending: true })
-    .limit(3);
-  const { data: reviews } = await supabase
-    .from("reviews")
-    .select("id, rating, comment, profiles!reviews_client_id_fkey(full_name)")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(3);
+
+  const [{ data: services }, settings, { data: reviews }] = await Promise.all([
+    supabase
+      .from("services")
+      .select("slug, title, short_description")
+      .eq("is_active", true)
+      .order("order", { ascending: true })
+      .limit(3),
+    getBusinessSettings(),
+    supabase
+      .from("reviews")
+      .select("rating, comment, profiles!reviews_client_id_fkey(full_name)")
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .limit(3),
+  ]);
+
   const whatsappHref = buildWhatsAppLink(
     "Hola, me gustaría más información sobre sus servicios",
+    settings.whatsapp,
   );
 
   return (
@@ -112,43 +119,48 @@ export default async function HomePage() {
         </Link>
       </section>
 
+      {/* Reseñas */}
       {reviews && reviews.length > 0 ? (
-      <section className="border-t border-black/10 bg-surface py-16 dark:border-white/10">
-        <div className="mx-auto max-w-6xl px-6">
-          <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Lo que dicen nuestros clientes
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {reviews.map((r, i) => {
-              const client = r.profiles as unknown as { full_name: string } | null;
-              return (
-                <div
-                  key={i}
-                  className="rounded-lg border border-black/10 bg-background p-6 dark:border-white/10"
-                >
-                  <div className="flex gap-0.5">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        className={star <= r.rating ? "text-brand-yellow" : "text-black/15 dark:text-white/15"}
-                      >
-                        ★
-                      </span>
-                    ))}
+        <section className="border-t border-black/10 bg-surface py-16 dark:border-white/10">
+          <div className="mx-auto max-w-6xl px-6">
+            <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Lo que dicen nuestros clientes
+            </h2>
+            <div className="grid gap-6 sm:grid-cols-3">
+              {reviews.map((r, i) => {
+                const client = r.profiles as unknown as { full_name: string } | null;
+                return (
+                  <div
+                    key={i}
+                    className="rounded-lg border border-black/10 bg-background p-6 dark:border-white/10"
+                  >
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          className={
+                            star <= r.rating
+                              ? "text-brand-yellow"
+                              : "text-black/15 dark:text-white/15"
+                          }
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                    {r.comment ? (
+                      <p className="mt-3 text-sm text-muted">&quot;{r.comment}&quot;</p>
+                    ) : null}
+                    <p className="mt-3 text-sm font-medium text-foreground">
+                      {client?.full_name}
+                    </p>
                   </div>
-                  {r.comment ? (
-                    <p className="mt-3 text-sm text-muted">&quot;{r.comment}&quot;</p>
-                  ) : null}
-                  <p className="mt-3 text-sm font-medium text-foreground">
-                    {client?.full_name}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
-) : null}
+        </section>
+      ) : null}
 
       {/* CTA final */}
       <section className="border-t border-black/10 bg-surface dark:border-white/10">

@@ -1,9 +1,12 @@
 import { businessInfo } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import { FooterLogo } from "@/components/FooterLogo";
 import { Link as LinkIcon, MapPin, MessageCircle } from "lucide-react";
-import Link from "next/link";
+import { formatWhatsApp } from "@/lib/constants/business";
 
-export function Footer() {
+export async function Footer() {
+  const settings = await getBusinessSettings();
+
   return (
     <footer className="border-t border-black/10 bg-surface dark:border-white/10">
       <div className="mx-auto max-w-6xl px-6 py-12">
@@ -20,11 +23,13 @@ export function Footer() {
               Horario
             </h3>
             <ul className="mt-3 space-y-1.5 text-sm text-muted">
-              {businessInfo.hours.map((h) => (
-                <li key={h.days}>
-                  <span className="text-foreground">{h.days}:</span> {h.time}
-                </li>
-              ))}
+              <li>
+                <span className="text-foreground">Lunes a Viernes:</span>{" "}
+                {settings.hoursWeekday}
+              </li>
+              <li>
+                <span className="text-foreground">Sábado:</span> {settings.hoursSaturday}
+              </li>
             </ul>
           </div>
 
@@ -45,7 +50,7 @@ export function Footer() {
                   size={16}
                   className="shrink-0 text-brand-yellow-dark dark:text-brand-yellow"
                 />
-                <span>{businessInfo.whatsappFormatted}</span>
+                <span>{formatWhatsApp(settings.whatsapp)}</span>
               </li>
               <li>
                 <a
@@ -64,17 +69,10 @@ export function Footer() {
             </ul>
           </div>
         </div>
+
         <div className="mt-10 border-t border-black/10 pt-6 text-center text-xs text-muted dark:border-white/10">
           <p>
             © {new Date().getFullYear()} Tapicería Automotriz by NOVO. Todos los derechos reservados.
-          </p>
-          <p className="mt-2 flex justify-center gap-4">
-            <Link href="/privacidad" className="hover:text-foreground hover:underline">
-              Aviso de Privacidad
-            </Link>
-            <Link href="/terminos" className="hover:text-foreground hover:underline">
-              Términos y Condiciones
-            </Link>
           </p>
         </div>
       </div>
