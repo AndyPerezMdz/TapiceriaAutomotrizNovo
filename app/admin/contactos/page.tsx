@@ -2,6 +2,7 @@ import { ContactStatusButton } from "@/components/admin/ContactStatusButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
 import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
 import { Download, MessageCircle, Phone } from "lucide-react";
 
@@ -16,6 +17,8 @@ export default async function AdminContactosPage({ searchParams }: Props) {
   const page = Math.max(1, Number(pageParam) || 1);
 
   const supabase = await createClient();
+  const settings = await getBusinessSettings();
+
   let query = supabase
     .from("contact_submissions")
     .select("id, name, phone, message, status, created_at", { count: "exact" })
@@ -66,7 +69,8 @@ export default async function AdminContactosPage({ searchParams }: Props) {
             {submissions.map((s) => {
               const whatsappHref = buildWhatsAppLink(
                 `Hola ${s.name}, te contactamos por tu mensaje en nuestro sitio web.`,
-              ).replace(/wa\.me\/52\d{10}/, `wa.me/52${s.phone}`);
+                s.phone,
+              );
 
               const isNew = s.status === "nuevo";
 
