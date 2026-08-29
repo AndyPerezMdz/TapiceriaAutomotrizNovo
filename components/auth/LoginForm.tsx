@@ -11,13 +11,11 @@ import {
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const debugReason = searchParams.get("reason");
 
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
@@ -76,12 +74,6 @@ export function LoginForm() {
       }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        {debugReason ? (
-          <div className="rounded-md border border-orange-500/30 bg-orange-500/5 px-3.5 py-2.5 text-xs text-orange-700 dark:text-orange-400">
-            Debug: {debugReason}
-          </div>
-        ) : null}
-
         {formError ? (
           <div className={formErrorClassName}>{formError}</div>
         ) : null}
