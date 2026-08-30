@@ -95,6 +95,12 @@ export function OrderStaffPanel({
       return;
     }
 
+    fetch("/api/notify/order-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId }),
+    }).catch(() => {});
+
     if (note.trim()) {
       const { data: lastHistoryEntry } = await supabase
         .from("order_status_history")

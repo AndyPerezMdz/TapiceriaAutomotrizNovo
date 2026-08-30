@@ -185,6 +185,11 @@ export function NewOrderForm({ services }: { services: Service[] }) {
       });
     }
 
+    fetch("/api/notify/new-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: order.id }),
+    }).catch(() => {});
     router.push(`/portal/pedidos/${order.id}`);
     router.refresh();
   }
