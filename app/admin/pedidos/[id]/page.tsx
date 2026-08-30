@@ -37,10 +37,15 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
     supabase.from("order_photos").select("id, url").eq("order_id", id),
     supabase
       .from("order_status_history")
-      .select("id, status, note, created_at")
+      .select("id, status, note, created_at, changed_by")
       .eq("order_id", id)
       .order("created_at", { ascending: true }),
   ]);
+
+  const changedByIds = [...new Set((history ?? []).map((h) => h.changed_by).filter(Boolean))];
+  const { data: historyProfiles } = changedByIds.length
+    ? await supabase.from("profiles").select("id, full_name, role").in("id", changedByIds)
+    : { data: [] };
 
   if (!order) {
     notFound();
@@ -169,7 +174,11 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
               Seguimiento
             </h2>
             {history && history.length > 0 ? (
-              <OrderTimeline history={history} />
+              <OrderTimeline
+                history={history}
+                profiles={historyProfiles ?? []}
+                currentUserId={user?.id ?? null}
+              />
             ) : (
               <p className="text-sm text-muted">Sin actualizaciones todavía.</p>
             )}
