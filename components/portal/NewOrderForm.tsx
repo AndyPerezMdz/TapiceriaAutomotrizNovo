@@ -391,12 +391,6 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               </div>
             </div>
 
-            <CouponSelector
-              serviceId={selection.serviceId}
-              selectedCouponId={selectedCouponId}
-              onSelect={setSelectedCouponId}
-            />
-
             <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
               <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
                 <ImagePlus size={16} /> Fotos (opcional, máx. {MAX_PHOTOS})
@@ -455,8 +449,8 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         )}
       </form>
 
-      {/* Resumen en vivo */}
-      <div className="min-w-0">
+      {/* Resumen en vivo + cupón */}
+      <div className="min-w-0 space-y-6">
         <div className="sticky top-6 rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
           <h2 className="mb-4 text-sm font-semibold text-foreground">
             Resumen de tu solicitud
@@ -527,6 +521,14 @@ export function NewOrderForm({ services }: { services: Service[] }) {
             </p>
           </div>
         </div>
+
+        {!selection.requiresVisit ? (
+          <CouponSelector
+            serviceId={selection.serviceId}
+            selectedCouponId={selectedCouponId}
+            onSelect={setSelectedCouponId}
+          />
+        ) : null}
       </div>
     </div>
   );

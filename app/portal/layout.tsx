@@ -5,7 +5,7 @@ import { ChatWidget } from "@/components/chat/ChatWidget";
 import { NotificationBell } from "@/components/portal/NotificationBell";
 import { getPortalNotifications } from "@/lib/notifications/get-portal-notifications";
 import { createClient } from "@/lib/supabase/server";
-import { CalendarDays, History, LayoutDashboard, PlusCircle, User } from "lucide-react";
+import { CalendarDays, History, LayoutDashboard, PlusCircle, Tag, User } from "lucide-react";
 import Link from "next/link";
 
 export default async function PortalLayout({
@@ -84,6 +84,12 @@ export default async function PortalLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <CalendarDays size={16} /> Mis citas
+          </Link>
+          <Link
+            href="/portal/cupones"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <Tag size={16} /> Cupones
           </Link>
           <Link
             href="/portal/perfil"
