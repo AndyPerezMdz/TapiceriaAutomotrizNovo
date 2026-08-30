@@ -8,6 +8,7 @@ import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
 import { AddPhotoButton } from "@/components/portal/AddPhotoButton";
 import { MarkAsViewed } from "@/components/portal/MarkAsViewed";
 import { ReviewForm } from "@/components/portal/ReviewForm";
+import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -157,6 +158,15 @@ export default async function PedidoDetallePage({ params }: Props) {
                 <p className="text-lg font-semibold text-foreground">
                   ${order.estimated_price.toLocaleString("es-MX")}
                 </p>
+              </div>
+            ) : null}
+
+            {order.estimated_price !== null ? (
+              <div className="mt-3">
+                <DownloadPdfButton
+                  orderId={order.id}
+                  label={order.status === "entregado" ? "Descargar recibo" : "Descargar cotización"}
+                />
               </div>
             ) : null}
           </div>
