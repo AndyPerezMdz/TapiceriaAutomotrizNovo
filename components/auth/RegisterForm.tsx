@@ -11,6 +11,7 @@ import {
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -20,6 +21,7 @@ export function RegisterForm() {
   const [fieldErrors, setFieldErrors] = useState
     <Partial<Record<keyof RegisterFormData, string>>
   >({});
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formLoadedAt] = useState(() => Date.now());
 
@@ -42,6 +44,12 @@ export function RegisterForm() {
     const elapsed = Date.now() - formLoadedAt;
     if (elapsed < 3000) {
       setFormError("Ocurrió un problema. Intenta de nuevo.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!acceptedTerms) {
+      setFormError("Debes aceptar los Términos y el Aviso de Privacidad para continuar.");
       setIsLoading(false);
       return;
     }
@@ -193,7 +201,32 @@ export function RegisterForm() {
           />
         </AuthField>
 
-        <button type="submit" disabled={isLoading} className={submitButtonClassName}>
+        <label className="flex items-start gap-2 text-sm text-foreground">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            disabled={isLoading}
+            className="mt-0.5"
+          />
+          <span>
+            Acepto los{" "}
+            <Link href="/terminos" target="_blank" className="underline hover:no-underline">
+              Términos y Condiciones
+            </Link>{" "}
+            y el{" "}
+            <Link href="/privacidad" target="_blank" className="underline hover:no-underline">
+              Aviso de Privacidad
+            </Link>
+            .
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          disabled={isLoading || !acceptedTerms}
+          className={submitButtonClassName}
+        >
           {isLoading ? "Creando cuenta..." : "Registrarse"}
         </button>
       </form>
