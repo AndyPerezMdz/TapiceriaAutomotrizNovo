@@ -1,4 +1,5 @@
 import { emailWrapper, sendEmail } from "@/lib/email/resend";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -14,16 +15,16 @@ const statusLabels: Record<string, string> = {
 };
 
 export async function POST(request: Request) {
-  const supabase = await createClient();
+  const sessionClient = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await sessionClient.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const { data: myProfile } = await supabase
+  const { data: myProfile } = await sessionClient
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -38,7 +39,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Falta orderId" }, { status: 400 });
   }
 
-  const { data: order } = await supabase
+  const adminClient = createAdminClient();
+  const { data: order } = await adminClient
     .from("orders")
     .select(
       "vehicle_make, vehicle_model, status, estimated_price, profiles!orders_client_id_fkey(full_name, email)",
