@@ -49,9 +49,11 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const repeatOrderId = searchParams.get("repeat");
+  const couponParam = searchParams.get("coupon");
+  const serviceParam = searchParams.get("service");
 
   const [selection, setSelection] = useState<MaterialSelection>(emptySelection);
-  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null);
+  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(couponParam);
 
   const [vehicleMake, setVehicleMake] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
@@ -86,35 +88,40 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   }, []);
 
   useEffect(() => {
-    if (!repeatOrderId) {
-      setInitialValues({});
+    if (repeatOrderId) {
+      const supabase = createClient();
+      supabase
+        .from("orders")
+        .select(
+          "vehicle_make, vehicle_model, vehicle_year, service_id, material_type_id, material_color_id",
+        )
+        .eq("id", repeatOrderId)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setVehicleMake(data.vehicle_make ?? "");
+            setVehicleModel(data.vehicle_model ?? "");
+            setVehicleYear(data.vehicle_year ? String(data.vehicle_year) : "");
+            setInitialValues({
+              serviceId: data.service_id ?? undefined,
+              materialTypeId: data.material_type_id ?? undefined,
+              materialColorId: data.material_color_id ?? undefined,
+            });
+          } else {
+            setInitialValues({});
+          }
+        });
       return;
     }
 
-    const supabase = createClient();
-    supabase
-      .from("orders")
-      .select(
-        "vehicle_make, vehicle_model, vehicle_year, service_id, material_type_id, material_color_id",
-      )
-      .eq("id", repeatOrderId)
-      .single()
-      .then(({ data }) => {
-        if (data) {
-          setVehicleMake(data.vehicle_make ?? "");
-          setVehicleModel(data.vehicle_model ?? "");
-          setVehicleYear(data.vehicle_year ? String(data.vehicle_year) : "");
-          setInitialValues({
-            serviceId: data.service_id ?? undefined,
-            materialTypeId: data.material_type_id ?? undefined,
-            materialColorId: data.material_color_id ?? undefined,
-          });
-        } else {
-          setInitialValues({});
-        }
-      });
+    if (serviceParam) {
+      setInitialValues({ serviceId: serviceParam });
+      return;
+    }
+
+    setInitialValues({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repeatOrderId]);
+  }, [repeatOrderId, serviceParam]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
@@ -252,6 +259,12 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         {formError ? (
           <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
             {formError}
+          </div>
+        ) : null}
+
+        {selectedCouponId ? (
+          <div className="rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+            Tienes un cupón activado para este pedido — confírmalo abajo, junto al resumen.
           </div>
         ) : null}
 

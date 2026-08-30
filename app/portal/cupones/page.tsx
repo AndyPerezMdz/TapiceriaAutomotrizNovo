@@ -1,3 +1,4 @@
+import { ActivateCouponButton } from "@/components/portal/ActivateCouponButton";
 import { createClient } from "@/lib/supabase/server";
 import { Tag } from "lucide-react";
 
@@ -27,7 +28,7 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
     supabase
       .from("coupons")
       .select(
-        "id, title, description, discount_type, discount_value, expires_at, services(title)",
+        "id, title, description, discount_type, discount_value, expires_at, service_id, services(title)",
       )
       .in("audience", audienceFilter),
     supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
@@ -122,6 +123,10 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
                     ? ` · Vence ${new Date(`${c.expires_at}T00:00:00`).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`
                     : ""}
                 </p>
+
+                {activeTab === "activos" ? (
+                  <ActivateCouponButton couponId={c.id} serviceId={c.service_id} />
+                ) : null}
               </div>
             );
           })}
