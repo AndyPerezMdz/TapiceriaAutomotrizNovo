@@ -8,16 +8,19 @@ import {
   inputClassName,
   submitButtonClassName,
 } from "@/components/auth/AuthLayout";
+import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
+
+type LoginMode = "password" | "magic";
 
 export function LoginForm() {
   const router = useRouter();
-  const [showMagicLink, setShowMagicLink] = useState(false);
+
+  const [mode, setMode] = useState<LoginMode>("password");
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
     <Partial<Record<keyof LoginFormData, string>>
@@ -74,57 +77,70 @@ export function LoginForm() {
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {formError ? (
-          <div className={formErrorClassName}>{formError}</div>
-        ) : null}
-
-        <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            className={inputClassName}
-            disabled={isLoading}
-          />
-        </AuthField>
-
-        <AuthField id="password" label="Contraseña" error={fieldErrors.password}>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            className={inputClassName}
-            disabled={isLoading}
-          />
-        </AuthField>
-
-        <div className="text-right">
-          <AuthLink href="/recuperar">¿Olvidaste tu contraseña?</AuthLink>
-        </div>
-
-        <button type="submit" disabled={isLoading} className={submitButtonClassName}>
-          {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+      <div className="mb-5 grid grid-cols-2 gap-1 rounded-md border border-black/15 p-1 dark:border-white/15">
+        <button
+          type="button"
+          onClick={() => setMode("password")}
+          className={`rounded-sm py-1.5 text-sm font-medium transition ${
+            mode === "password"
+              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
+              : "text-muted hover:text-foreground"
+          }`}
+        >
+          Contraseña
         </button>
+        <button
+          type="button"
+          onClick={() => setMode("magic")}
+          className={`rounded-sm py-1.5 text-sm font-medium transition ${
+            mode === "magic"
+              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
+              : "text-muted hover:text-foreground"
+          }`}
+        >
+          Sin contraseña
+        </button>
+      </div>
 
-        <div className="border-t border-black/10 pt-4 text-center dark:border-white/10">
-          {showMagicLink ? (
-            <div className="mt-2 text-left">
-              <MagicLinkForm redirectPath="/portal" />
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowMagicLink(true)}
-              className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              O inicia sesión sin contraseña
-            </button>
-          )}
-        </div>
-      </form>
+      {mode === "password" ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <div className={formErrorClassName}>{formError}</div>
+          ) : null}
+
+          <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              className={inputClassName}
+              disabled={isLoading}
+            />
+          </AuthField>
+
+          <AuthField id="password" label="Contraseña" error={fieldErrors.password}>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              className={inputClassName}
+              disabled={isLoading}
+            />
+          </AuthField>
+
+          <div className="text-right">
+            <AuthLink href="/recuperar">¿Olvidaste tu contraseña?</AuthLink>
+          </div>
+
+          <button type="submit" disabled={isLoading} className={submitButtonClassName}>
+            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+          </button>
+        </form>
+      ) : (
+        <MagicLinkForm redirectPath="/portal" />
+      )}
     </AuthLayout>
   );
 }
