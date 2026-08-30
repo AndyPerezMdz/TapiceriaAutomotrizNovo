@@ -4,17 +4,23 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+interface Service {
+  id: string;
+  title: string;
+}
+
 const fieldClassName =
   "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 const labelClassName = "mb-1.5 block text-sm font-medium text-foreground";
 
-export function CouponForm() {
+export function CouponForm({ services }: { services: Service[] }) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [discountType, setDiscountType] = useState<"percentage" | "fixed">("percentage");
   const [discountValue, setDiscountValue] = useState("");
   const [audience, setAudience] = useState<"clientes" | "frecuentes" | "ambos">("ambos");
+  const [serviceId, setServiceId] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -45,6 +51,7 @@ export function CouponForm() {
       discount_type: discountType,
       discount_value: value,
       audience,
+      service_id: serviceId || null,
     });
 
     if (insertError) {
@@ -56,6 +63,7 @@ export function CouponForm() {
     setTitle("");
     setDescription("");
     setDiscountValue("");
+    setServiceId("");
     setIsSaving(false);
     router.refresh();
   }
@@ -91,6 +99,23 @@ export function CouponForm() {
           className={fieldClassName}
           disabled={isSaving}
         />
+      </div>
+
+      <div>
+        <label className={labelClassName}>¿Aplica a un servicio específico?</label>
+        <select
+          value={serviceId}
+          onChange={(e) => setServiceId(e.target.value)}
+          className={fieldClassName}
+          disabled={isSaving}
+        >
+          <option value="">General (cualquier servicio)</option>
+          {services.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.title}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

@@ -13,6 +13,7 @@ interface Coupon {
   discount_value: number;
   audience: string;
   is_active: boolean;
+  service_title: string | null;
 }
 
 const audienceLabels: Record<string, string> = {
@@ -61,9 +62,14 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
           {coupon.description ? (
             <p className="mt-1 text-xs text-muted">{coupon.description}</p>
           ) : null}
-          <span className="mt-2 inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-muted dark:bg-white/5">
-            {audienceLabels[coupon.audience]}
-          </span>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <span className="inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-muted dark:bg-white/5">
+              {audienceLabels[coupon.audience]}
+            </span>
+            <span className="inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-xs text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+              {coupon.service_title ?? "General"}
+            </span>
+          </div>
         </div>
 
         <div className="flex shrink-0 flex-col items-end gap-2">

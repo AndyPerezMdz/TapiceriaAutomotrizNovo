@@ -16,10 +16,27 @@ export default async function AdminCuponesPage() {
     redirect("/admin");
   }
 
-  const { data: coupons } = await supabase
-    .from("coupons")
-    .select("id, title, description, discount_type, discount_value, audience, is_active")
-    .order("created_at", { ascending: false });
+  const [{ data: coupons }, { data: services }] = await Promise.all([
+    supabase
+      .from("coupons")
+      .select(
+        "id, title, description, discount_type, discount_value, audience, is_active, services(title)",
+      )
+      .order("created_at", { ascending: false }),
+    supabase.from("services").select("id, title").eq("is_active", true).order("order", { ascending: true }),
+  ]);
+
+  const formattedCoupons =
+    coupons?.map((c) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      discount_type: c.discount_type,
+      discount_value: c.discount_value,
+      audience: c.audience,
+      is_active: c.is_active,
+      service_title: (c.services as unknown as { title: string } | null)?.title ?? null,
+    })) ?? [];
 
   return (
     <div>
@@ -28,17 +45,17 @@ export default async function AdminCuponesPage() {
       </h1>
 
       <div className="mb-8">
-        <CouponForm />
+        <CouponForm services={services ?? []} />
       </div>
 
       <h2 className="mb-3 text-sm font-semibold text-foreground">Cupones existentes</h2>
-      {!coupons || coupons.length === 0 ? (
+      {formattedCoupons.length === 0 ? (
         <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
           <p className="text-sm text-muted">Aún no has creado ningún cupón.</p>
         </div>
       ) : (
         <div className="space-y-2">
-          {coupons.map((c) => (
+          {formattedCoupons.map((c) => (
             <CouponRow key={c.id} coupon={c} />
           ))}
         </div>
