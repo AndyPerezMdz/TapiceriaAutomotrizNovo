@@ -1,0 +1,92 @@
+"use client";
+
+import { createClient } from "@/lib/supabase/client";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+interface Coupon {
+  id: string;
+  title: string;
+  description: string | null;
+  discount_type: string;
+  discount_value: number;
+  audience: string;
+  is_active: boolean;
+}
+
+const audienceLabels: Record<string, string> = {
+  clientes: "Clientes",
+  frecuentes: "Frecuentes",
+  ambos: "Ambos",
+};
+
+export function CouponRow({ coupon }: { coupon: Coupon }) {
+  const router = useRouter();
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  async function toggleActive() {
+    setIsUpdating(true);
+    const supabase = createClient();
+    await supabase
+      .from("coupons")
+      .update({ is_active: !coupon.is_active })
+      .eq("id", coupon.id);
+    router.refresh();
+    setIsUpdating(false);
+  }
+
+  async function handleDelete() {
+    if (!confirm("¿Eliminar este cupón? Esta acción no se puede deshacer.")) return;
+    setIsUpdating(true);
+    const supabase = createClient();
+    await supabase.from("coupons").delete().eq("id", coupon.id);
+    router.refresh();
+    setIsUpdating(false);
+  }
+
+  const discountLabel =
+    coupon.discount_type === "percentage"
+      ? `${coupon.discount_value}% de descuento`
+      : `$${coupon.discount_value.toLocaleString("es-MX")} de descuento`;
+
+  return (
+    <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-medium text-foreground">{coupon.title}</p>
+          <p className="mt-0.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+            {discountLabel}
+          </p>
+          {coupon.description ? (
+            <p className="mt-1 text-xs text-muted">{coupon.description}</p>
+          ) : null}
+          <span className="mt-2 inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-muted dark:bg-white/5">
+            {audienceLabels[coupon.audience]}
+          </span>
+        </div>
+
+        <div className="flex shrink-0 flex-col items-end gap-2">
+          <button
+            onClick={toggleActive}
+            disabled={isUpdating}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition disabled:opacity-50 ${
+              coupon.is_active
+                ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
+                : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+            }`}
+          >
+            {coupon.is_active ? "Activo" : "Inactivo"}
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={isUpdating}
+            className="text-muted transition hover:text-brand-red disabled:opacity-50"
+          >
+            <Trash2 size={15} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

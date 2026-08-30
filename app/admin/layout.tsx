@@ -2,7 +2,7 @@ import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, Settings } from "lucide-react";
+import { Calendar, Settings, Tag } from "lucide-react";
 import {
   BarChart3,
   ClipboardList,
@@ -158,8 +158,17 @@ export default async function AdminLayout({
           >
             <Settings size={16} /> Configuración
           </Link>
-) : null}
+          ) : null}
           
+          {isAdmin ? (
+            <Link
+              href="/admin/cupones"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            >
+              <Tag size={16} /> Cupones
+            </Link>
+          ) : null}
+  
           <Link
             href="/admin/perfil"
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
