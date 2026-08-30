@@ -1,6 +1,7 @@
 import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { createClient } from "@/lib/supabase/server";
 import { CalendarDays, History, LayoutDashboard, PlusCircle, User } from "lucide-react";
 import Link from "next/link";
@@ -112,6 +113,8 @@ export default async function PortalLayout({
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+
+      <ChatWidget />
     </div>
   );
 }
