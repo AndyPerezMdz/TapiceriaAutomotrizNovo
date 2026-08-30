@@ -2,6 +2,8 @@ import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { NotificationBell } from "@/components/portal/NotificationBell";
+import { getPortalNotifications } from "@/lib/notifications/get-portal-notifications";
 import { createClient } from "@/lib/supabase/server";
 import { CalendarDays, History, LayoutDashboard, PlusCircle, User } from "lucide-react";
 import Link from "next/link";
@@ -24,23 +26,7 @@ export default async function PortalLayout({
         .single()
     : { data: null };
 
-  let unreadCount = 0;
-  if (user) {
-    const { data: orders } = await supabase
-      .from("orders")
-      .select("updated_at, client_last_viewed_at")
-      .eq("client_id", user.id)
-      .is("deleted_at", null)
-      .not("status", "in", "(entregado,cancelado,rechazado)");
-
-    unreadCount =
-      orders?.filter(
-        (o) =>
-          o.updated_at &&
-          (!o.client_last_viewed_at ||
-            new Date(o.updated_at) > new Date(o.client_last_viewed_at)),
-      ).length ?? 0;
-  }
+  const notifications = user ? await getPortalNotifications(supabase, user.id) : [];
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background">
@@ -68,6 +54,7 @@ export default async function PortalLayout({
               )}
               <span className="text-sm text-muted">{profile?.full_name}</span>
             </Link>
+            <NotificationBell notifications={notifications} />
             <ThemeToggle />
             <SignOutButton />
           </div>
@@ -76,14 +63,9 @@ export default async function PortalLayout({
         <nav className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <Link
             href="/portal"
-            className="relative flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <LayoutDashboard size={16} /> Mis pedidos
-            {unreadCount > 0 ? (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-semibold text-white">
-                {unreadCount}
-              </span>
-            ) : null}
           </Link>
           <Link
             href="/portal/pedidos"
