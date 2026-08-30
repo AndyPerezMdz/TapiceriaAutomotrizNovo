@@ -90,7 +90,7 @@ export async function GET(request: Request, { params }: Props) {
     />,
   );
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="${isReceipt ? "recibo" : "cotizacion"}-${order.id.slice(0, 8)}.pdf"`,
