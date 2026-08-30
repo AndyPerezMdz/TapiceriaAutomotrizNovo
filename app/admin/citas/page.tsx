@@ -1,13 +1,15 @@
 import { AppointmentStatusButton } from "@/components/admin/AppointmentStatusButton";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, Phone } from "lucide-react";
+import { Calendar, MessageSquare, Phone } from "lucide-react";
 
 export default async function AdminCitasPage() {
   const supabase = await createClient();
 
   const { data: appointments } = await supabase
     .from("appointments")
-    .select("id, client_name, client_phone, appointment_date, appointment_time, status, notes")
+    .select(
+      "id, client_name, client_phone, appointment_date, appointment_time, status, reason",
+    )
     .neq("status", "cancelada")
     .order("appointment_date", { ascending: true })
     .order("appointment_time", { ascending: true });
@@ -46,6 +48,13 @@ export default async function AdminCitasPage() {
                 </div>
                 <AppointmentStatusButton id={a.id} status={a.status} />
               </div>
+
+              {a.reason ? (
+                <div className="mt-3 flex items-start gap-1.5 rounded-md bg-black/5 p-2.5 dark:bg-white/5">
+                  <MessageSquare size={13} className="mt-0.5 shrink-0 text-muted" />
+                  <p className="break-words text-xs text-foreground">{a.reason}</p>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

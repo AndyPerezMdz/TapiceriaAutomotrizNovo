@@ -22,6 +22,7 @@ export function AppointmentBooking({
 }: Props) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
+  const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -80,6 +81,7 @@ export function AppointmentBooking({
       client_phone: clientPhone,
       appointment_date: selectedDate,
       appointment_time: selectedSlot,
+      reason: reason.trim() || null,
     });
 
     if (insertError) {
@@ -122,6 +124,19 @@ export function AppointmentBooking({
         </div>
       ) : null}
 
+      <div className="mb-4">
+        <label className="mb-1.5 block text-xs font-medium text-muted">
+          ¿Cuál es el motivo de tu visita?
+        </label>
+        <textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          rows={2}
+          placeholder="Ej. Quiero cotizar piel color café para los asientos de mi Nissan Versa"
+          className="w-full rounded-md border border-black/15 bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
+        />
+      </div>
+      
       <p className="mb-2 text-xs font-medium text-muted">Elige un día</p>
       <div className="mb-4 flex flex-wrap gap-2">
         {availableDays.map((d) => (
