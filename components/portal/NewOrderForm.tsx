@@ -67,7 +67,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
-    <Partial<Record<keyof NewOrderFormData, string>>
+    Partial<Record<keyof NewOrderFormData, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -273,12 +273,6 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           {fieldErrors.serviceId ? (
             <p className="mt-2 text-sm text-brand-red">{fieldErrors.serviceId}</p>
           ) : null}
-
-          <CouponSelector
-            serviceId={selection.serviceId}
-            selectedCouponId={selectedCouponId}
-            onSelect={setSelectedCouponId}
-          />
         </div>
 
         {selection.requiresVisit ? (
@@ -396,6 +390,12 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                 ) : null}
               </div>
             </div>
+
+            <CouponSelector
+              serviceId={selection.serviceId}
+              selectedCouponId={selectedCouponId}
+              onSelect={setSelectedCouponId}
+            />
 
             <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
               <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">

@@ -14,6 +14,7 @@ interface Coupon {
   audience: string;
   is_active: boolean;
   service_title: string | null;
+  expires_at: string | null;
 }
 
 const audienceLabels: Record<string, string> = {
@@ -51,6 +52,8 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
       ? `${coupon.discount_value}% de descuento`
       : `$${coupon.discount_value.toLocaleString("es-MX")} de descuento`;
 
+  const isExpired = coupon.expires_at ? new Date(coupon.expires_at) < new Date() : false;
+
   return (
     <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
       <div className="flex items-start justify-between gap-3">
@@ -69,6 +72,21 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
             <span className="inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-xs text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
               {coupon.service_title ?? "General"}
             </span>
+            {coupon.expires_at ? (
+              <span
+                className={`inline-block rounded-full px-2.5 py-0.5 text-xs ${
+                  isExpired
+                    ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                    : "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+                }`}
+              >
+                {isExpired ? "Caducado" : "Vence"}{" "}
+                {new Date(`${coupon.expires_at}T00:00:00`).toLocaleDateString("es-MX", {
+                  day: "numeric",
+                  month: "short",
+                })}
+              </span>
+            ) : null}
           </div>
         </div>
 

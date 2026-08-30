@@ -20,7 +20,7 @@ export default async function AdminCuponesPage() {
     supabase
       .from("coupons")
       .select(
-        "id, title, description, discount_type, discount_value, audience, is_active, services(title)",
+        "id, title, description, discount_type, discount_value, audience, is_active, expires_at, services(title)",
       )
       .order("created_at", { ascending: false }),
     supabase.from("services").select("id, title").eq("is_active", true).order("order", { ascending: true }),
@@ -35,6 +35,7 @@ export default async function AdminCuponesPage() {
       discount_value: c.discount_value,
       audience: c.audience,
       is_active: c.is_active,
+      expires_at: c.expires_at,
       service_title: (c.services as unknown as { title: string } | null)?.title ?? null,
     })) ?? [];
 

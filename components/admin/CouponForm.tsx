@@ -21,6 +21,7 @@ export function CouponForm({ services }: { services: Service[] }) {
   const [discountValue, setDiscountValue] = useState("");
   const [audience, setAudience] = useState<"clientes" | "frecuentes" | "ambos">("ambos");
   const [serviceId, setServiceId] = useState<string>("");
+  const [expiresAt, setExpiresAt] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -52,6 +53,7 @@ export function CouponForm({ services }: { services: Service[] }) {
       discount_value: value,
       audience,
       service_id: serviceId || null,
+      expires_at: expiresAt || null,
     });
 
     if (insertError) {
@@ -64,6 +66,7 @@ export function CouponForm({ services }: { services: Service[] }) {
     setDescription("");
     setDiscountValue("");
     setServiceId("");
+    setExpiresAt("");
     setIsSaving(false);
     router.refresh();
   }
@@ -147,18 +150,31 @@ export function CouponForm({ services }: { services: Service[] }) {
         </div>
       </div>
 
-      <div>
-        <label className={labelClassName}>¿Para quién es?</label>
-        <select
-          value={audience}
-          onChange={(e) => setAudience(e.target.value as typeof audience)}
-          className={fieldClassName}
-          disabled={isSaving}
-        >
-          <option value="clientes">Clientes (no frecuentes)</option>
-          <option value="frecuentes">Solo clientes frecuentes</option>
-          <option value="ambos">Ambos</option>
-        </select>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className={labelClassName}>¿Para quién es?</label>
+          <select
+            value={audience}
+            onChange={(e) => setAudience(e.target.value as typeof audience)}
+            className={fieldClassName}
+            disabled={isSaving}
+          >
+            <option value="clientes">Clientes (no frecuentes)</option>
+            <option value="frecuentes">Solo clientes frecuentes</option>
+            <option value="ambos">Ambos</option>
+          </select>
+        </div>
+
+        <div>
+          <label className={labelClassName}>Fecha de caducidad (opcional)</label>
+          <input
+            type="date"
+            value={expiresAt}
+            onChange={(e) => setExpiresAt(e.target.value)}
+            className={fieldClassName}
+            disabled={isSaving}
+          />
+        </div>
       </div>
 
       <button

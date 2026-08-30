@@ -30,6 +30,7 @@ export function CouponSelector({
     }
 
     const supabase = createClient();
+    const today = new Date().toISOString().slice(0, 10);
 
     async function load() {
       const {
@@ -46,7 +47,7 @@ export function CouponSelector({
       const [{ data: availableCoupons }, { data: redemptions }] = await Promise.all([
         supabase
           .from("coupons")
-          .select("id, title, discount_type, discount_value, service_id")
+          .select("id, title, discount_type, discount_value, service_id, expires_at")
           .eq("is_active", true)
           .in("audience", audienceFilter)
           .or(`service_id.is.null,service_id.eq.${serviceId}`),
@@ -54,7 +55,10 @@ export function CouponSelector({
       ]);
 
       const usedIds = new Set(redemptions?.map((r) => r.coupon_id) ?? []);
-      setCoupons((availableCoupons ?? []).filter((c) => !usedIds.has(c.id)));
+      const valid = (availableCoupons ?? []).filter(
+        (c) => !usedIds.has(c.id) && (!c.expires_at || c.expires_at >= today),
+      );
+      setCoupons(valid);
     }
 
     load();
@@ -64,10 +68,10 @@ export function CouponSelector({
   if (coupons.length === 0) return null;
 
   return (
-    <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
-      <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted">
-        <Tag size={13} /> Tienes cupones disponibles para este servicio
-      </p>
+    <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
+      <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+        <Tag size={16} /> Cupón disponible para este servicio
+      </h2>
       <div className="space-y-2">
         {coupons.map((c) => {
           const discountLabel =
@@ -93,9 +97,13 @@ export function CouponSelector({
               </span>
               {isSelected ? (
                 <span className="text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                  Aplicado ✓
+                  Canjear ✓
                 </span>
-              ) : null}
+              ) : (
+                <span className="text-xs font-medium text-foreground underline-offset-2 hover:underline">
+                  Activar
+                </span>
+              )}
             </button>
           );
         })}
