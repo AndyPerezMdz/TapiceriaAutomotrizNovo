@@ -7,13 +7,14 @@ import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 
 const fieldClassName =
   "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 
 export function StaffLoginForm() {
   const router = useRouter();
-
+  const [showMagicLink, setShowMagicLink] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
     <Partial<Record<keyof LoginFormData, string>>
@@ -149,6 +150,21 @@ export function StaffLoginForm() {
           >
             {isLoading ? "Verificando..." : "Iniciar sesión"}
           </button>
+          <div className="border-t border-white/10 pt-4 text-center">
+            {showMagicLink ? (
+              <div className="mt-2 text-left">
+                <MagicLinkForm redirectPath="/admin" />
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowMagicLink(true)}
+                className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                O inicia sesión sin contraseña
+              </button>
+            )}
+          </div>
         </form>
       </div>
     </main>

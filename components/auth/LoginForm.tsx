@@ -13,10 +13,11 @@ import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 
 export function LoginForm() {
   const router = useRouter();
-
+  const [showMagicLink, setShowMagicLink] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
     <Partial<Record<keyof LoginFormData, string>>
@@ -107,6 +108,22 @@ export function LoginForm() {
         <button type="submit" disabled={isLoading} className={submitButtonClassName}>
           {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
         </button>
+
+        <div className="border-t border-black/10 pt-4 text-center dark:border-white/10">
+          {showMagicLink ? (
+            <div className="mt-2 text-left">
+              <MagicLinkForm redirectPath="/portal" />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowMagicLink(true)}
+              className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+            >
+              O inicia sesión sin contraseña
+            </button>
+          )}
+        </div>
       </form>
     </AuthLayout>
   );
