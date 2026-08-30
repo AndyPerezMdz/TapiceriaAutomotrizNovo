@@ -3,6 +3,7 @@ import { ChangePasswordForm } from "@/components/portal/ChangePasswordForm";
 import { ProfileForm } from "@/components/portal/ProfileForm";
 import { createClient } from "@/lib/supabase/server";
 import { Calendar, ClipboardList, Star } from "lucide-react";
+import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
 
 export default async function PerfilPage() {
   const supabase = await createClient();
@@ -105,6 +106,11 @@ export default async function PerfilPage() {
             fullName={profile?.full_name ?? ""}
             phone={profile?.phone ?? null}
           />
+        </div>
+
+        <div className="mt-6 border-t border-black/10 pt-6 dark:border-white/10">
+          <h3 className="mb-3 text-sm font-semibold text-foreground">Correo electrónico</h3>
+          <ChangeEmailForm currentEmail={profile?.email ?? user?.email ?? ""} />
         </div>
 
         <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
