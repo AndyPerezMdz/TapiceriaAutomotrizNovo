@@ -1,4 +1,5 @@
 import { BusinessSettingsForm } from "@/components/admin/BusinessSettingsForm";
+import { PurgeOrdersButton } from "@/components/admin/PurgeOrdersButton";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -18,12 +19,20 @@ export default async function ConfiguracionPage() {
 
   const settings = await getBusinessSettings();
 
+  const { count: deletedCount } = await supabase
+    .from("orders")
+    .select("*", { count: "exact", head: true })
+    .not("deleted_at", "is", null);
+
   return (
     <div>
       <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
         Configuración del negocio
       </h1>
-      <BusinessSettingsForm settings={settings} />
+      <div className="space-y-8">
+        <BusinessSettingsForm settings={settings} />
+        <PurgeOrdersButton deletedCount={deletedCount ?? 0} />
+      </div>
     </div>
   );
 }
