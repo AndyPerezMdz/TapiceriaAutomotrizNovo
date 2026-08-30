@@ -56,7 +56,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
-    <Partial<Record<keyof NewOrderFormData, string>>
+    Partial<Record<keyof NewOrderFormData, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -218,23 +218,31 @@ export function NewOrderForm({ services }: { services: Service[] }) {
             <p className="mt-1 text-sm text-muted">
               Para colores de piel distintos al negro de fábrica, necesitamos
               tomar una muestra de tu asiento para igualar el tono exacto.
-              Contáctanos por WhatsApp para agendar tu visita.
+              Agenda tu visita en línea, o contáctanos por WhatsApp.
             </p>
-            <a
-              href={
-                whatsappNumber
-                  ? buildWhatsAppLink(
-                      "Hola, quiero agendar una visita al taller para cotizar un color de piel personalizado.",
-                      whatsappNumber,
-                    )
-                  : "#"
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-            >
-              <MessageCircle size={16} /> Agendar por WhatsApp
-            </a>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href="/portal/agendar-cita"
+                className="flex w-fit items-center gap-2 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+              >
+                Agendar visita en línea
+              </a>
+              
+                href={
+                  whatsappNumber
+                    ? buildWhatsAppLink(
+                        "Hola, quiero agendar una visita al taller para cotizar un color de piel personalizado.",
+                        whatsappNumber,
+                      )
+                    : "#"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
+              >
+                <MessageCircle size={16} /> WhatsApp
+              </a>
+            </div>
           </div>
         ) : (
           <>

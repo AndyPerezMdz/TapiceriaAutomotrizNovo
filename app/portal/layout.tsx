@@ -2,7 +2,7 @@ import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
-import { History, LayoutDashboard, PlusCircle, User } from "lucide-react";
+import { Calendar, History, LayoutDashboard, PlusCircle, User } from "lucide-react";
 import Link from "next/link";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 
@@ -96,6 +96,12 @@ export default async function PortalLayout({
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
             <PlusCircle size={16} /> Nuevo pedido
+          </Link>
+          <Link
+            href="/portal/agendar-cita"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <Calendar size={16} /> Agendar cita
           </Link>
           <Link
             href="/portal/perfil"
