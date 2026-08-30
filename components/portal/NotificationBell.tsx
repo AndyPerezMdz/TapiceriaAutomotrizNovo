@@ -39,7 +39,7 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border border-black/10 bg-surface shadow-xl dark:border-white/10">
+        <div className="fixed inset-x-4 top-16 z-50 rounded-lg border border-black/10 bg-surface shadow-xl dark:border-white/10 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80">
           <div className="border-b border-black/10 px-4 py-3 dark:border-white/10">
             <p className="text-sm font-semibold text-foreground">Notificaciones</p>
           </div>
@@ -49,7 +49,7 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
               Estás al día, no tienes nada pendiente.
             </p>
           ) : (
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-[60vh] overflow-y-auto sm:max-h-80">
               {notifications.map((n) => {
                 const Icon = icons[n.type];
                 return (
