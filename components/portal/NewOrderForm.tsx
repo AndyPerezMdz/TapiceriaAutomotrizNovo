@@ -227,7 +227,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               >
                 Agendar visita en línea
               </a>
-              
+              <a
                 href={
                   whatsappNumber
                     ? buildWhatsAppLink(
