@@ -36,10 +36,19 @@ export interface MaterialSelection {
 interface Props {
   services: Service[];
   onSelectionChange: (selection: MaterialSelection) => void;
+  initialServiceId?: string;
+  initialMaterialTypeId?: string;
+  initialMaterialColorId?: string;
 }
 
-export function ServiceMaterialSelector({ services, onSelectionChange }: Props) {
-  const [serviceId, setServiceId] = useState<string>("");
+export function ServiceMaterialSelector({
+  services,
+  onSelectionChange,
+  initialServiceId,
+  initialMaterialTypeId,
+  initialMaterialColorId,
+}: Props) {
+  const [serviceId, setServiceId] = useState<string>(initialServiceId ?? "");
   const [materialTypes, setMaterialTypes] = useState<MaterialType[]>([]);
   const [materialTypeId, setMaterialTypeId] = useState<string>("");
   const [colors, setColors] = useState<MaterialColor[]>([]);
@@ -47,10 +56,6 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
   const [loadingMaterials, setLoadingMaterials] = useState(false);
 
   useEffect(() => {
-    setMaterialTypeId("");
-    setColors([]);
-    setMaterialColorId("");
-
     if (!serviceId) {
       setMaterialTypes([]);
       return;
@@ -67,14 +72,22 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
       .then(({ data }) => {
         setMaterialTypes(data ?? []);
         setLoadingMaterials(false);
+        if (!initialMaterialTypeId || materialTypeId) {
+          setMaterialTypeId("");
+          setColors([]);
+          setMaterialColorId("");
+        } else {
+          setMaterialTypeId(initialMaterialTypeId);
+        }
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceId]);
 
   useEffect(() => {
-    setColors([]);
-    setMaterialColorId("");
-
-    if (!materialTypeId) return;
+    if (!materialTypeId) {
+      setColors([]);
+      return;
+    }
 
     const supabase = createClient();
     supabase
@@ -83,7 +96,15 @@ export function ServiceMaterialSelector({ services, onSelectionChange }: Props) 
       .eq("material_type_id", materialTypeId)
       .eq("is_active", true)
       .order("order", { ascending: true })
-      .then(({ data }) => setColors(data ?? []));
+      .then(({ data }) => {
+        setColors(data ?? []);
+        if (initialMaterialColorId && !materialColorId) {
+          setMaterialColorId(initialMaterialColorId);
+        } else if (!initialMaterialColorId) {
+          setMaterialColorId("");
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materialTypeId]);
 
   useEffect(() => {

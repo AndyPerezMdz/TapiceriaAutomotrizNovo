@@ -16,7 +16,7 @@ import {
   Wrench,
   X,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const fieldClassName =
@@ -46,12 +46,21 @@ const emptySelection: MaterialSelection = {
 
 export function NewOrderForm({ services }: { services: Service[] }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const repeatOrderId = searchParams.get("repeat");
+
   const [selection, setSelection] = useState<MaterialSelection>(emptySelection);
 
   const [vehicleMake, setVehicleMake] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleYear, setVehicleYear] = useState("");
   const [description, setDescription] = useState("");
+
+  const [initialValues, setInitialValues] = useState<{
+    serviceId?: string;
+    materialTypeId?: string;
+    materialColorId?: string;
+  } | null>(null);
 
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
@@ -73,6 +82,37 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         if (data) setWhatsappNumber(data.whatsapp);
       });
   }, []);
+
+  useEffect(() => {
+    if (!repeatOrderId) {
+      setInitialValues({});
+      return;
+    }
+
+    const supabase = createClient();
+    supabase
+      .from("orders")
+      .select(
+        "vehicle_make, vehicle_model, vehicle_year, service_id, material_type_id, material_color_id",
+      )
+      .eq("id", repeatOrderId)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setVehicleMake(data.vehicle_make ?? "");
+          setVehicleModel(data.vehicle_model ?? "");
+          setVehicleYear(data.vehicle_year ? String(data.vehicle_year) : "");
+          setInitialValues({
+            serviceId: data.service_id ?? undefined,
+            materialTypeId: data.material_type_id ?? undefined,
+            materialColorId: data.material_color_id ?? undefined,
+          });
+        } else {
+          setInitialValues({});
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [repeatOrderId]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
@@ -190,6 +230,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId: order.id }),
     }).catch(() => {});
+
     router.push(`/portal/pedidos/${order.id}`);
     router.refresh();
   }
@@ -209,7 +250,17 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           <h2 className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-foreground">
             <Wrench size={16} /> Servicio y material
           </h2>
-          <ServiceMaterialSelector services={services} onSelectionChange={setSelection} />
+          {initialValues !== null ? (
+            <ServiceMaterialSelector
+              services={services}
+              onSelectionChange={setSelection}
+              initialServiceId={initialValues.serviceId}
+              initialMaterialTypeId={initialValues.materialTypeId}
+              initialMaterialColorId={initialValues.materialColorId}
+            />
+          ) : (
+            <p className="text-sm text-muted">Cargando...</p>
+          )}
           {fieldErrors.serviceId ? (
             <p className="mt-2 text-sm text-brand-red">{fieldErrors.serviceId}</p>
           ) : null}

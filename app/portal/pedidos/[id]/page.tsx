@@ -9,6 +9,7 @@ import { AddPhotoButton } from "@/components/portal/AddPhotoButton";
 import { MarkAsViewed } from "@/components/portal/MarkAsViewed";
 import { ReviewForm } from "@/components/portal/ReviewForm";
 import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
+import { RepeatOrderButton } from "@/components/portal/RepeatOrderButton";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -29,6 +30,10 @@ export default async function PedidoDetallePage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const [{ data: order }, { data: photos }, { data: history }, { data: review }] =
     await Promise.all([
       supabase
@@ -41,11 +46,16 @@ export default async function PedidoDetallePage({ params }: Props) {
       supabase.from("order_photos").select("id, url").eq("order_id", id),
       supabase
         .from("order_status_history")
-        .select("id, status, note, created_at")
+        .select("id, status, note, created_at, changed_by")
         .eq("order_id", id)
         .order("created_at", { ascending: true }),
       supabase.from("reviews").select("id, rating, comment").eq("order_id", id).maybeSingle(),
     ]);
+
+  const changedByIds = [...new Set((history ?? []).map((h) => h.changed_by).filter(Boolean))];
+  const { data: historyProfiles } = changedByIds.length
+    ? await supabase.from("profiles").select("id, full_name, role").in("id", changedByIds)
+    : { data: [] };
 
   if (!order) {
     notFound();
@@ -168,7 +178,12 @@ export default async function PedidoDetallePage({ params }: Props) {
                   label={order.status === "entregado" ? "Descargar recibo" : "Descargar cotización"}
                 />
               </div>
+              
             ) : null}
+
+            <div className="mt-2">
+              <RepeatOrderButton orderId={order.id} />
+            </div>
           </div>
 
           {order.material_types || order.material_colors ? (
@@ -225,7 +240,11 @@ export default async function PedidoDetallePage({ params }: Props) {
             Seguimiento
           </h2>
           {history && history.length > 0 ? (
-            <OrderTimeline history={history} />
+            <OrderTimeline
+              history={history}
+              profiles={historyProfiles ?? []}
+              currentUserId={user?.id ?? null}
+            />
           ) : (
             <p className="text-sm text-muted">Sin actualizaciones todavía.</p>
           )}
