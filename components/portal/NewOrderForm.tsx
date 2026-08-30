@@ -67,7 +67,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
-    Partial<Record<keyof NewOrderFormData, string>>
+    <Partial<Record<keyof NewOrderFormData, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
