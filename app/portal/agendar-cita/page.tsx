@@ -1,5 +1,4 @@
 import { AppointmentBooking } from "@/components/portal/AppointmentBooking";
-import { MyAppointmentsList } from "@/components/portal/MyAppointmentsList";
 import { createClient } from "@/lib/supabase/server";
 
 interface Props {
@@ -14,18 +13,9 @@ export default async function AgendarCitaPage({ searchParams }: Props) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: profile }, { data: myAppointments }] = await Promise.all([
-    user
-      ? supabase.from("profiles").select("full_name, phone").eq("id", user.id).single()
-      : Promise.resolve({ data: null }),
-    user
-      ? supabase
-          .from("appointments")
-          .select("id, appointment_date, appointment_time, status")
-          .eq("client_id", user.id)
-          .order("appointment_date", { ascending: true })
-      : Promise.resolve({ data: [] }),
-  ]);
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("full_name, phone").eq("id", user.id).single()
+    : { data: null };
 
   const startWindow = new Date();
   const endWindow = new Date();
@@ -60,8 +50,6 @@ export default async function AgendarCitaPage({ searchParams }: Props) {
         Para colores de piel personalizados, necesitamos ver tu vehículo en
         persona y tomar una muestra del asiento.
       </p>
-
-      <MyAppointmentsList appointments={myAppointments ?? []} />
 
       <AppointmentBooking
         clientName={profile?.full_name ?? ""}
