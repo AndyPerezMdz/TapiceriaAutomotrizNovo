@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
 import { History, LayoutDashboard, PlusCircle, User } from "lucide-react";
 import Link from "next/link";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 
 export default async function PortalLayout({
   children,
@@ -106,6 +107,7 @@ export default async function PortalLayout({
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+      <ChatWidget />
     </div>
   );
 }
