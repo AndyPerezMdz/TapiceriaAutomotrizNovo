@@ -17,9 +17,7 @@ export function PurgeOrdersButton({ deletedCount }: { deletedCount: number }) {
     setError(null);
 
     const supabase = createClient();
-    const { data, error: purgeError } = await supabase.rpc("purge_deleted_orders", {
-      p_older_than_days: 30,
-    });
+    const { data, error: purgeError } = await supabase.rpc("purge_deleted_orders");
 
     if (purgeError) {
       setError("No se pudo completar la purga. Intenta de nuevo.");
@@ -45,8 +43,8 @@ export function PurgeOrdersButton({ deletedCount }: { deletedCount: number }) {
           <p className="mt-1 text-xs text-muted">
             Los pedidos eliminados siguen ocupando espacio de almacenamiento
             aunque no se muestren. Los que llevan más de 30 días se borran
-            automáticamente el día 1 de cada mes, pero también puedes
-            hacerlo manualmente ahora.
+            automáticamente el día 1 de cada mes; con este botón puedes
+            borrarlos todos ahora mismo, sin esperar.
           </p>
 
           {!isOpen ? (
@@ -61,9 +59,10 @@ export function PurgeOrdersButton({ deletedCount }: { deletedCount: number }) {
               <div className="flex items-start gap-2">
                 <AlertTriangle size={16} className="mt-0.5 shrink-0 text-brand-red" />
                 <p className="text-sm text-brand-red">
-                  Esto borrará <strong>permanentemente</strong> los pedidos con
-                  más de 30 días marcados como eliminados (incluyendo sus fotos
-                  y seguimiento). Esta acción no se puede deshacer.
+                  Esto borrará <strong>permanentemente</strong> todos los pedidos
+                  marcados como eliminados, sin importar cuánto tiempo llevan así
+                  (incluyendo sus fotos y seguimiento). Esta acción no se puede
+                  deshacer.
                 </p>
               </div>
 
