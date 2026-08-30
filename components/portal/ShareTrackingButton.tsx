@@ -21,16 +21,16 @@ export function ShareTrackingButton({
     let token = existingToken;
 
     if (!token) {
-      token = crypto.randomUUID();
-      const { error } = await supabase
-        .from("orders")
-        .update({ share_token: token })
-        .eq("id", orderId);
+      const { data, error } = await supabase.rpc("generate_share_token", {
+        p_order_id: orderId,
+      });
 
-      if (error) {
+      if (error || !data) {
         setIsLoading(false);
         return;
       }
+
+      token = data;
     }
 
     const url = `${window.location.origin}/seguimiento/${token}`;
