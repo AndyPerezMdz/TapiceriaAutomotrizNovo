@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { AlertCircle, PlusCircle } from "lucide-react";
+import { AlertCircle, PlusCircle, Star } from "lucide-react";
 import Link from "next/link";
 import { OrderCard } from "@/components/portal/OrderCard";
 
@@ -38,6 +38,21 @@ export default async function PortalDashboardPage() {
   );
 
   const awaitingResponse = orders?.filter((o) => o.status === "cotizado") ?? [];
+
+  const deliveredOrderIds =
+    orders?.filter((o) => o.status === "entregado").map((o) => o.id) ?? [];
+
+  let ordersWithoutReview: typeof orders = [];
+  if (deliveredOrderIds.length > 0) {
+    const { data: reviewedIds } = await supabase
+      .from("reviews")
+      .select("order_id")
+      .in("order_id", deliveredOrderIds);
+
+    const reviewedSet = new Set(reviewedIds?.map((r) => r.order_id) ?? []);
+    ordersWithoutReview =
+      orders?.filter((o) => o.status === "entregado" && !reviewedSet.has(o.id)) ?? [];
+  }
 
   const firstName = profile?.full_name?.split(" ")[0];
 
@@ -85,6 +100,36 @@ export default async function PortalDashboardPage() {
                     {order.estimated_price
                       ? ` · $${order.estimated_price.toLocaleString("es-MX")}`
                       : ""}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {ordersWithoutReview && ordersWithoutReview.length > 0 ? (
+        <div className="mb-6 space-y-2">
+          {ordersWithoutReview.map((order) => {
+            const vehicle = [order.vehicle_make, order.vehicle_model]
+              .filter(Boolean)
+              .join(" ");
+            return (
+              <Link
+                key={order.id}
+                href={`/portal/pedidos/${order.id}`}
+                className="flex items-center gap-3 rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10"
+              >
+                <Star
+                  size={20}
+                  className="shrink-0 text-brand-yellow-dark dark:text-brand-yellow"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground">
+                    ¿Cómo fue tu experiencia con {vehicle || "tu pedido"}?
+                  </p>
+                  <p className="text-xs text-muted">
+                    Tu opinión nos ayuda a mejorar — solo toma un minuto.
                   </p>
                 </div>
               </Link>
