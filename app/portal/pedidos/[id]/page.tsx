@@ -10,6 +10,7 @@ import { MarkAsViewed } from "@/components/portal/MarkAsViewed";
 import { ReviewForm } from "@/components/portal/ReviewForm";
 import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
 import { RepeatOrderButton } from "@/components/portal/RepeatOrderButton";
+import { ShareTrackingButton } from "@/components/portal/ShareTrackingButton";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -183,6 +184,10 @@ export default async function PedidoDetallePage({ params }: Props) {
 
             <div className="mt-2">
               <RepeatOrderButton orderId={order.id} />
+            </div>
+
+            <div className="mt-2">
+              <ShareTrackingButton orderId={order.id} existingToken={order.share_token} />
             </div>
           </div>
 
