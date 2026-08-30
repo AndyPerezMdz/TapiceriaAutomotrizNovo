@@ -9,8 +9,12 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@react-pdf/renderer"],
   outputFileTracingIncludes: {
     "/api/pdf/pedido/[id]": [
-      "./node_modules/pdfkit/js/standard-fonts/*.cjs",
-      "./node_modules/pdfkit/js/standard-fonts/*.afm",
+      "./node_modules/pdfkit/**",
+      "./node_modules/fontkit/**",
+      "./node_modules/@react-pdf/**",
+      "./node_modules/unicode-properties/**",
+      "./node_modules/linebreak/**",
+      "./node_modules/brotli/**",
     ],
   },
   images: {
