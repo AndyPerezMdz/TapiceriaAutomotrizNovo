@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export const orderStatusValues = [
   "pendiente_revision",
   "cotizado",

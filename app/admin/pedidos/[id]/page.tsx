@@ -182,7 +182,6 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             currentStatus={order.status}
             estimatedPrice={order.estimated_price}
             finalPrice={order.final_price}
-            adminNotes={order.admin_notes}
             isAdmin={isAdmin}
             clientPhone={client?.phone ?? null}
             clientName={client?.full_name ?? null}

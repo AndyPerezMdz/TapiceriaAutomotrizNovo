@@ -2,7 +2,6 @@ import { ContactStatusButton } from "@/components/admin/ContactStatusButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
 import { buildWhatsAppLink } from "@/lib/constants/business";
-import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
 import { Download, MessageCircle, Phone } from "lucide-react";
 
@@ -17,7 +16,6 @@ export default async function AdminContactosPage({ searchParams }: Props) {
   const page = Math.max(1, Number(pageParam) || 1);
 
   const supabase = await createClient();
-  const settings = await getBusinessSettings();
 
   let query = supabase
     .from("contact_submissions")

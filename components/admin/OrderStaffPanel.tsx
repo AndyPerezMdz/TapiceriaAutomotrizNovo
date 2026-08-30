@@ -1,6 +1,6 @@
 "use client";
 
-import { statusLabels, orderStatusValues } from "@/lib/validations/admin-order";
+import { statusLabels } from "@/lib/validations/admin-order";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
 import { MessageCircle, AlertTriangle } from "lucide-react";
@@ -26,7 +26,6 @@ interface Props {
   currentStatus: string;
   estimatedPrice: number | null;
   finalPrice: number | null;
-  adminNotes: string | null;
   isAdmin: boolean;
   clientPhone: string | null;
   clientName: string | null;
@@ -38,7 +37,6 @@ export function OrderStaffPanel({
   currentStatus,
   estimatedPrice,
   finalPrice,
-  adminNotes,
   isAdmin,
   clientPhone,
   clientName,
