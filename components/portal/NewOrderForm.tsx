@@ -4,6 +4,7 @@ import {
   ServiceMaterialSelector,
   type MaterialSelection,
 } from "@/components/portal/ServiceMaterialSelector";
+import { CouponSelector } from "@/components/portal/CouponSelector";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
 import { newOrderSchema, type NewOrderFormData } from "@/lib/validations/order";
@@ -50,6 +51,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const repeatOrderId = searchParams.get("repeat");
 
   const [selection, setSelection] = useState<MaterialSelection>(emptySelection);
+  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null);
 
   const [vehicleMake, setVehicleMake] = useState("");
   const [vehicleModel, setVehicleModel] = useState("");
@@ -204,6 +206,13 @@ export function NewOrderForm({ services }: { services: Service[] }) {
       return;
     }
 
+    if (selectedCouponId) {
+      await supabase.rpc("apply_coupon_to_order", {
+        p_coupon_id: selectedCouponId,
+        p_order_id: order.id,
+      });
+    }
+
     for (const photo of photos) {
       const fileExt = photo.name.split(".").pop();
       const filePath = `${order.id}/${crypto.randomUUID()}.${fileExt}`;
@@ -264,6 +273,12 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           {fieldErrors.serviceId ? (
             <p className="mt-2 text-sm text-brand-red">{fieldErrors.serviceId}</p>
           ) : null}
+
+          <CouponSelector
+            serviceId={selection.serviceId}
+            selectedCouponId={selectedCouponId}
+            onSelect={setSelectedCouponId}
+          />
         </div>
 
         {selection.requiresVisit ? (
@@ -482,6 +497,16 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                 </p>
               </div>
             </div>
+
+            {selectedCouponId ? (
+              <div className="flex items-start gap-2">
+                <Check size={15} className="mt-0.5 shrink-0 text-brand-yellow-dark dark:text-brand-yellow" />
+                <div>
+                  <p className="text-xs text-muted">Cupón</p>
+                  <p className="text-foreground">Aplicado ✓</p>
+                </div>
+              </div>
+            ) : null}
 
             {photos.length > 0 ? (
               <div className="flex items-start gap-2">
