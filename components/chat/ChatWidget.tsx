@@ -1,6 +1,7 @@
 "use client";
 
-import { MessageSquare, Send, X } from "lucide-react";
+import { NoviAvatar } from "@/components/chat/NoviAvatar";
+import { Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface ChatMessage {
@@ -76,9 +77,17 @@ export function ChatWidget() {
       {isOpen ? (
         <div className="fixed bottom-24 left-5 z-50 flex h-[480px] w-[340px] flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl dark:border-white/10 sm:w-96">
           <div className="flex items-center justify-between bg-brand-black px-4 py-3">
-            <div>
-              <p className="text-sm font-semibold text-white">Novi</p>
-              <p className="text-xs text-white/60">Asistente de Tapicería NOVO</p>
+            <div className="flex items-center gap-2.5">
+              <div className="rounded-full bg-white/95 p-0.5">
+                <NoviAvatar size={32} />
+              </div>
+              <div>
+                <p className="flex items-center gap-1 text-sm font-semibold text-white">
+                  Novi
+                  <Sparkles size={12} className="text-brand-yellow" />
+                </p>
+                <p className="text-xs text-white/60">Asistente con IA</p>
+              </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
@@ -92,10 +101,13 @@ export function ChatWidget() {
             {messages.map((m, i) => (
               <div
                 key={i}
-                className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
+                {m.role === "assistant" ? (
+                  <NoviAvatar size={24} className="mb-1 shrink-0" />
+                ) : null}
                 <div
-                  className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
                     m.role === "user"
                       ? "bg-brand-yellow text-brand-black"
                       : "bg-black/5 text-foreground dark:bg-white/10"
@@ -106,9 +118,12 @@ export function ChatWidget() {
               </div>
             ))}
             {isLoading ? (
-              <div className="flex justify-start">
-                <div className="rounded-lg bg-black/5 px-3 py-2 text-sm text-muted dark:bg-white/10">
-                  Escribiendo...
+              <div className="flex items-end gap-2">
+                <NoviAvatar size={24} className="mb-1 shrink-0" />
+                <div className="flex items-center gap-1 rounded-lg bg-black/5 px-3 py-2.5 dark:bg-white/10">
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.3s]" />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.15s]" />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted" />
                 </div>
               </div>
             ) : null}
@@ -137,10 +152,20 @@ export function ChatWidget() {
 
       <button
         onClick={() => setIsOpen((v) => !v)}
-        aria-label="Abrir chat"
-        className="fixed bottom-5 left-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand-black text-white shadow-lg transition hover:scale-105 hover:shadow-xl dark:bg-white dark:text-brand-black"
+        aria-label="Abrir chat con Novi, asistente de IA"
+        className="fixed bottom-5 left-5 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-105"
+        style={{
+          animation: isOpen
+            ? undefined
+            : "novi-bounce 3s ease-in-out infinite, novi-pulse-ring 2.5s ease-out infinite",
+        }}
       >
-        <MessageSquare size={24} />
+        <NoviAvatar size={44} />
+        {!isOpen ? (
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-red text-white shadow">
+            <Sparkles size={11} />
+          </span>
+        ) : null}
       </button>
     </>
   );
