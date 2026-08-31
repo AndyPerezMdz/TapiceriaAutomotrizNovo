@@ -82,12 +82,18 @@ export function OrderStaffPanel({
     : enteredPrice;
 
   async function handleSave() {
-    setIsSaving(true);
     setSaveError(null);
 
-    const supabase = createClient();
-
     const finalStatus = priceChanged ? "cotizado" : status;
+
+    if (finalStatus === "cotizado" && (!price || Number(price) <= 0)) {
+      setSaveError("Ingresa un precio antes de marcar el pedido como Cotizado.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    const supabase = createClient();
     const priceToSave = coupon && enteredPrice > 0 ? discountedPrice : enteredPrice;
 
     const updatePayload: Record<string, unknown> = { status: finalStatus };
