@@ -7,7 +7,7 @@ const SYSTEM_PROMPT_BASE = `Eres "Novi", el asistente virtual de Tapicería Auto
 Reglas importantes:
 - Responde siempre en español, de forma amable, breve y directa.
 - SOLO usa la información que se te proporciona en el contexto. Nunca inventes precios, horarios, ni datos que no estén ahí.
-- Si no tienes la información para responder algo, dilo honestamente y sugiere contactar al taller por WhatsApp (el cliente puede encontrar el botón de WhatsApp en el sitio).
+- Si no tienes la información para responder algo, dilo honestamente.
 - Los precios que menciones son siempre "de referencia" — el precio final lo confirma el taller al revisar cada solicitud.
 - No das consejos técnicos de mecánica ni de otros temas fuera de tapicería automotriz.
 - Sé conciso: respuestas de 2-4 líneas normalmente, salvo que te pidan más detalle.`;
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       contextText += `- ${row.value}\n`;
     });
 
-    // Cupones generales activos (públicos, no ligados a un cliente en específico)
+    // Cupones generales activos
     const { data: generalCoupons } = await supabase
       .from("coupons")
       .select("title, description, discount_type, discount_value, audience, expires_at, services(title)")
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // Programa de puntos de lealtad (reglas actuales, siempre al día)
+    // Programa de puntos de lealtad
     const { data: loyaltySettings } = await supabase
       .from("loyalty_settings")
       .select("pesos_per_point, points_for_reward, reward_type, reward_value")
@@ -68,11 +68,12 @@ export async function POST(request: Request) {
         loyaltySettings.reward_type === "percentage"
           ? `${loyaltySettings.reward_value}% de descuento`
           : `$${loyaltySettings.reward_value} de descuento`;
-      contextText += `\nPrograma de puntos de lealtad: los clientes ganan 1 punto por cada $${loyaltySettings.pesos_per_point} gastados en pedidos entregados. Al acumular ${loyaltySettings.points_for_reward} puntos, pueden canjearlos por un cupón de ${reward}, disponible en su portal en "Mis puntos".\n`;
+      contextText += `\nPrograma de puntos de lealtad: los clientes ganan 1 punto por cada $${loyaltySettings.pesos_per_point} gastados en pedidos entregados. Al acumular ${loyaltySettings.points_for_reward} puntos, pueden canjearlos por un cupón de ${reward}.\n`;
     }
 
-    // Si hay sesión de cliente, agrega SUS pedidos, puntos y cupones personales
     let personalizedGreeting = "";
+    let roleContext = "";
+
     if (user) {
       const { data: profile } = await supabase
         .from("profiles")
@@ -92,15 +93,15 @@ export async function POST(request: Request) {
           .limit(10);
 
         if (orders && orders.length > 0) {
-          contextText += `\nPedidos del cliente que está hablando contigo (${profile.full_name}):\n`;
+          roleContext += `\nPedidos del cliente que está hablando contigo (${profile.full_name}):\n`;
           orders.forEach((o) => {
             const service = (o.services as unknown as { title: string } | null)?.title;
             const vehicle = [o.vehicle_make, o.vehicle_model].filter(Boolean).join(" ");
             const price = o.final_price ?? o.estimated_price;
-            contextText += `- Pedido de ${vehicle || "vehículo sin detalle"}${service ? ` (${service})` : ""}, estado: ${o.status}${price ? `, precio: $${price}` : ""}, fecha: ${new Date(o.created_at).toLocaleDateString("es-MX")}\n`;
+            roleContext += `- Pedido de ${vehicle || "vehículo sin detalle"}${service ? ` (${service})` : ""}, estado: ${o.status}${price ? `, precio: $${price}` : ""}, fecha: ${new Date(o.created_at).toLocaleDateString("es-MX")}\n`;
           });
         } else {
-          contextText += `\nEl cliente ${profile.full_name} no tiene pedidos registrados todavía.\n`;
+          roleContext += `\nEl cliente ${profile.full_name} no tiene pedidos registrados todavía.\n`;
         }
 
         const { data: points } = await supabase
@@ -109,7 +110,7 @@ export async function POST(request: Request) {
           .eq("client_id", user.id)
           .maybeSingle();
 
-        contextText += `\nPuntos de lealtad de este cliente: ${points?.balance ?? 0} puntos acumulados actualmente.\n`;
+        roleContext += `\nPuntos de lealtad de este cliente: ${points?.balance ?? 0} puntos acumulados actualmente.\n`;
 
         const { data: personalCoupons } = await supabase
           .from("coupons")
@@ -118,21 +119,49 @@ export async function POST(request: Request) {
           .eq("client_id", user.id);
 
         if (personalCoupons && personalCoupons.length > 0) {
-          contextText += "\nCupones personales de este cliente (generados por canje de puntos):\n";
+          roleContext += "\nCupones personales de este cliente (generados por canje de puntos):\n";
           personalCoupons.forEach((c) => {
             const discount =
               c.discount_type === "percentage"
                 ? `${c.discount_value}%`
                 : `$${c.discount_value}`;
-            contextText += `- "${c.title}": ${discount} de descuento.\n`;
+            roleContext += `- "${c.title}": ${discount} de descuento.\n`;
           });
         }
 
-        personalizedGreeting = ` El cliente con el que hablas se llama ${profile.full_name}, puedes usar su nombre si es natural.`;
+        personalizedGreeting = ` El cliente con el que hablas se llama ${profile.full_name}, puedes usar su nombre si es natural. Es un CLIENTE, no personal del taller.`;
+      } else if (profile?.role === "admin" || profile?.role === "empleado") {
+        const [
+          { count: pendientes },
+          { count: cotizados },
+          { count: citasPendientes },
+        ] = await Promise.all([
+          supabase
+            .from("orders")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "pendiente_revision")
+            .is("deleted_at", null),
+          supabase
+            .from("orders")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "cotizado")
+            .is("deleted_at", null),
+          supabase
+            .from("appointments")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "pendiente"),
+        ]);
+
+        roleContext += `\nResumen operativo actual del taller:\n`;
+        roleContext += `- Pedidos pendientes de revisión: ${pendientes ?? 0}\n`;
+        roleContext += `- Pedidos cotizados esperando respuesta del cliente: ${cotizados ?? 0}\n`;
+        roleContext += `- Citas pendientes de confirmar: ${citasPendientes ?? 0}\n`;
+
+        personalizedGreeting = ` Hablas con ${profile.full_name}, quien es PERSONAL DEL TALLER (rol: ${profile.role}), no un cliente. Puedes ayudarle con preguntas operativas del negocio (cupones, puntos, políticas, resumen de pedidos), y hablarle de forma más directa y técnica que a un cliente. No le sugieras "contactar al taller por WhatsApp", porque él ES el taller.`;
       }
     }
 
-    const systemPrompt = `${SYSTEM_PROMPT_BASE}${personalizedGreeting}\n\n${contextText}`;
+    const systemPrompt = `${SYSTEM_PROMPT_BASE}${personalizedGreeting}\n\n${contextText}${roleContext}`;
 
     const geminiMessages = [
       ...history.slice(-6).map((h: { role: string; content: string }) => ({

@@ -1,6 +1,7 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
@@ -57,8 +58,10 @@ export default async function AdminLayout({
           <SignOutButton />
         </header>
 
-        <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
       </div>
+
+      <ChatWidget />
     </div>
   );
 }
