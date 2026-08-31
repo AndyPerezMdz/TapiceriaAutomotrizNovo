@@ -1,9 +1,8 @@
 import { ChangePasswordForm } from "@/components/portal/ChangePasswordForm";
 import { StaffAvatarUploader } from "@/components/admin/StaffAvatarUploader";
 import { StaffProfileForm } from "@/components/admin/StaffProfileForm";
-import { createClient } from "@/lib/supabase/server";
-import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
 import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function StaffPerfilPage() {
   const supabase = await createClient();
@@ -18,6 +17,12 @@ export default async function StaffPerfilPage() {
         .eq("id", user.id)
         .single()
     : { data: null };
+
+  const isAdmin = profile?.role === "admin";
+
+  const manualUrl = isAdmin
+    ? "https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Staff.pdf"
+    : "https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Empleado.pdf";
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -44,25 +49,21 @@ export default async function StaffPerfilPage() {
             phone={profile?.phone ?? null}
           />
         </div>
-        
-        <div className="mt-6 border-t border-black/10 pt-6 dark:border-white/10">
-          <h3 className="mb-3 text-sm font-semibold text-foreground">Correo electrónico</h3>
-          <ChangeEmailForm currentEmail={profile?.email ?? user?.email ?? ""} />
-        </div>
-        
+
         <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
           <h2 className="mb-4 text-sm font-semibold text-foreground">
             Contraseña
           </h2>
           <ChangePasswordForm />
         </div>
-        <div className="mt-6">
-          <DownloadManualCard
-            title="Manual de staff"
-            description="Guía de uso del panel administrativo en PDF"
-            fileUrl="https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Staff.pdf"
-          />
-        </div>
+      </div>
+
+      <div className="mt-6">
+        <DownloadManualCard
+          title={isAdmin ? "Manual de Staff" : "Manual del Empleado"}
+          description="Guía de uso del panel administrativo en PDF"
+          fileUrl={manualUrl}
+        />
       </div>
     </div>
   );
