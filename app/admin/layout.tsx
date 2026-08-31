@@ -2,15 +2,18 @@ import { FooterLogo } from "@/components/FooterLogo";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, Settings, Tag } from "lucide-react";
 import {
+  Award,
   BarChart3,
+  Calendar,
   ClipboardList,
   History,
   ImageIcon,
   LayoutDashboard,
   MessageSquare,
+  Settings,
   Star,
+  Tag,
   User,
   Users,
   Users2,
@@ -108,12 +111,6 @@ export default async function AdminLayout({
             <Users2 size={16} /> Clientes
           </Link>
           <Link
-            href="/admin/citas"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
-          >
-            <Calendar size={16} /> Citas
-          </Link>
-          <Link
             href="/admin/contactos"
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
@@ -138,6 +135,28 @@ export default async function AdminLayout({
             <Star size={16} /> Reseñas
           </Link>
           <Link
+            href="/admin/citas"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+          >
+            <Calendar size={16} /> Citas
+          </Link>
+          {isAdmin ? (
+            <Link
+              href="/admin/cupones"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            >
+              <Tag size={16} /> Cupones
+            </Link>
+          ) : null}
+          {isAdmin ? (
+            <Link
+              href="/admin/puntos"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
+            >
+              <Award size={16} /> Puntos
+            </Link>
+          ) : null}
+          <Link
             href="/admin/historial"
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
           >
@@ -152,23 +171,13 @@ export default async function AdminLayout({
             </Link>
           ) : null}
           {isAdmin ? (
-          <Link
-            href="/admin/configuracion"
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
-          >
-            <Settings size={16} /> Configuración
-          </Link>
-          ) : null}
-          
-          {isAdmin ? (
             <Link
-              href="/admin/cupones"
+              href="/admin/configuracion"
               className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
             >
-              <Tag size={16} /> Cupones
+              <Settings size={16} /> Configuración
             </Link>
           ) : null}
-  
           <Link
             href="/admin/perfil"
             className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-3 py-2.5 text-sm font-medium text-muted transition hover:border-brand-yellow hover:text-foreground"
