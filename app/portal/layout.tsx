@@ -59,6 +59,7 @@ export default async function PortalLayout({
                 )}
                 <span className="text-sm text-muted">{profile?.full_name}</span>
               </Link>
+              <ChatWidget variant="header" />
               <NotificationBell notifications={notifications} />
               <ThemeToggle />
               <SignOutButton />
@@ -72,7 +73,6 @@ export default async function PortalLayout({
       </div>
 
       <BottomNav />
-      <ChatWidget />
       <ApplyPendingReferral />
     </div>
   );

@@ -37,6 +37,7 @@ export default async function AdminLayout({
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 lg:px-6 lg:pl-6">
+          <ChatWidget variant="header" />
           <Link href="/admin/perfil" className="flex items-center gap-2">
             {profile?.avatar_url ? (
               <img
@@ -60,8 +61,6 @@ export default async function AdminLayout({
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
       </div>
-
-      <ChatWidget withSidebar />
     </div>
   );
 }
