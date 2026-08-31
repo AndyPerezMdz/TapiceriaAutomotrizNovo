@@ -4,6 +4,7 @@ import { ServiceMaterialsManager } from "@/components/admin/ServiceMaterialsMana
 import { createClient } from "@/lib/supabase/server";
 import { ClipboardList, ImageIcon } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
+import { ServiceStitchingManager } from "@/components/admin/ServiceStitchingManager";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -69,6 +70,13 @@ export default async function EditarServicioPage({ params }: Props) {
           Materiales y colores
         </h2>
         <ServiceMaterialsManager serviceId={service.id} />
+      </div>
+
+      <div className="mt-10 max-w-xl">
+        <h2 className="mb-4 text-sm font-semibold text-foreground">
+          Costura y colores
+        </h2>
+        <ServiceStitchingManager serviceId={service.id} />
       </div>
     </div>
   );

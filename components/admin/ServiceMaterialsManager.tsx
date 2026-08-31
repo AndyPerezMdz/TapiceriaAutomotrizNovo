@@ -1,5 +1,6 @@
 "use client";
 
+import { MaterialImageUploader } from "@/components/admin/MaterialImageUploader";
 import { createClient } from "@/lib/supabase/client";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -8,12 +9,14 @@ interface MaterialColor {
   id: string;
   name: string;
   hex_color: string | null;
+  image_url: string | null;
 }
 
 interface MaterialType {
   id: string;
   name: string;
   price_hint: string | null;
+  image_url: string | null;
   colors: MaterialColor[];
 }
 
@@ -38,7 +41,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
     const supabase = createClient();
     const { data: types } = await supabase
       .from("material_types")
-      .select("id, name, price_hint")
+      .select("id, name, price_hint, image_url")
       .eq("service_id", serviceId)
       .order("order", { ascending: true });
 
@@ -50,7 +53,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
 
     const { data: colors } = await supabase
       .from("material_colors")
-      .select("id, name, hex_color, material_type_id")
+      .select("id, name, hex_color, image_url, material_type_id")
       .in("material_type_id", types.map((t) => t.id));
 
     setMaterials(
@@ -123,6 +126,11 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="space-y-4">
+      <div className="rounded-md border border-brand-yellow/30 bg-brand-yellow/10 p-3 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+        <strong>Regla para las fotos:</strong> la imagen debe mostrar únicamente el material, de
+        punta a punta, sin fondo, personas, ni ningún otro objeto en la foto.
+      </div>
+
       {materials.map((material) => (
         <div
           key={material.id}
@@ -156,12 +164,20 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
               </button>
             </div>
           ) : (
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-foreground">{material.name}</p>
-                {material.price_hint ? (
-                  <p className="text-xs text-muted">{material.price_hint}</p>
-                ) : null}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <MaterialImageUploader
+                  table="material_types"
+                  recordId={material.id}
+                  currentImageUrl={material.image_url}
+                  onUploaded={loadMaterials}
+                />
+                <div>
+                  <p className="font-medium text-foreground">{material.name}</p>
+                  {material.price_hint ? (
+                    <p className="text-xs text-muted">{material.price_hint}</p>
+                  ) : null}
+                </div>
               </div>
               <div className="flex gap-1">
                 <button
@@ -185,26 +201,34 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
           )}
 
           {/* Colores de este material */}
-          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-black/10 pt-3 dark:border-white/10">
+          <div className="mt-3 space-y-2 border-t border-black/10 pt-3 dark:border-white/10">
             {material.colors.map((color) => (
-              <span
+              <div
                 key={color.id}
-                className="flex items-center gap-1.5 rounded-full border border-black/15 px-2.5 py-1 text-xs text-foreground dark:border-white/15"
+                className="flex items-center justify-between gap-2 rounded-md border border-black/10 px-2.5 py-1.5 dark:border-white/10"
               >
-                {color.hex_color ? (
-                  <span
-                    className="h-3 w-3 rounded-full border border-black/10"
-                    style={{ backgroundColor: color.hex_color }}
+                <div className="flex items-center gap-2">
+                  <MaterialImageUploader
+                    table="material_colors"
+                    recordId={color.id}
+                    currentImageUrl={color.image_url}
+                    onUploaded={loadMaterials}
                   />
-                ) : null}
-                {color.name}
+                  {!color.image_url && color.hex_color ? (
+                    <span
+                      className="h-4 w-4 rounded-full border border-black/10"
+                      style={{ backgroundColor: color.hex_color }}
+                    />
+                  ) : null}
+                  <span className="text-sm text-foreground">{color.name}</span>
+                </div>
                 <button onClick={() => deleteColor(color.id)} className="text-muted hover:text-brand-red">
-                  <X size={12} />
+                  <X size={13} />
                 </button>
-              </span>
+              </div>
             ))}
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 pt-1">
               <input
                 value={colorForms[material.id]?.name ?? ""}
                 onChange={(e) =>
@@ -213,8 +237,8 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
                     [material.id]: { ...prev[material.id], name: e.target.value, hex: prev[material.id]?.hex ?? "" },
                   }))
                 }
-                placeholder="Color"
-                className={`${inputClassName} w-24`}
+                placeholder="Nombre del color"
+                className={`${inputClassName} w-32`}
               />
               <input
                 type="color"
@@ -225,6 +249,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
                     [material.id]: { name: prev[material.id]?.name ?? "", hex: e.target.value },
                   }))
                 }
+                title="Solo para colores lisos; si el color tiene textura, súbele una foto después de crearlo"
                 className="h-8 w-8 rounded border border-black/15 dark:border-white/15"
               />
               <button
