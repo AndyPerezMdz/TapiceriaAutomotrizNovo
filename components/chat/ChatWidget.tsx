@@ -9,7 +9,7 @@ interface ChatMessage {
   content: string;
 }
 
-export function ChatWidget() {
+export function ChatWidget({ withSidebar = false }: { withSidebar?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -72,10 +72,15 @@ export function ChatWidget() {
     }
   }
 
+  const desktopLeftPanel = withSidebar ? "lg:left-[288px]" : "lg:left-5";
+  const desktopLeftButton = withSidebar ? "lg:left-[288px]" : "lg:left-5";
+
   return (
     <>
       {isOpen ? (
-        <div className="fixed bottom-40 left-5 z-50 flex h-[440px] w-[320px] flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl lg:bottom-24 lg:h-[480px] lg:w-96 dark:border-white/10">
+        <div
+          className={`fixed bottom-40 left-5 z-50 flex h-[440px] w-[320px] flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl lg:bottom-24 lg:h-[480px] lg:w-96 ${desktopLeftPanel} dark:border-white/10`}
+        >
           <div className="flex items-center justify-between bg-brand-black px-4 py-3">
             <div className="flex items-center gap-2.5">
               <div className="rounded-full bg-white/95 p-0.5">
@@ -153,7 +158,7 @@ export function ChatWidget() {
       <button
         onClick={() => setIsOpen((v) => !v)}
         aria-label="Abrir chat con Novi, asistente de IA"
-        className="fixed bottom-20 left-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-105 lg:bottom-5 lg:h-16 lg:w-16"
+        className={`fixed bottom-20 left-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-105 lg:bottom-5 lg:h-16 lg:w-16 ${desktopLeftButton}`}
         style={{
           animation: isOpen
             ? undefined

@@ -61,7 +61,7 @@ export default async function AdminLayout({
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
       </div>
 
-      <ChatWidget />
+      <ChatWidget withSidebar />
     </div>
   );
 }
