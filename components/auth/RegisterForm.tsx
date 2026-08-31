@@ -12,11 +12,14 @@ import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const refId = searchParams.get("ref");
+
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
     <Partial<Record<keyof RegisterFormData, string>>
@@ -33,14 +36,12 @@ export function RegisterForm() {
 
     const formData = new FormData(event.currentTarget);
 
-    // Honeypot: campo invisible que solo un bot llenaría
     const honeypot = String(formData.get("company") ?? "");
     if (honeypot) {
       setIsLoading(false);
       return;
     }
 
-    // Trampa de tiempo
     const elapsed = Date.now() - formLoadedAt;
     if (elapsed < 3000) {
       setFormError("Ocurrió un problema. Intenta de nuevo.");
@@ -101,12 +102,16 @@ export function RegisterForm() {
       return;
     }
 
-    if (!data.session) {
+if (!data.session || !data.user) {
       setFormError(
         "Cuenta creada. Revisa tu correo para confirmar tu registro antes de iniciar sesión.",
       );
       setIsLoading(false);
       return;
+    }
+
+    if (refId && refId !== data.user.id) {
+      await supabase.from("profiles").update({ referred_by: refId }).eq("id", data.user.id);
     }
 
     router.push("/portal");
@@ -128,7 +133,6 @@ export function RegisterForm() {
           <div className={formErrorClassName}>{formError}</div>
         ) : null}
 
-        {/* Honeypot: invisible para humanos, tentador para bots */}
         <div className="absolute left-[-9999px]" aria-hidden="true">
           <label htmlFor="company">No llenar este campo</label>
           <input

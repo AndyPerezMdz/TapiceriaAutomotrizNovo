@@ -60,6 +60,7 @@ const groups: NavGroup[] = [
       { href: "/admin/puntos", label: "Puntos", icon: Award, adminOnly: true },
       { href: "/admin/resenas", label: "Reseñas", icon: Star },
       { href: "/admin/contactos", label: "Contactos", icon: MessageSquare },
+      { href: "/admin/referidos", label: "Referidos", icon: Users, adminOnly: true },
     ],
   },
   {

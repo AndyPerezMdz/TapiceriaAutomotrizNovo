@@ -5,6 +5,7 @@ import {
   Award,
   CalendarDays,
   ChevronDown,
+  Gift,
   History,
   LayoutDashboard,
   PlusCircle,
@@ -46,6 +47,7 @@ const groups: NavGroup[] = [
     items: [
       { href: "/portal/cupones", label: "Cupones", icon: Tag },
       { href: "/portal/puntos", label: "Puntos", icon: Award },
+      { href: "/portal/referidos", label: "Referidos", icon: Gift },
     ],
   },
   {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Award, Tag, User, X } from "lucide-react";
+import { Award, Gift, Tag, User, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
@@ -19,6 +19,7 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
     { href: "/portal/cupones", label: "Cupones", icon: Tag },
     { href: "/portal/puntos", label: "Puntos", icon: Award },
     { href: "/portal/perfil", label: "Mi perfil", icon: User },
+    { href: "/portal/referidos", label: "Referidos", icon: Gift },
   ];
 
   return (
