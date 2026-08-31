@@ -26,21 +26,29 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
 
   const isAdmin = myProfile?.role === "admin";
 
-  const [{ data: order }, { data: photos }, { data: history }] = await Promise.all([
-    supabase
-      .from("orders")
-      .select(
-        "*, profiles!orders_client_id_fkey(full_name, phone), services(title), material_types(name), material_colors(name, hex_color), coupons(title, discount_type, discount_value), deleted_at",
-      )
-      .eq("id", id)
-      .single(),
-    supabase.from("order_photos").select("id, url").eq("order_id", id),
-    supabase
-      .from("order_status_history")
-      .select("id, status, note, created_at, changed_by")
-      .eq("order_id", id)
-      .order("created_at", { ascending: true }),
-  ]);
+  const [{ data: order }, { data: items }, { data: photos }, { data: history }] =
+    await Promise.all([
+      supabase
+        .from("orders")
+        .select(
+          "*, profiles!orders_client_id_fkey(full_name, phone), coupons(title, discount_type, discount_value, service_id), deleted_at",
+        )
+        .eq("id", id)
+        .single(),
+      supabase
+        .from("order_items")
+        .select(
+          "id, price, service_id, services(title), material_types(name), material_colors(name, hex_color)",
+        )
+        .eq("order_id", id)
+        .order("order", { ascending: true }),
+      supabase.from("order_photos").select("id, url").eq("order_id", id),
+      supabase
+        .from("order_status_history")
+        .select("id, status, note, created_at, changed_by")
+        .eq("order_id", id)
+        .order("created_at", { ascending: true }),
+    ]);
 
   const changedByIds = [...new Set((history ?? []).map((h) => h.changed_by).filter(Boolean))];
   const { data: historyProfiles } = changedByIds.length
@@ -79,11 +87,27 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
     title: string;
     discount_type: string;
     discount_value: number;
+    service_id: string | null;
   } | null;
 
   const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
     .filter(Boolean)
     .join(" ");
+
+  const formattedItems = (items ?? []).map((item) => {
+    const service = item.services as unknown as { title: string } | null;
+    const material = item.material_types as unknown as { name: string } | null;
+    const color = item.material_colors as unknown as { name: string } | null;
+    return {
+      id: item.id,
+      serviceTitle: service?.title ?? null,
+      serviceId: item.service_id,
+      materialLabel:
+        material?.name && color?.name
+          ? `${material.name} · ${color.name}`
+          : material?.name ?? null,
+    };
+  });
 
   return (
     <div className="mx-auto max-w-4xl overflow-x-hidden">
@@ -116,20 +140,28 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       <div className="grid gap-8 sm:grid-cols-[1fr_1.1fr]">
         <div className="min-w-0 space-y-6">
           <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-            <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+            <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
               <Car size={16} /> {vehicle || "Vehículo sin detalle"}
             </h2>
-            {coupon ? (
-              <span className="mb-2 inline-block rounded-full bg-brand-yellow/20 px-2.5 py-0.5 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                Cupón canjeado: {coupon.title}
-              </span>
-            ) : null}
-            {order.services ? (
-              <p className="mb-1 text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                {(order.services as unknown as { title: string }).title}
-              </p>
-            ) : null}
-            <p className="break-words text-sm text-muted">
+
+            <div className="space-y-2">
+              {formattedItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="rounded-md border border-black/10 px-3 py-2 dark:border-white/10"
+                >
+                  <p className="text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
+                    {formattedItems.length > 1 ? `${index + 1}. ` : ""}
+                    {item.serviceTitle ?? "Servicio"}
+                  </p>
+                  {item.materialLabel ? (
+                    <p className="text-xs text-muted">{item.materialLabel}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-3 break-words text-sm text-muted">
               {order.service_description}
             </p>
 
@@ -142,24 +174,6 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
               </div>
             ) : null}
           </div>
-
-          {order.material_types || order.material_colors ? (
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <h2 className="mb-2 text-sm font-semibold text-foreground">
-                Material elegido
-              </h2>
-              <p className="break-words text-sm text-muted">
-                {(order.material_types as unknown as { name: string } | null)?.name}
-                {order.material_colors ? (
-                  <>
-                    {" "}
-                    ·{" "}
-                    {(order.material_colors as unknown as { name: string }).name}
-                  </>
-                ) : null}
-              </p>
-            </div>
-          ) : null}
 
           {photos && photos.length > 0 ? (
             <div>
@@ -202,8 +216,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
           <OrderStaffPanel
             orderId={order.id}
             currentStatus={order.status}
-            estimatedPrice={order.estimated_price}
-            finalPrice={order.final_price}
+            items={formattedItems}
             isAdmin={isAdmin}
             clientPhone={client?.phone ?? null}
             clientName={client?.full_name ?? null}

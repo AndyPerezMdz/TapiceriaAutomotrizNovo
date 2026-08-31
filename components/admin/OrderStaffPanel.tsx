@@ -21,17 +21,24 @@ function getAllowedStatuses(current: string): string[] {
   return transitions[current] ?? [current];
 }
 
+interface OrderItem {
+  id: string;
+  serviceTitle: string | null;
+  serviceId: string | null;
+  materialLabel: string | null;
+}
+
 interface Coupon {
   title: string;
   discount_type: string;
   discount_value: number;
+  service_id: string | null;
 }
 
 interface Props {
   orderId: string;
   currentStatus: string;
-  estimatedPrice: number | null;
-  finalPrice: number | null;
+  items: OrderItem[];
   isAdmin: boolean;
   clientPhone: string | null;
   clientName: string | null;
@@ -42,8 +49,7 @@ interface Props {
 export function OrderStaffPanel({
   orderId,
   currentStatus,
-  estimatedPrice,
-  finalPrice,
+  items,
   isAdmin,
   clientPhone,
   clientName,
@@ -51,9 +57,9 @@ export function OrderStaffPanel({
   coupon,
 }: Props) {
   const router = useRouter();
-  const originalPrice = finalPrice?.toString() ?? estimatedPrice?.toString() ?? "";
   const [status, setStatus] = useState(currentStatus);
-  const [price, setPrice] = useState(originalPrice);
+  const [prices, setPrices] = useState<Record<string, string>>({});
+  const [originalPrices, setOriginalPrices] = useState<Record<string, string>>({});
   const [note, setNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -62,6 +68,19 @@ export function OrderStaffPanel({
   useEffect(() => {
     const supabase = createClient();
     supabase
+      .from("order_items")
+      .select("id, price")
+      .eq("order_id", orderId)
+      .then(({ data }) => {
+        const map: Record<string, string> = {};
+        data?.forEach((row) => {
+          map[row.id] = row.price !== null ? String(row.price) : "";
+        });
+        setPrices(map);
+        setOriginalPrices(map);
+      });
+
+    supabase
       .from("business_settings")
       .select("whatsapp")
       .eq("id", 1)
@@ -69,40 +88,68 @@ export function OrderStaffPanel({
       .then(({ data }) => {
         if (data) setWhatsappNumber(data.whatsapp);
       });
-  }, []);
+  }, [orderId]);
 
   const isLocked = currentStatus === "cancelado" || currentStatus === "entregado";
-  const priceChanged = isAdmin && price !== originalPrice;
+  const priceChanged =
+    isAdmin && items.some((item) => (prices[item.id] ?? "") !== (originalPrices[item.id] ?? ""));
 
-  const enteredPrice = Number(price) || 0;
-  const discountedPrice = coupon
-    ? coupon.discount_type === "percentage"
-      ? enteredPrice * (1 - coupon.discount_value / 100)
-      : Math.max(enteredPrice - coupon.discount_value, 0)
-    : enteredPrice;
+  function itemDiscount(item: OrderItem): number {
+    if (!coupon) return 0;
+    const raw = Number(prices[item.id]) || 0;
+    if (coupon.service_id !== null && coupon.service_id === item.serviceId) {
+      return coupon.discount_type === "percentage"
+        ? raw * (coupon.discount_value / 100)
+        : Math.min(coupon.discount_value, raw);
+    }
+    return 0;
+  }
+
+  const rawTotal = items.reduce((sum, item) => sum + (Number(prices[item.id]) || 0), 0);
+  const itemLevelDiscount = items.reduce((sum, item) => sum + itemDiscount(item), 0);
+
+  let total = rawTotal - itemLevelDiscount;
+  let generalDiscountAmount = 0;
+
+  if (coupon && coupon.service_id === null && rawTotal > 0) {
+    generalDiscountAmount =
+      coupon.discount_type === "percentage"
+        ? total * (coupon.discount_value / 100)
+        : Math.min(coupon.discount_value, total);
+    total = total - generalDiscountAmount;
+  }
+
+  total = Math.max(total, 0);
 
   async function handleSave() {
+    setIsSaving(true);
     setSaveError(null);
 
     const finalStatus = priceChanged ? "cotizado" : status;
 
-    if (finalStatus === "cotizado" && (!price || Number(price) <= 0)) {
-      setSaveError("Ingresa un precio antes de marcar el pedido como Cotizado.");
+    const hasAnyPrice = items.some((item) => Number(prices[item.id]) > 0);
+    if (finalStatus === "cotizado" && !hasAnyPrice) {
+      setSaveError("Ingresa al menos un precio antes de marcar el pedido como Cotizado.");
+      setIsSaving(false);
       return;
     }
 
-    setIsSaving(true);
-
     const supabase = createClient();
-    const priceToSave = coupon && enteredPrice > 0 ? discountedPrice : enteredPrice;
+
+    if (isAdmin) {
+      for (const item of items) {
+        const value = prices[item.id] ? Number(prices[item.id]) : null;
+        await supabase.from("order_items").update({ price: value }).eq("id", item.id);
+      }
+    }
 
     const updatePayload: Record<string, unknown> = { status: finalStatus };
 
     if (isAdmin) {
-      const numericPrice = price ? priceToSave : null;
-      updatePayload.estimated_price = numericPrice;
+      const numericTotal = hasAnyPrice ? total : null;
+      updatePayload.estimated_price = numericTotal;
       if (finalStatus === "entregado") {
-        updatePayload.final_price = numericPrice;
+        updatePayload.final_price = numericTotal;
       }
     }
 
@@ -140,6 +187,7 @@ export function OrderStaffPanel({
       body: JSON.stringify({ orderId }),
     }).catch(() => {});
 
+    setOriginalPrices(prices);
     router.refresh();
     setIsSaving(false);
     setNote("");
@@ -164,7 +212,8 @@ export function OrderStaffPanel({
       {coupon ? (
         <div className="mb-4 flex items-center gap-1.5 rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
           <Tag size={14} />
-          Este pedido tiene el cupón &quot;{coupon.title}&quot; aplicado.
+          Cupón &quot;{coupon.title}&quot; aplicado
+          {coupon.service_id === null ? " (descuento al total)" : " (descuento a un servicio)"}.
         </div>
       ) : null}
 
@@ -184,9 +233,8 @@ export function OrderStaffPanel({
         <div className="mb-4 flex items-start gap-2 rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           <span>
-            Cambiaste el precio. Al guardar, el pedido regresará a
-            &quot;Cotizado&quot; para que el cliente vuelva a aceptar o
-            rechazar.
+            Cambiaste un precio. Al guardar, el pedido regresará a &quot;Cotizado&quot; para que
+            el cliente vuelva a aceptar o rechazar.
           </span>
         </div>
       ) : null}
@@ -216,36 +264,59 @@ export function OrderStaffPanel({
         </div>
 
         {isAdmin ? (
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">
-              Precio {status === "entregado" ? "final" : "estimado"} (MXN)
-              {coupon ? " — sin descuento" : ""}
-            </label>
-            <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="0.00"
-              disabled={isLocked}
-              className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
-            />
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-foreground">
+              Precio {status === "entregado" ? "final" : "estimado"} por servicio (MXN)
+            </p>
+            {items.map((item) => {
+              const discount = itemDiscount(item);
+              return (
+                <div key={item.id}>
+                  <label className="mb-1 block text-xs text-muted">
+                    {item.serviceTitle ?? "Servicio"}
+                    {item.materialLabel ? ` — ${item.materialLabel}` : ""}
+                  </label>
+                  <input
+                    type="number"
+                    value={prices[item.id] ?? ""}
+                    onChange={(e) =>
+                      setPrices((prev) => ({ ...prev, [item.id]: e.target.value }))
+                    }
+                    placeholder="0.00"
+                    disabled={isLocked}
+                    className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
+                  />
+                  {discount > 0 ? (
+                    <p className="mt-1 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                      Con cupón: ${(Number(prices[item.id]) || 0).toLocaleString("es-MX")} −{" "}
+                      {coupon?.discount_type === "percentage"
+                        ? `${coupon.discount_value}%`
+                        : `$${coupon?.discount_value.toLocaleString("es-MX")}`}{" "}
+                      = $
+                      {((Number(prices[item.id]) || 0) - discount).toLocaleString("es-MX", {
+                        maximumFractionDigits: 2,
+                      })}
+                    </p>
+                  ) : null}
+                </div>
+              );
+            })}
 
-            {coupon && enteredPrice > 0 ? (
-              <p className="mt-2 rounded-md bg-brand-yellow/10 px-3 py-2 text-xs text-brand-yellow-dark dark:text-brand-yellow">
-                Con el cupón &quot;{coupon.title}&quot;: ${enteredPrice.toLocaleString("es-MX")}
-                {" − "}
-                {coupon.discount_type === "percentage"
-                  ? `${coupon.discount_value}%`
-                  : `$${coupon.discount_value.toLocaleString("es-MX")}`}
-                {" = "}
-                <strong>${discountedPrice.toLocaleString("es-MX", { maximumFractionDigits: 2 })}</strong>
-                {" · Este es el precio que se le enviará al cliente."}
+            <div className="border-t border-black/10 pt-3 dark:border-white/10">
+              {generalDiscountAmount > 0 ? (
+                <p className="mb-1 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                  Descuento general del cupón: -${generalDiscountAmount.toLocaleString("es-MX", { maximumFractionDigits: 2 })}
+                </p>
+              ) : null}
+              <p className="text-sm font-semibold text-foreground">
+                Total: ${total.toLocaleString("es-MX", { maximumFractionDigits: 2 })}
               </p>
-            ) : null}
+              <p className="text-xs text-muted">Este es el total que verá el cliente.</p>
+            </div>
           </div>
         ) : (
           <p className="text-xs text-muted">
-            Solo un administrador puede fijar el precio.
+            Solo un administrador puede fijar precios.
           </p>
         )}
 
