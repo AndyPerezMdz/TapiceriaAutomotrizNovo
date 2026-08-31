@@ -20,13 +20,15 @@ export function ChatWidget({ withSidebar = false }: { withSidebar?: boolean }) {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showSlowNotice, setShowSlowNotice] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const slowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, isOpen]);
+  }, [messages, isOpen, showSlowNotice]);
 
-async function sendMessage() {
+  async function sendMessage() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
@@ -34,9 +36,11 @@ async function sendMessage() {
     setMessages(newMessages);
     setInput("");
     setIsLoading(true);
+    setShowSlowNotice(false);
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30000);
+    const abortTimer = setTimeout(() => controller.abort(), 30000);
+    slowTimerRef.current = setTimeout(() => setShowSlowNotice(true), 6000);
 
     try {
       const res = await fetch("/api/chat", {
@@ -71,7 +75,9 @@ async function sendMessage() {
         },
       ]);
     } finally {
-      clearTimeout(timeout);
+      clearTimeout(abortTimer);
+      if (slowTimerRef.current) clearTimeout(slowTimerRef.current);
+      setShowSlowNotice(false);
       setIsLoading(false);
     }
   }
@@ -136,10 +142,17 @@ async function sendMessage() {
             {isLoading ? (
               <div className="flex items-end gap-2">
                 <NoviAvatar size={24} className="mb-1 shrink-0" />
-                <div className="flex items-center gap-1 rounded-lg bg-black/5 px-3 py-2.5 dark:bg-white/10">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.3s]" />
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.15s]" />
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted" />
+                <div className="max-w-[80%] rounded-lg bg-black/5 px-3 py-2.5 dark:bg-white/10">
+                  <div className="flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.3s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.15s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted" />
+                  </div>
+                  {showSlowNotice ? (
+                    <p className="mt-1.5 text-[11px] text-muted">
+                      A veces tardo un poco más de lo normal — sigo aquí.
+                    </p>
+                  ) : null}
                 </div>
               </div>
             ) : null}
