@@ -3,6 +3,7 @@ import { StaffAvatarUploader } from "@/components/admin/StaffAvatarUploader";
 import { StaffProfileForm } from "@/components/admin/StaffProfileForm";
 import { createClient } from "@/lib/supabase/server";
 import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
+import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
 
 export default async function StaffPerfilPage() {
   const supabase = await createClient();
@@ -54,6 +55,13 @@ export default async function StaffPerfilPage() {
             Contraseña
           </h2>
           <ChangePasswordForm />
+        </div>
+        <div className="mt-6">
+          <DownloadManualCard
+            title="Manual de staff"
+            description="Guía de uso del panel administrativo en PDF"
+            fileUrl="https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Staff.pdf"
+          />
         </div>
       </div>
     </div>

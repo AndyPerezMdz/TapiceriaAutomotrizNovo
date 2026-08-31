@@ -4,6 +4,7 @@ import { ProfileForm } from "@/components/portal/ProfileForm";
 import { createClient } from "@/lib/supabase/server";
 import { Calendar, ClipboardList, Star } from "lucide-react";
 import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
+import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
 
 export default async function PerfilPage() {
   const supabase = await createClient();
@@ -119,7 +120,15 @@ export default async function PerfilPage() {
           </h2>
           <ChangePasswordForm />
         </div>
+        <div className="mt-6">
+          <DownloadManualCard
+            title="Manual del cliente"
+            description="Guía de uso del portal en PDF"
+            fileUrl="https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Cliente.pdf"
+          />
+        </div>
       </div>
     </div>
+
   );
 }
