@@ -73,7 +73,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
-    Partial<Record<keyof NewOrderFormData, string>>
+    <Partial<Record<keyof NewOrderFormData, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -377,13 +377,13 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               WhatsApp.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              
+              <a
                 href="/portal/agendar-cita"
                 className="flex w-fit items-center gap-2 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
               >
                 Agendar visita en línea
               </a>
-              
+              <a
                 href={
                   whatsappNumber
                     ? buildWhatsAppLink(

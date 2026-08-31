@@ -9,22 +9,25 @@ interface Coupon {
   title: string;
   discount_type: string;
   discount_value: number;
+  service_id: string | null;
 }
 
 export function CouponSelector({
-  serviceId,
+  serviceIds,
   selectedCouponId,
   onSelect,
 }: {
-  serviceId: string | null;
+  serviceIds: string[];
   selectedCouponId: string | null;
   onSelect: (couponId: string | null) => void;
 }) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [activeCouponId, setActiveCouponId] = useState<string | null>(null);
+
+  const serviceKey = serviceIds.filter(Boolean).sort().join(",");
 
   useEffect(() => {
-    if (!serviceId) {
+    const validIds = serviceIds.filter(Boolean);
+    if (validIds.length === 0) {
       setCoupons([]);
       onSelect(null);
       return;
@@ -45,46 +48,36 @@ export function CouponSelector({
 
       const audienceFilter = isFrequent ? ["frecuentes", "ambos"] : ["clientes", "ambos"];
 
-      const [{ data: availableCoupons }, { data: redemptions }, { data: active }] =
-        await Promise.all([
-          supabase
-            .from("coupons")
-            .select("id, title, discount_type, discount_value, service_id, expires_at")
-            .eq("is_active", true)
-            .in("audience", audienceFilter)
-            .or(`service_id.is.null,service_id.eq.${serviceId}`),
-          supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
-          supabase
-            .from("active_coupons")
-            .select("coupon_id")
-            .eq("client_id", user.id)
-            .maybeSingle(),
-        ]);
+      const [{ data: availableCoupons }, { data: redemptions }] = await Promise.all([
+        supabase
+          .from("coupons")
+          .select("id, title, discount_type, discount_value, service_id, expires_at")
+          .eq("is_active", true)
+          .in("audience", audienceFilter),
+        supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
+      ]);
 
       const usedIds = new Set(redemptions?.map((r) => r.coupon_id) ?? []);
+
       const valid = (availableCoupons ?? []).filter(
-        (c) => !usedIds.has(c.id) && (!c.expires_at || c.expires_at >= today),
+        (c) =>
+          !usedIds.has(c.id) &&
+          (!c.expires_at || c.expires_at >= today) &&
+          (c.service_id === null || validIds.includes(c.service_id)),
       );
       setCoupons(valid);
-
-      const activeId = active?.coupon_id ?? null;
-      setActiveCouponId(activeId);
-
-      if (activeId && valid.some((c) => c.id === activeId)) {
-        onSelect(activeId);
-      }
     }
 
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serviceId]);
+  }, [serviceKey]);
 
   if (coupons.length === 0) return null;
 
   return (
     <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
       <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-        <Tag size={16} /> Cupón disponible para este servicio
+        <Tag size={16} /> Cupón disponible para tu pedido
       </h2>
       <div className="space-y-2">
         {coupons.map((c) => {
@@ -108,10 +101,8 @@ export function CouponSelector({
               <span>
                 <span className="font-medium text-foreground">{c.title}</span>{" "}
                 <span className="text-muted">— {discountLabel}</span>
-                {activeCouponId === c.id ? (
-                  <span className="ml-1.5 text-xs text-brand-yellow-dark dark:text-brand-yellow">
-                    (activado desde Mis cupones)
-                  </span>
+                {c.service_id === null ? (
+                  <span className="ml-1.5 text-xs text-muted">(general)</span>
                 ) : null}
               </span>
               {isSelected ? (
