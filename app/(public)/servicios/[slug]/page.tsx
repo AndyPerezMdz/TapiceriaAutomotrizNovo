@@ -1,7 +1,7 @@
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -22,6 +22,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: service ? `${service.title} | Tapicería Automotriz by NOVO` : "Servicio",
   };
+}
+
+interface SwatchColor {
+  id: string;
+  name: string;
+  hex_color: string | null;
+  image_url: string | null;
+}
+
+function SwatchGrid({ colors }: { colors: SwatchColor[] }) {
+  if (colors.length === 0) return null;
+  return (
+    <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+      {colors.map((c) => (
+        <div
+          key={c.id}
+          className="group overflow-hidden rounded-lg border border-black/10 bg-surface transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+        >
+          <div className="aspect-square w-full">
+            {c.image_url ? (
+              <img src={c.image_url} alt={c.name} className="h-full w-full object-cover" />
+            ) : c.hex_color ? (
+              <div className="h-full w-full" style={{ backgroundColor: c.hex_color }} />
+            ) : (
+              <div className="h-full w-full bg-black/5 dark:bg-white/5" />
+            )}
+          </div>
+          <p className="truncate px-2 py-1.5 text-center text-xs font-medium text-foreground">
+            {c.name}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default async function ServicioDetallePage({ params }: Props) {
@@ -78,56 +112,48 @@ export default async function ServicioDetallePage({ params }: Props) {
         {service.full_description}
       </p>
 
+      {/* CTA principal — cotizar en línea */}
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link
+          href={`/portal/nuevo-pedido?service=${service.id}`}
+          className="flex items-center gap-2 rounded-md bg-brand-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black dark:hover:bg-white/85"
+        >
+          <Sparkles size={16} /> Cotizar en línea
+        </Link>
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-6 py-3 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
+        >
+          <MessageCircle size={16} /> Preguntar por WhatsApp
+        </a>
+      </div>
+
       {materials && materials.length > 0 ? (
-        <div className="mt-12">
-          <h2 className="mb-5 text-xl font-semibold text-foreground">Materiales disponibles</h2>
-          <div className="space-y-8">
+        <div className="mt-14">
+          <h2 className="mb-6 text-xl font-semibold text-foreground">Materiales disponibles</h2>
+          <div className="space-y-10">
             {materials.map((m) => {
-              const colors = (m.material_colors as unknown as {
-                id: string;
-                name: string;
-                hex_color: string | null;
-                image_url: string | null;
-              }[]) ?? [];
+              const colors = (m.material_colors as unknown as SwatchColor[]) ?? [];
               return (
                 <div key={m.id}>
-                  <div className="flex flex-col gap-4 sm:flex-row">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                     {m.image_url ? (
                       <img
                         src={m.image_url}
                         alt={m.name}
-                        className="h-40 w-full rounded-lg object-cover sm:w-40"
+                        className="h-44 w-full rounded-xl object-cover sm:w-44"
                       />
                     ) : null}
                     <div>
-                      <p className="font-semibold text-foreground">{m.name}</p>
+                      <p className="text-lg font-semibold text-foreground">{m.name}</p>
                       {m.price_hint ? (
                         <p className="text-sm text-muted">{m.price_hint}</p>
                       ) : null}
                     </div>
                   </div>
-
-                  {colors.length > 0 ? (
-                    <div className="mt-3 flex flex-wrap gap-3">
-                      {colors.map((c) => (
-                        <div key={c.id} className="flex items-center gap-1.5">
-                          {c.image_url ? (
-                            <img
-                              src={c.image_url}
-                              alt={c.name}
-                              className="h-8 w-8 rounded-full border border-black/10 object-cover dark:border-white/10"
-                            />
-                          ) : c.hex_color ? (
-                            <span
-                              className="h-6 w-6 rounded-full border border-black/10 dark:border-white/10"
-                              style={{ backgroundColor: c.hex_color }}
-                            />
-                          ) : null}
-                          <span className="text-xs text-muted">{c.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
+                  <SwatchGrid colors={colors} />
                 </div>
               );
             })}
@@ -136,55 +162,29 @@ export default async function ServicioDetallePage({ params }: Props) {
       ) : null}
 
       {stitchings && stitchings.length > 0 ? (
-        <div className="mt-12">
-          <h2 className="mb-5 text-xl font-semibold text-foreground">Costuras disponibles</h2>
-          <div className="space-y-8">
+        <div className="mt-14">
+          <h2 className="mb-6 text-xl font-semibold text-foreground">Costuras disponibles</h2>
+          <div className="space-y-10">
             {stitchings.map((s) => {
-              const colors = (s.stitching_colors as unknown as {
-                id: string;
-                name: string;
-                hex_color: string | null;
-                image_url: string | null;
-              }[]) ?? [];
+              const colors = (s.stitching_colors as unknown as SwatchColor[]) ?? [];
               return (
                 <div key={s.id}>
-                  <div className="flex flex-col gap-4 sm:flex-row">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                     {s.image_url ? (
                       <img
                         src={s.image_url}
                         alt={s.name}
-                        className="h-40 w-full rounded-lg object-cover sm:w-40"
+                        className="h-44 w-full rounded-xl object-cover sm:w-44"
                       />
                     ) : null}
                     <div>
-                      <p className="font-semibold text-foreground">{s.name}</p>
+                      <p className="text-lg font-semibold text-foreground">{s.name}</p>
                       {s.price_hint ? (
                         <p className="text-sm text-muted">{s.price_hint}</p>
                       ) : null}
                     </div>
                   </div>
-
-                  {colors.length > 0 ? (
-                    <div className="mt-3 flex flex-wrap gap-3">
-                      {colors.map((c) => (
-                        <div key={c.id} className="flex items-center gap-1.5">
-                          {c.image_url ? (
-                            <img
-                              src={c.image_url}
-                              alt={c.name}
-                              className="h-8 w-8 rounded-full border border-black/10 object-cover dark:border-white/10"
-                            />
-                          ) : c.hex_color ? (
-                            <span
-                              className="h-6 w-6 rounded-full border border-black/10 dark:border-white/10"
-                              style={{ backgroundColor: c.hex_color }}
-                            />
-                          ) : null}
-                          <span className="text-xs text-muted">{c.name}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
+                  <SwatchGrid colors={colors} />
                 </div>
               );
             })}
@@ -192,14 +192,17 @@ export default async function ServicioDetallePage({ params }: Props) {
         </div>
       ) : null}
 
-      <a
-        href={whatsappHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-10 inline-block rounded-md bg-brand-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black dark:hover:bg-white/85"
-      >
-        Cotizar este servicio por WhatsApp
-      </a>
+      <div className="mt-14 rounded-xl border border-black/10 bg-surface p-8 text-center dark:border-white/10">
+        <p className="mb-4 text-lg font-semibold text-foreground">
+          ¿Listo para renovar el interior de tu vehículo?
+        </p>
+        <Link
+          href={`/portal/nuevo-pedido?service=${service.id}`}
+          className="inline-flex items-center gap-2 rounded-md bg-brand-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black dark:hover:bg-white/85"
+        >
+          <Sparkles size={16} /> Cotizar {service.title.toLowerCase()} en línea
+        </Link>
+      </div>
     </div>
   );
 }
