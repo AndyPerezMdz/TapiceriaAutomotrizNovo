@@ -1,7 +1,7 @@
 "use client";
 
 import { NoviAvatar } from "@/components/chat/NoviAvatar";
-import { MessageSquareText, Send, Sparkles, X } from "lucide-react";
+import { Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface ChatMessage {
@@ -196,7 +196,7 @@ export function ChatWidget({ variant = "floating" }: Props) {
           aria-label="Abrir chat con Novi, asistente de IA"
           className="relative flex h-8 w-8 items-center justify-center rounded-full text-muted transition hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
         >
-          <MessageSquareText size={18} />
+          <NoviAvatar size={26} />
         </button>
 
         {isOpen ? (
