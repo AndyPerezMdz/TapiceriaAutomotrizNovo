@@ -78,6 +78,16 @@ export function RegisterForm() {
       return;
     }
 
+    // Guarda el referido ANTES de crear la cuenta, para que sobreviva
+    // aunque tenga que confirmar su correo antes de tener sesión.
+    if (refId) {
+      try {
+        localStorage.setItem("pending_referral", refId);
+      } catch {
+        // localStorage puede fallar en modo incógnito estricto; no es crítico.
+      }
+    }
+
     const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email,
@@ -102,16 +112,12 @@ export function RegisterForm() {
       return;
     }
 
-if (!data.session || !data.user) {
+    if (!data.session || !data.user) {
       setFormError(
         "Cuenta creada. Revisa tu correo para confirmar tu registro antes de iniciar sesión.",
       );
       setIsLoading(false);
       return;
-    }
-
-    if (refId) {
-      await supabase.rpc("set_referred_by", { p_referred_by: refId });
     }
 
     router.push("/portal");

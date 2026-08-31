@@ -1,6 +1,7 @@
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { ApplyPendingReferral } from "@/components/portal/ApplyPendingReferral";
 import { BottomNav } from "@/components/portal/BottomNav";
 import { NotificationBell } from "@/components/portal/NotificationBell";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
@@ -72,6 +73,7 @@ export default async function PortalLayout({
 
       <BottomNav />
       <ChatWidget />
+      <ApplyPendingReferral />
     </div>
   );
 }
