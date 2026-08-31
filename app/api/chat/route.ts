@@ -37,7 +37,41 @@ export async function POST(request: Request) {
       contextText += `- ${row.value}\n`;
     });
 
-    // Si hay sesión de cliente, agrega SUS pedidos (respetando RLS automáticamente)
+    // Cupones generales activos (públicos, no ligados a un cliente en específico)
+    const { data: generalCoupons } = await supabase
+      .from("coupons")
+      .select("title, description, discount_type, discount_value, audience, expires_at, services(title)")
+      .eq("is_active", true)
+      .is("client_id", null);
+
+    if (generalCoupons && generalCoupons.length > 0) {
+      contextText += "\nCupones de descuento activos actualmente:\n";
+      generalCoupons.forEach((c) => {
+        const discount =
+          c.discount_type === "percentage"
+            ? `${c.discount_value}%`
+            : `$${c.discount_value}`;
+        const service = (c.services as unknown as { title: string } | null)?.title;
+        contextText += `- "${c.title}": ${discount} de descuento${service ? ` (solo en ${service})` : " (aplica a cualquier servicio)"}${c.audience === "frecuentes" ? " — solo para clientes frecuentes" : ""}${c.expires_at ? ` — vence el ${c.expires_at}` : ""}.\n`;
+      });
+    }
+
+    // Programa de puntos de lealtad (reglas actuales, siempre al día)
+    const { data: loyaltySettings } = await supabase
+      .from("loyalty_settings")
+      .select("pesos_per_point, points_for_reward, reward_type, reward_value")
+      .eq("id", 1)
+      .single();
+
+    if (loyaltySettings) {
+      const reward =
+        loyaltySettings.reward_type === "percentage"
+          ? `${loyaltySettings.reward_value}% de descuento`
+          : `$${loyaltySettings.reward_value} de descuento`;
+      contextText += `\nPrograma de puntos de lealtad: los clientes ganan 1 punto por cada $${loyaltySettings.pesos_per_point} gastados en pedidos entregados. Al acumular ${loyaltySettings.points_for_reward} puntos, pueden canjearlos por un cupón de ${reward}, disponible en su portal en "Mis puntos".\n`;
+    }
+
+    // Si hay sesión de cliente, agrega SUS pedidos, puntos y cupones personales
     let personalizedGreeting = "";
     if (user) {
       const { data: profile } = await supabase
@@ -67,6 +101,31 @@ export async function POST(request: Request) {
           });
         } else {
           contextText += `\nEl cliente ${profile.full_name} no tiene pedidos registrados todavía.\n`;
+        }
+
+        const { data: points } = await supabase
+          .from("loyalty_points")
+          .select("balance")
+          .eq("client_id", user.id)
+          .maybeSingle();
+
+        contextText += `\nPuntos de lealtad de este cliente: ${points?.balance ?? 0} puntos acumulados actualmente.\n`;
+
+        const { data: personalCoupons } = await supabase
+          .from("coupons")
+          .select("title, discount_type, discount_value")
+          .eq("is_active", true)
+          .eq("client_id", user.id);
+
+        if (personalCoupons && personalCoupons.length > 0) {
+          contextText += "\nCupones personales de este cliente (generados por canje de puntos):\n";
+          personalCoupons.forEach((c) => {
+            const discount =
+              c.discount_type === "percentage"
+                ? `${c.discount_value}%`
+                : `$${c.discount_value}`;
+            contextText += `- "${c.title}": ${discount} de descuento.\n`;
+          });
         }
 
         personalizedGreeting = ` El cliente con el que hablas se llama ${profile.full_name}, puedes usar su nombre si es natural.`;
