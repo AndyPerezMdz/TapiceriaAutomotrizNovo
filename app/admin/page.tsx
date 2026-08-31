@@ -115,46 +115,46 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Dashboard
         </h1>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-2 text-base text-muted">
           Panorama general del taller.
         </p>
       </div>
 
-      {/* Barra de métricas compacta */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+      {/* Métricas */}
+      <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-lg border border-black/10 bg-surface p-3 text-center dark:border-white/10"
+            className="rounded-xl border border-black/10 bg-surface p-5 text-center dark:border-white/10"
           >
-            <stat.icon size={14} className="mx-auto mb-1 text-muted" />
-            <p className="text-xl font-bold text-foreground">{stat.value}</p>
-            <p className="text-[11px] text-muted">{stat.label}</p>
+            <stat.icon size={20} className="mx-auto mb-2 text-muted" />
+            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+            <p className="mt-1 text-xs text-muted">{stat.label}</p>
           </div>
         ))}
-        <div className="col-span-2 rounded-lg border border-brand-yellow/30 bg-brand-yellow/10 p-3 text-center sm:col-span-1">
-          <DollarSign size={14} className="mx-auto mb-1 text-brand-yellow-dark dark:text-brand-yellow" />
-          <p className="text-xl font-bold text-foreground">
+        <div className="col-span-2 rounded-xl border border-brand-yellow/30 bg-brand-yellow/10 p-5 text-center sm:col-span-1">
+          <DollarSign size={20} className="mx-auto mb-2 text-brand-yellow-dark dark:text-brand-yellow" />
+          <p className="text-2xl font-bold text-foreground">
             ${monthlyRevenue.toLocaleString("es-MX")}
           </p>
-          <p className="text-[11px] text-muted">Este mes</p>
+          <p className="mt-1 text-xs text-muted">Este mes</p>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
+      <div className="grid gap-10 xl:grid-cols-[1fr_300px]">
         {/* Columna principal */}
-        <div className="min-w-0 space-y-6">
+        <div className="min-w-0 space-y-10">
           <div>
-            <h2 className="mb-3 text-sm font-semibold text-foreground">
+            <h2 className="mb-4 text-base font-semibold text-foreground">
               Necesita tu atención
             </h2>
 
             {formattedAttention.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
+              <div className="rounded-xl border border-dashed border-black/15 bg-surface p-12 text-center dark:border-white/15">
                 <p className="text-sm text-muted">No hay pedidos pendientes de revisión.</p>
               </div>
             ) : (
@@ -181,7 +181,7 @@ export default async function AdminDashboardPage() {
             {formattedAttention.length > 0 ? (
               <Link
                 href="/admin/pedidos"
-                className="mt-3 inline-block text-xs font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow"
+                className="mt-4 inline-block text-sm font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow"
               >
                 Ver todos los pedidos →
               </Link>
@@ -189,36 +189,36 @@ export default async function AdminDashboardPage() {
           </div>
 
           <div>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-foreground">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-base font-semibold text-foreground">
                 Actividad reciente
               </h2>
               <Link
                 href="/admin/historial"
-                className="text-xs font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow"
+                className="text-sm font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow"
               >
                 Ver todo
               </Link>
             </div>
 
             {!recentActivity || recentActivity.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
+              <div className="rounded-xl border border-dashed border-black/15 bg-surface p-12 text-center dark:border-white/15">
                 <p className="text-sm text-muted">Sin actividad todavía.</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {recentActivity.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex items-start gap-2 rounded-lg border border-black/10 bg-surface p-3 dark:border-white/10"
+                    className="flex items-start gap-3 rounded-xl border border-black/10 bg-surface p-4 dark:border-white/10"
                   >
-                    <History size={14} className="mt-0.5 shrink-0 text-muted" />
+                    <History size={16} className="mt-0.5 shrink-0 text-muted" />
                     <div className="min-w-0">
                       <p className="text-sm text-foreground">
                         <span className="font-medium">{entry.actor_name ?? "Sistema"}</span>{" "}
                         · {entry.action.toLowerCase()}
                       </p>
-                      <p className="truncate text-xs text-muted">
+                      <p className="mt-0.5 truncate text-xs text-muted">
                         {entry.entity_type}: {entry.entity_label}
                       </p>
                     </div>
@@ -229,54 +229,54 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Barra lateral: accesos rápidos */}
+        {/* Barra lateral */}
         <div className="space-y-4">
           <Link
             href="/admin/citas"
-            className="block rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+            className="block rounded-xl border border-black/10 bg-surface p-5 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
           >
-            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-muted">
-              <Calendar size={13} /> CITAS PENDIENTES
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted">
+              <Calendar size={14} /> Citas pendientes
             </div>
-            <p className="text-xl font-bold text-foreground">{pendingAppointments ?? 0}</p>
+            <p className="text-2xl font-bold text-foreground">{pendingAppointments ?? 0}</p>
           </Link>
 
           <Link
             href="/admin/cupones"
-            className="block rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+            className="block rounded-xl border border-black/10 bg-surface p-5 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
           >
-            <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-muted">
-              <Tag size={13} /> CUPONES ACTIVOS
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted">
+              <Tag size={14} /> Cupones activos
             </div>
-            <p className="text-xl font-bold text-foreground">{activeCouponsCount ?? 0}</p>
+            <p className="text-2xl font-bold text-foreground">{activeCouponsCount ?? 0}</p>
           </Link>
 
-          <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
-            <div className="mb-3 flex items-center gap-1.5 text-xs font-semibold text-muted">
-              <Wrench size={13} /> ACCESOS RÁPIDOS
+          <div className="rounded-xl border border-black/10 bg-surface p-5 dark:border-white/10">
+            <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted">
+              <Wrench size={14} /> Accesos rápidos
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Link
                 href="/admin/servicios"
-                className="block rounded-md px-2.5 py-1.5 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
+                className="block rounded-md px-3 py-2 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
               >
                 Servicios
               </Link>
               <Link
                 href="/admin/resenas"
-                className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
               >
-                <Star size={13} /> Reseñas
+                <Star size={14} /> Reseñas
               </Link>
               <Link
                 href="/admin/puntos"
-                className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
               >
-                <Award size={13} /> Puntos de lealtad
+                <Award size={14} /> Puntos de lealtad
               </Link>
               <Link
                 href="/admin/clientes"
-                className="block rounded-md px-2.5 py-1.5 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
+                className="block rounded-md px-3 py-2 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
               >
                 Clientes
               </Link>
