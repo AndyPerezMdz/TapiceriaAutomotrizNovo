@@ -14,6 +14,8 @@ import {
   ImagePlus,
   MessageCircle,
   Palette,
+  Plus,
+  Trash2,
   Wrench,
   X,
 } from "lucide-react";
@@ -34,6 +36,11 @@ interface Service {
   title: string;
 }
 
+interface StackLine {
+  key: string;
+  selection: MaterialSelection;
+}
+
 const emptySelection: MaterialSelection = {
   serviceId: null,
   serviceName: null,
@@ -49,8 +56,11 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const repeatOrderId = searchParams.get("repeat");
+  const preselectedService = searchParams.get("service");
 
-  const [selection, setSelection] = useState<MaterialSelection>(emptySelection);
+  const [stack, setStack] = useState<StackLine[]>([
+    { key: crypto.randomUUID(), selection: emptySelection },
+  ]);
   const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null);
 
   const [vehicleMake, setVehicleMake] = useState("");
@@ -58,16 +68,12 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const [vehicleYear, setVehicleYear] = useState("");
   const [description, setDescription] = useState("");
 
-  const [initialValues, setInitialValues] = useState<{
-    serviceId?: string;
-    materialTypeId?: string;
-    materialColorId?: string;
-  } | null>(null);
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState
-    <Partial<Record<keyof NewOrderFormData, string>>
+    Partial<Record<keyof NewOrderFormData, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,36 +91,74 @@ export function NewOrderForm({ services }: { services: Service[] }) {
       });
   }, []);
 
+  // Precarga: repetir pedido (trae todas las líneas del stack original) o preseleccionar servicio
   useEffect(() => {
-    if (!repeatOrderId) {
-      setInitialValues({});
-      return;
-    }
+    if (initialLoaded) return;
 
-    const supabase = createClient();
-    supabase
-      .from("orders")
-      .select(
-        "vehicle_make, vehicle_model, vehicle_year, service_id, material_type_id, material_color_id",
-      )
-      .eq("id", repeatOrderId)
-      .single()
-      .then(({ data }) => {
-        if (data) {
-          setVehicleMake(data.vehicle_make ?? "");
-          setVehicleModel(data.vehicle_model ?? "");
-          setVehicleYear(data.vehicle_year ? String(data.vehicle_year) : "");
-          setInitialValues({
-            serviceId: data.service_id ?? undefined,
-            materialTypeId: data.material_type_id ?? undefined,
-            materialColorId: data.material_color_id ?? undefined,
-          });
-        } else {
-          setInitialValues({});
+    if (repeatOrderId) {
+      const supabase = createClient();
+      Promise.all([
+        supabase
+          .from("orders")
+          .select("vehicle_make, vehicle_model, vehicle_year")
+          .eq("id", repeatOrderId)
+          .single(),
+        supabase
+          .from("order_items")
+          .select("service_id, material_type_id, material_color_id, services(title), material_types(name), material_colors(name)")
+          .eq("order_id", repeatOrderId)
+          .order("order", { ascending: true }),
+      ]).then(([orderRes, itemsRes]) => {
+        if (orderRes.data) {
+          setVehicleMake(orderRes.data.vehicle_make ?? "");
+          setVehicleModel(orderRes.data.vehicle_model ?? "");
+          setVehicleYear(orderRes.data.vehicle_year ? String(orderRes.data.vehicle_year) : "");
         }
+        if (itemsRes.data && itemsRes.data.length > 0) {
+          setStack(
+            itemsRes.data.map((item) => ({
+              key: crypto.randomUUID(),
+              selection: {
+                serviceId: item.service_id,
+                serviceName: (item.services as unknown as { title: string } | null)?.title ?? null,
+                materialTypeId: item.material_type_id,
+                materialName: (item.material_types as unknown as { name: string } | null)?.name ?? null,
+                materialColorId: item.material_color_id,
+                colorName: (item.material_colors as unknown as { name: string } | null)?.name ?? null,
+                priceHint: null,
+                requiresVisit: false,
+              },
+            })),
+          );
+        }
+        setInitialLoaded(true);
       });
+    } else if (preselectedService) {
+      setStack([
+        {
+          key: crypto.randomUUID(),
+          selection: { ...emptySelection, serviceId: preselectedService },
+        },
+      ]);
+      setInitialLoaded(true);
+    } else {
+      setInitialLoaded(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repeatOrderId]);
+  }, [repeatOrderId, preselectedService]);
+
+  function updateLine(key: string, selection: MaterialSelection) {
+    setStack((prev) => prev.map((line) => (line.key === key ? { ...line, selection } : line)));
+  }
+
+  function addLine() {
+    setStack((prev) => [...prev, { key: crypto.randomUUID(), selection: emptySelection }]);
+  }
+
+  function removeLine(key: string) {
+    setStack((prev) => (prev.length > 1 ? prev.filter((line) => line.key !== key) : prev));
+    if (selectedCouponId) setSelectedCouponId(null);
+  }
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
@@ -145,14 +189,18 @@ export function NewOrderForm({ services }: { services: Service[] }) {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
   }
 
+  const anyRequiresVisit = stack.some((line) => line.selection.requiresVisit);
+  const serviceIds = stack.map((line) => line.selection.serviceId).filter(Boolean) as string[];
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFieldErrors({});
     setFormError(null);
     setIsLoading(true);
 
+    const firstServiceId = stack[0]?.selection.serviceId ?? "";
     const values = {
-      serviceId: selection.serviceId ?? "",
+      serviceId: firstServiceId,
       vehicleMake,
       vehicleModel,
       vehicleYear,
@@ -170,6 +218,13 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         vehicleYear: errors.vehicleYear?.[0],
         serviceDescription: errors.serviceDescription?.[0],
       });
+      setIsLoading(false);
+      return;
+    }
+
+    const incompleteLine = stack.find((line) => !line.selection.serviceId);
+    if (incompleteLine) {
+      setFormError("Elige un servicio en cada línea, o quita las líneas vacías.");
       setIsLoading(false);
       return;
     }
@@ -193,9 +248,6 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         vehicle_model: parsed.data.vehicleModel,
         vehicle_year: Number(parsed.data.vehicleYear),
         service_description: parsed.data.serviceDescription,
-        service_id: selection.serviceId,
-        material_type_id: selection.materialTypeId,
-        material_color_id: selection.materialColorId,
       })
       .select("id")
       .single();
@@ -205,6 +257,16 @@ export function NewOrderForm({ services }: { services: Service[] }) {
       setIsLoading(false);
       return;
     }
+
+    const itemsToInsert = stack.map((line, index) => ({
+      order_id: order.id,
+      service_id: line.selection.serviceId,
+      material_type_id: line.selection.materialTypeId,
+      material_color_id: line.selection.materialColorId,
+      order: index,
+    }));
+
+    await supabase.from("order_items").insert(itemsToInsert);
 
     if (selectedCouponId) {
       await supabase.rpc("apply_coupon_to_order", {
@@ -246,6 +308,10 @@ export function NewOrderForm({ services }: { services: Service[] }) {
 
   const vehicleSummary = [vehicleMake, vehicleModel, vehicleYear].filter(Boolean).join(" ");
 
+  if (!initialLoaded) {
+    return <p className="text-sm text-muted">Cargando...</p>;
+  }
+
   return (
     <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
       <form onSubmit={handleSubmit} className="min-w-0 space-y-6">
@@ -255,44 +321,69 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           </div>
         ) : null}
 
-        <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-          <h2 className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-            <Wrench size={16} /> Servicio y material
-          </h2>
-          {initialValues !== null ? (
-            <ServiceMaterialSelector
-              services={services}
-              onSelectionChange={setSelection}
-              initialServiceId={initialValues.serviceId}
-              initialMaterialTypeId={initialValues.materialTypeId}
-              initialMaterialColorId={initialValues.materialColorId}
-            />
-          ) : (
-            <p className="text-sm text-muted">Cargando...</p>
-          )}
+        <div className="space-y-4">
+          {stack.map((line, index) => (
+            <div
+              key={line.key}
+              className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10"
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                  <Wrench size={16} /> Servicio {stack.length > 1 ? `#${index + 1}` : ""}
+                </h2>
+                {stack.length > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => removeLine(line.key)}
+                    className="text-muted transition hover:text-brand-red"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                ) : null}
+              </div>
+              <ServiceMaterialSelector
+                services={services}
+                onSelectionChange={(sel) => updateLine(line.key, sel)}
+                initialServiceId={line.selection.serviceId ?? undefined}
+                initialMaterialTypeId={line.selection.materialTypeId ?? undefined}
+                initialMaterialColorId={line.selection.materialColorId ?? undefined}
+              />
+            </div>
+          ))}
+
+          {!anyRequiresVisit ? (
+            <button
+              type="button"
+              onClick={addLine}
+              className="flex w-fit items-center gap-1.5 rounded-md border border-dashed border-black/20 px-4 py-2 text-sm font-medium text-foreground transition hover:border-black/40 dark:border-white/20"
+            >
+              <Plus size={15} /> Agregar otro servicio a este pedido
+            </button>
+          ) : null}
+
           {fieldErrors.serviceId ? (
-            <p className="mt-2 text-sm text-brand-red">{fieldErrors.serviceId}</p>
+            <p className="text-sm text-brand-red">{fieldErrors.serviceId}</p>
           ) : null}
         </div>
 
-        {selection.requiresVisit ? (
+        {anyRequiresVisit ? (
           <div className="rounded-lg border border-brand-yellow/30 bg-brand-yellow/10 p-5">
             <p className="font-medium text-foreground">
-              Este color necesita una visita al taller
+              Uno de tus servicios necesita una visita al taller
             </p>
             <p className="mt-1 text-sm text-muted">
-              Para colores de piel distintos al negro de fábrica, necesitamos
-              tomar una muestra de tu asiento para igualar el tono exacto.
-              Agenda tu visita en línea, o contáctanos por WhatsApp.
+              Para colores de piel distintos al negro de fábrica, necesitamos tomar una muestra de
+              tu asiento para igualar el tono exacto. Agenda tu visita en línea, o contáctanos por
+              WhatsApp.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <a
+              
                 href="/portal/agendar-cita"
                 className="flex w-fit items-center gap-2 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
               >
                 Agendar visita en línea
               </a>
-              <a
+              
                 href={
                   whatsappNumber
                     ? buildWhatsAppLink(
@@ -456,31 +547,26 @@ export function NewOrderForm({ services }: { services: Service[] }) {
             Resumen de tu solicitud
           </h2>
 
-          <div className="space-y-3 text-sm">
-            <div className="flex items-start gap-2">
-              <Wrench size={15} className="mt-0.5 shrink-0 text-muted" />
-              <div>
-                <p className="text-xs text-muted">Servicio</p>
-                <p className="text-foreground">
-                  {selection.serviceName ?? "Sin elegir todavía"}
-                </p>
+          <div className="space-y-4 text-sm">
+            {stack.map((line, index) => (
+              <div key={line.key} className="flex items-start gap-2">
+                <Wrench size={15} className="mt-0.5 shrink-0 text-muted" />
+                <div>
+                  <p className="text-xs text-muted">
+                    Servicio {stack.length > 1 ? `#${index + 1}` : ""}
+                  </p>
+                  <p className="text-foreground">
+                    {line.selection.serviceName ?? "Sin elegir todavía"}
+                  </p>
+                  {line.selection.materialName ? (
+                    <p className="text-xs text-muted">
+                      {line.selection.materialName}
+                      {line.selection.colorName ? ` · ${line.selection.colorName}` : ""}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-start gap-2">
-              <Palette size={15} className="mt-0.5 shrink-0 text-muted" />
-              <div>
-                <p className="text-xs text-muted">Material y color</p>
-                <p className="text-foreground">
-                  {selection.materialName
-                    ? `${selection.materialName}${selection.colorName ? ` · ${selection.colorName}` : ""}`
-                    : "Sin elegir todavía"}
-                </p>
-                {selection.priceHint ? (
-                  <p className="text-xs text-muted">{selection.priceHint}</p>
-                ) : null}
-              </div>
-            </div>
+            ))}
 
             <div className="flex items-start gap-2">
               <Car size={15} className="mt-0.5 shrink-0 text-muted" />
@@ -516,15 +602,15 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           <div className="mt-5 border-t border-black/10 pt-4 dark:border-white/10">
             <p className="flex items-center gap-1.5 text-xs text-muted">
               <Check size={13} className="text-brand-yellow-dark dark:text-brand-yellow" />
-              Un miembro de nuestro equipo revisará tu solicitud y te enviará un
-              precio estimado antes de iniciar cualquier trabajo.
+              Un miembro de nuestro equipo revisará tu solicitud y te enviará un precio por cada
+              servicio, más el total.
             </p>
           </div>
         </div>
 
-        {!selection.requiresVisit ? (
+        {!anyRequiresVisit ? (
           <CouponSelector
-            serviceId={selection.serviceId}
+            serviceIds={serviceIds}
             selectedCouponId={selectedCouponId}
             onSelect={setSelectedCouponId}
           />
