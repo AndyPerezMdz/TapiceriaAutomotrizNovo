@@ -26,7 +26,7 @@ export function ChatWidget({ withSidebar = false }: { withSidebar?: boolean }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, isOpen]);
 
-  async function sendMessage() {
+async function sendMessage() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
@@ -34,6 +34,9 @@ export function ChatWidget({ withSidebar = false }: { withSidebar?: boolean }) {
     setMessages(newMessages);
     setInput("");
     setIsLoading(true);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
 
     try {
       const res = await fetch("/api/chat", {
@@ -43,6 +46,7 @@ export function ChatWidget({ withSidebar = false }: { withSidebar?: boolean }) {
           message: trimmed,
           history: newMessages.slice(0, -1),
         }),
+        signal: controller.signal,
       });
 
       const data = await res.json();
@@ -55,12 +59,19 @@ export function ChatWidget({ withSidebar = false }: { withSidebar?: boolean }) {
       } else {
         setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
       }
-    } catch {
+    } catch (err) {
+      const isTimeout = err instanceof Error && err.name === "AbortError";
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Lo siento, tuve un problema de conexión." },
+        {
+          role: "assistant",
+          content: isTimeout
+            ? "Tardé demasiado en responder. Intenta de nuevo en un momento."
+            : "Lo siento, tuve un problema de conexión.",
+        },
       ]);
     } finally {
+      clearTimeout(timeout);
       setIsLoading(false);
     }
   }
