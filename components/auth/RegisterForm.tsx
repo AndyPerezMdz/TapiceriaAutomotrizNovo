@@ -110,8 +110,8 @@ if (!data.session || !data.user) {
       return;
     }
 
-    if (refId && refId !== data.user.id) {
-      await supabase.from("profiles").update({ referred_by: refId }).eq("id", data.user.id);
+    if (refId) {
+      await supabase.rpc("set_referred_by", { p_referred_by: refId });
     }
 
     router.push("/portal");
