@@ -24,17 +24,20 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
   const audienceFilter = isFrequent ? ["frecuentes", "ambos"] : ["clientes", "ambos"];
   const today = new Date().toISOString().slice(0, 10);
 
-  const [{ data: allCoupons }, { data: redemptions }] = await Promise.all([
-    supabase
-      .from("coupons")
-      .select(
-        "id, title, description, discount_type, discount_value, expires_at, service_id, services(title)",
-      )
-      .in("audience", audienceFilter),
-    supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
-  ]);
+  const [{ data: allCoupons }, { data: redemptions }, { data: activeCoupon }] =
+    await Promise.all([
+      supabase
+        .from("coupons")
+        .select(
+          "id, title, description, discount_type, discount_value, expires_at, service_id, services(title)",
+        )
+        .in("audience", audienceFilter),
+      supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
+      supabase.from("active_coupons").select("coupon_id").eq("client_id", user.id).maybeSingle(),
+    ]);
 
   const redeemedIds = new Set(redemptions?.map((r) => r.coupon_id) ?? []);
+  const activeCouponId = activeCoupon?.coupon_id ?? null;
 
   const activos =
     allCoupons?.filter(
@@ -64,6 +67,13 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
           ? "Gracias por ser cliente frecuente — estos son tus cupones."
           : "Descuentos disponibles para tu próximo pedido."}
       </p>
+
+      {activeCouponId ? (
+        <div className="mb-6 rounded-md border border-brand-yellow/40 bg-brand-yellow/10 px-4 py-3 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+          Tienes un cupón activado — aparecerá automáticamente cuando cotices un
+          servicio compatible.
+        </div>
+      ) : null}
 
       <div className="mb-6 flex gap-2">
         {tabs.map((t) => (
@@ -125,7 +135,7 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
                 </p>
 
                 {activeTab === "activos" ? (
-                  <ActivateCouponButton couponId={c.id} serviceId={c.service_id} />
+                  <ActivateCouponButton couponId={c.id} isActive={activeCouponId === c.id} />
                 ) : null}
               </div>
             );

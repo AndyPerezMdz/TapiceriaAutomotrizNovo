@@ -1,22 +1,54 @@
-import Link from "next/link";
+"use client";
+
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function ActivateCouponButton({
   couponId,
-  serviceId,
+  isActive,
 }: {
   couponId: string;
-  serviceId: string | null;
+  isActive: boolean;
 }) {
-  const href = serviceId
-    ? `/portal/nuevo-pedido?coupon=${couponId}&service=${serviceId}`
-    : `/portal/nuevo-pedido?coupon=${couponId}`;
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+
+  async function handleClick() {
+    setIsSaving(true);
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setIsSaving(false);
+      return;
+    }
+
+    if (isActive) {
+      await supabase.from("active_coupons").delete().eq("client_id", user.id);
+    } else {
+      await supabase
+        .from("active_coupons")
+        .upsert({ client_id: user.id, coupon_id: couponId });
+    }
+
+    router.refresh();
+    setIsSaving(false);
+  }
 
   return (
-    <Link
-      href={href}
-      className="mt-3 inline-block rounded-md bg-brand-black px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+    <button
+      onClick={handleClick}
+      disabled={isSaving}
+      className={`mt-3 rounded-md px-4 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${
+        isActive
+          ? "border border-brand-yellow-dark bg-brand-yellow/20 text-brand-yellow-dark dark:text-brand-yellow"
+          : "bg-brand-black text-white hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+      }`}
     >
-      Activar cupón
-    </Link>
+      {isSaving ? "..." : isActive ? "Activado ✓ (clic para quitar)" : "Activar cupón"}
+    </button>
   );
 }

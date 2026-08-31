@@ -30,7 +30,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
     supabase
       .from("orders")
       .select(
-        "*, profiles!orders_client_id_fkey(full_name, phone), services(title), material_types(name), material_colors(name, hex_color), deleted_at",
+        "*, profiles!orders_client_id_fkey(full_name, phone), services(title), material_types(name), material_colors(name, hex_color), coupons(title, discount_type, discount_value), deleted_at",
       )
       .eq("id", id)
       .single(),
@@ -60,7 +60,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
         >
           <ArrowLeft size={16} /> Volver a pedidos
         </Link>
-        <div className="rounded-lg border border-black/10 bg-surface p-10 dark:border-white/10">
+        <div className="rounded-lg border border-black/10 bg-surface p-10 text-center dark:border-white/10">
           <p className="font-medium text-foreground">Este pedido fue eliminado</p>
           <p className="mt-2 text-sm text-muted">
             Ya no se puede consultar la información de este pedido.
@@ -73,6 +73,12 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
   const client = order.profiles as unknown as {
     full_name: string;
     phone: string;
+  } | null;
+
+  const coupon = order.coupons as unknown as {
+    title: string;
+    discount_type: string;
+    discount_value: number;
   } | null;
 
   const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
@@ -113,6 +119,11 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
               <Car size={16} /> {vehicle || "Vehículo sin detalle"}
             </h2>
+            {coupon ? (
+              <span className="mb-2 inline-block rounded-full bg-brand-yellow/20 px-2.5 py-0.5 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
+                Cupón canjeado: {coupon.title}
+              </span>
+            ) : null}
             {order.services ? (
               <p className="mb-1 text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
                 {(order.services as unknown as { title: string }).title}
@@ -197,6 +208,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             clientPhone={client?.phone ?? null}
             clientName={client?.full_name ?? null}
             vehicleLabel={vehicle}
+            coupon={coupon}
           />
         </div>
       </div>

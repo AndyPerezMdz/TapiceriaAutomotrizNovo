@@ -21,6 +21,7 @@ export function CouponSelector({
   onSelect: (couponId: string | null) => void;
 }) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [activeCouponId, setActiveCouponId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!serviceId) {
@@ -44,21 +45,34 @@ export function CouponSelector({
 
       const audienceFilter = isFrequent ? ["frecuentes", "ambos"] : ["clientes", "ambos"];
 
-      const [{ data: availableCoupons }, { data: redemptions }] = await Promise.all([
-        supabase
-          .from("coupons")
-          .select("id, title, discount_type, discount_value, service_id, expires_at")
-          .eq("is_active", true)
-          .in("audience", audienceFilter)
-          .or(`service_id.is.null,service_id.eq.${serviceId}`),
-        supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
-      ]);
+      const [{ data: availableCoupons }, { data: redemptions }, { data: active }] =
+        await Promise.all([
+          supabase
+            .from("coupons")
+            .select("id, title, discount_type, discount_value, service_id, expires_at")
+            .eq("is_active", true)
+            .in("audience", audienceFilter)
+            .or(`service_id.is.null,service_id.eq.${serviceId}`),
+          supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
+          supabase
+            .from("active_coupons")
+            .select("coupon_id")
+            .eq("client_id", user.id)
+            .maybeSingle(),
+        ]);
 
       const usedIds = new Set(redemptions?.map((r) => r.coupon_id) ?? []);
       const valid = (availableCoupons ?? []).filter(
         (c) => !usedIds.has(c.id) && (!c.expires_at || c.expires_at >= today),
       );
       setCoupons(valid);
+
+      const activeId = active?.coupon_id ?? null;
+      setActiveCouponId(activeId);
+
+      if (activeId && valid.some((c) => c.id === activeId)) {
+        onSelect(activeId);
+      }
     }
 
     load();
@@ -94,6 +108,11 @@ export function CouponSelector({
               <span>
                 <span className="font-medium text-foreground">{c.title}</span>{" "}
                 <span className="text-muted">— {discountLabel}</span>
+                {activeCouponId === c.id ? (
+                  <span className="ml-1.5 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                    (activado desde Mis cupones)
+                  </span>
+                ) : null}
               </span>
               {isSelected ? (
                 <span className="text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">

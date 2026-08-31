@@ -3,7 +3,7 @@
 import { statusLabels } from "@/lib/validations/admin-order";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
-import { MessageCircle, AlertTriangle } from "lucide-react";
+import { MessageCircle, AlertTriangle, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -21,6 +21,12 @@ function getAllowedStatuses(current: string): string[] {
   return transitions[current] ?? [current];
 }
 
+interface Coupon {
+  title: string;
+  discount_type: string;
+  discount_value: number;
+}
+
 interface Props {
   orderId: string;
   currentStatus: string;
@@ -30,6 +36,7 @@ interface Props {
   clientPhone: string | null;
   clientName: string | null;
   vehicleLabel: string;
+  coupon?: Coupon | null;
 }
 
 export function OrderStaffPanel({
@@ -41,6 +48,7 @@ export function OrderStaffPanel({
   clientPhone,
   clientName,
   vehicleLabel,
+  coupon,
 }: Props) {
   const router = useRouter();
   const originalPrice = finalPrice?.toString() ?? estimatedPrice?.toString() ?? "";
@@ -66,6 +74,13 @@ export function OrderStaffPanel({
   const isLocked = currentStatus === "cancelado" || currentStatus === "entregado";
   const priceChanged = isAdmin && price !== originalPrice;
 
+  const enteredPrice = Number(price) || 0;
+  const discountedPrice = coupon
+    ? coupon.discount_type === "percentage"
+      ? enteredPrice * (1 - coupon.discount_value / 100)
+      : Math.max(enteredPrice - coupon.discount_value, 0)
+    : enteredPrice;
+
   async function handleSave() {
     setIsSaving(true);
     setSaveError(null);
@@ -73,11 +88,12 @@ export function OrderStaffPanel({
     const supabase = createClient();
 
     const finalStatus = priceChanged ? "cotizado" : status;
+    const priceToSave = coupon && enteredPrice > 0 ? discountedPrice : enteredPrice;
 
     const updatePayload: Record<string, unknown> = { status: finalStatus };
 
     if (isAdmin) {
-      const numericPrice = price ? Number(price) : null;
+      const numericPrice = price ? priceToSave : null;
       updatePayload.estimated_price = numericPrice;
       if (finalStatus === "entregado") {
         updatePayload.final_price = numericPrice;
@@ -95,12 +111,6 @@ export function OrderStaffPanel({
       return;
     }
 
-    fetch("/api/notify/order-status", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId }),
-    }).catch(() => {});
-
     if (note.trim()) {
       const { data: lastHistoryEntry } = await supabase
         .from("order_status_history")
@@ -117,6 +127,12 @@ export function OrderStaffPanel({
           .eq("id", lastHistoryEntry.id);
       }
     }
+
+    fetch("/api/notify/order-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId }),
+    }).catch(() => {});
 
     router.refresh();
     setIsSaving(false);
@@ -138,6 +154,13 @@ export function OrderStaffPanel({
       <h2 className="mb-4 text-sm font-semibold text-foreground">
         Gestión del pedido
       </h2>
+
+      {coupon ? (
+        <div className="mb-4 flex items-center gap-1.5 rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+          <Tag size={14} />
+          Este pedido tiene el cupón &quot;{coupon.title}&quot; aplicado.
+        </div>
+      ) : null}
 
       {isLocked ? (
         <div className="mb-4 rounded-md border border-black/10 bg-black/5 px-3.5 py-2.5 text-sm text-muted dark:border-white/10 dark:bg-white/5">
@@ -190,6 +213,7 @@ export function OrderStaffPanel({
           <div>
             <label className="mb-1.5 block text-sm font-medium text-foreground">
               Precio {status === "entregado" ? "final" : "estimado"} (MXN)
+              {coupon ? " — sin descuento" : ""}
             </label>
             <input
               type="number"
@@ -199,6 +223,19 @@ export function OrderStaffPanel({
               disabled={isLocked}
               className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
             />
+
+            {coupon && enteredPrice > 0 ? (
+              <p className="mt-2 rounded-md bg-brand-yellow/10 px-3 py-2 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                Con el cupón &quot;{coupon.title}&quot;: ${enteredPrice.toLocaleString("es-MX")}
+                {" − "}
+                {coupon.discount_type === "percentage"
+                  ? `${coupon.discount_value}%`
+                  : `$${coupon.discount_value.toLocaleString("es-MX")}`}
+                {" = "}
+                <strong>${discountedPrice.toLocaleString("es-MX", { maximumFractionDigits: 2 })}</strong>
+                {" · Este es el precio que se le enviará al cliente."}
+              </p>
+            ) : null}
           </div>
         ) : (
           <p className="text-xs text-muted">
