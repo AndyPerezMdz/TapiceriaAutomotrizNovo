@@ -1,6 +1,6 @@
 import { OrderTimeline } from "@/components/portal/OrderTimeline";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft, Car, Calendar } from "lucide-react";
+import { ArrowLeft, Car, Calendar, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { QuoteResponse } from "@/components/portal/QuoteResponse";
@@ -11,6 +11,8 @@ import { ReviewForm } from "@/components/portal/ReviewForm";
 import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
 import { RepeatOrderButton } from "@/components/portal/RepeatOrderButton";
 import { ShareTrackingButton } from "@/components/portal/ShareTrackingButton";
+import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -35,15 +37,20 @@ export default async function PedidoDetallePage({ params }: Props) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: order }, { data: photos }, { data: history }, { data: review }] =
+  const [{ data: order }, { data: items }, { data: photos }, { data: history }, { data: review }, settings] =
     await Promise.all([
       supabase
         .from("orders")
-        .select(
-          "*, services(title), material_types(name), material_colors(name, hex_color), deleted_at",
-        )
+        .select("*, deleted_at")
         .eq("id", id)
         .single(),
+      supabase
+        .from("order_items")
+        .select(
+          "id, price, services(title), material_types(name), material_colors(name, hex_color)",
+        )
+        .eq("order_id", id)
+        .order("order", { ascending: true }),
       supabase.from("order_photos").select("id, url").eq("order_id", id),
       supabase
         .from("order_status_history")
@@ -51,6 +58,7 @@ export default async function PedidoDetallePage({ params }: Props) {
         .eq("order_id", id)
         .order("created_at", { ascending: true }),
       supabase.from("reviews").select("id, rating, comment").eq("order_id", id).maybeSingle(),
+      getBusinessSettings(),
     ]);
 
   const changedByIds = [...new Set((history ?? []).map((h) => h.changed_by).filter(Boolean))];
@@ -86,6 +94,30 @@ export default async function PedidoDetallePage({ params }: Props) {
     .join(" ");
 
   const isFinalState = order.status === "entregado" || order.status === "cancelado";
+  const isApprovedOrLater = !["pendiente_revision", "cotizado", "rechazado"].includes(
+    order.status,
+  );
+
+  const formattedItems =
+    items?.map((item) => {
+      const service = item.services as unknown as { title: string } | null;
+      const material = item.material_types as unknown as { name: string } | null;
+      const color = item.material_colors as unknown as { name: string } | null;
+      return {
+        id: item.id,
+        title: service?.title ?? "Servicio",
+        materialLabel:
+          material?.name && color?.name
+            ? `${material.name} · ${color.name}`
+            : material?.name ?? null,
+        price: item.price,
+      };
+    }) ?? [];
+
+  const whatsappHref = buildWhatsAppLink(
+    `Hola, quiero agregar otro servicio a mi pedido de ${vehicle || "mi vehículo"} (ya aprobado).`,
+    settings.whatsapp,
+  );
 
   return (
     <div className="mx-auto max-w-3xl overflow-x-hidden">
@@ -151,61 +183,77 @@ export default async function PedidoDetallePage({ params }: Props) {
           ) : null}
 
           <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-            <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-              <Car size={16} /> Descripción
+            <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+              <Car size={16} /> Servicios de este pedido
             </h2>
-            {order.services ? (
-              <p className="mb-1 text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                {(order.services as unknown as { title: string }).title}
-              </p>
-            ) : null}
-            <p className="break-words text-sm text-muted">
-              {order.service_description}
-            </p>
+
+            <div className="space-y-3">
+              {formattedItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between border-b border-black/5 pb-3 last:border-0 last:pb-0 dark:border-white/5"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
+                      {formattedItems.length > 1 ? `${index + 1}. ` : ""}
+                      {item.title}
+                    </p>
+                    {item.materialLabel ? (
+                      <p className="text-xs text-muted">{item.materialLabel}</p>
+                    ) : null}
+                  </div>
+                  {item.price !== null ? (
+                    <p className="text-sm font-medium text-foreground">
+                      ${item.price.toLocaleString("es-MX")}
+                    </p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-4 break-words text-sm text-muted">{order.service_description}</p>
 
             {order.estimated_price ? (
               <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
-                <p className="text-sm text-muted">Precio estimado</p>
+                <p className="text-sm text-muted">
+                  {order.status === "entregado" ? "Precio final" : "Precio total estimado"}
+                </p>
                 <p className="text-lg font-semibold text-foreground">
                   ${order.estimated_price.toLocaleString("es-MX")}
                 </p>
               </div>
             ) : null}
 
-            {order.estimated_price !== null ? (
-              <div className="mt-3">
+            <div className="mt-3 flex flex-wrap gap-2">
+              {order.estimated_price !== null ? (
                 <DownloadPdfButton
                   orderId={order.id}
                   label={order.status === "entregado" ? "Descargar recibo" : "Descargar cotización"}
                 />
-              </div>
-              
-            ) : null}
-
-            <div className="mt-2">
+              ) : null}
               <RepeatOrderButton orderId={order.id} />
-            </div>
-
-            <div className="mt-2">
               <ShareTrackingButton orderId={order.id} existingToken={order.share_token} />
             </div>
           </div>
 
-          {order.material_types || order.material_colors ? (
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <h2 className="mb-2 text-sm font-semibold text-foreground">
-                Material elegido
-              </h2>
-              <p className="break-words text-sm text-muted">
-                {(order.material_types as unknown as { name: string } | null)?.name}
-                {order.material_colors ? (
-                  <>
-                    {" "}
-                    ·{" "}
-                    {(order.material_colors as unknown as { name: string }).name}
-                  </>
-                ) : null}
+          {isApprovedOrLater && !isFinalState ? (
+            <div className="rounded-lg border border-brand-yellow/30 bg-brand-yellow/10 p-5">
+              <p className="text-sm font-medium text-foreground">
+                ¿Quieres agregar otro servicio a este pedido?
               </p>
+              <p className="mt-1 text-sm text-muted">
+                Como tu cotización ya fue aceptada, para agregar un servicio nuevo necesitas
+                visitar el taller en persona, o escribirnos por WhatsApp para que lo agreguemos
+                como nota en tu pedido.
+              </p>
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
+              >
+                <MessageCircle size={16} /> Escribir por WhatsApp
+              </a>
             </div>
           ) : null}
 

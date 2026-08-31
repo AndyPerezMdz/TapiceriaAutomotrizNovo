@@ -34,7 +34,7 @@ export async function GET(request: Request, { params }: Props) {
   const { data: order } = await supabase
     .from("orders")
     .select(
-      "id, client_id, created_at, status, estimated_price, final_price, vehicle_make, vehicle_model, vehicle_year, service_description, profiles!orders_client_id_fkey(full_name, phone), services(title), material_types(name), material_colors(name)",
+      "id, client_id, created_at, status, estimated_price, final_price, vehicle_make, vehicle_model, vehicle_year, service_description, profiles!orders_client_id_fkey(full_name, phone), coupons(title)",
     )
     .eq("id", id)
     .single();
@@ -48,13 +48,19 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
 
+  const { data: items } = await supabase
+    .from("order_items")
+    .select(
+      "price, services(title), material_types(name), material_colors(name)",
+    )
+    .eq("order_id", id)
+    .order("order", { ascending: true });
+
   const client = order.profiles as unknown as {
     full_name: string;
     phone: string | null;
   } | null;
-  const service = order.services as unknown as { title: string } | null;
-  const material = order.material_types as unknown as { name: string } | null;
-  const color = order.material_colors as unknown as { name: string } | null;
+  const coupon = order.coupons as unknown as { title: string } | null;
 
   const isReceipt = order.status === "entregado";
   const price = isReceipt ? order.final_price : order.estimated_price;
@@ -71,6 +77,20 @@ export async function GET(request: Request, { params }: Props) {
     .filter(Boolean)
     .join(" ");
 
+  const formattedItems = (items ?? []).map((item) => {
+    const service = item.services as unknown as { title: string } | null;
+    const material = item.material_types as unknown as { name: string } | null;
+    const color = item.material_colors as unknown as { name: string } | null;
+    return {
+      title: service?.title ?? "Servicio",
+      materialLabel:
+        material?.name && color?.name
+          ? `${material.name} · ${color.name}`
+          : material?.name ?? null,
+      price: item.price,
+    };
+  });
+
   const buffer = await renderToBuffer(
     <CotizacionDocument
       isReceipt={isReceipt}
@@ -79,11 +99,10 @@ export async function GET(request: Request, { params }: Props) {
       clientName={client?.full_name ?? "Cliente"}
       clientPhone={client?.phone ?? null}
       vehicle={vehicle}
-      serviceName={service?.title ?? null}
-      materialName={material?.name ?? null}
-      colorName={color?.name ?? null}
+      items={formattedItems}
       description={order.service_description}
-      price={price}
+      totalPrice={price}
+      couponTitle={coupon?.title ?? null}
       businessName={businessInfo.name}
       businessAddress={businessInfo.address}
       businessPhone={settings.whatsapp}

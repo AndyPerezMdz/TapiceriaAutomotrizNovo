@@ -52,6 +52,17 @@ const styles = StyleSheet.create({
   row: { flexDirection: "row", marginBottom: 3 },
   label: { width: 100, color: "#6b6b6b" },
   value: { flex: 1, fontWeight: 500 },
+  itemRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    borderBottom: "1 solid #f0f0f0",
+    paddingVertical: 8,
+  },
+  itemLeft: { flex: 1 },
+  itemTitle: { fontWeight: 700, fontSize: 10.5 },
+  itemMaterial: { fontSize: 9, color: "#6b6b6b", marginTop: 2 },
+  itemPrice: { fontSize: 10.5, fontWeight: 700 },
   divider: { borderBottom: "1 solid #e5e5e5", marginVertical: 16 },
   priceBox: {
     backgroundColor: "#fafafa",
@@ -62,6 +73,7 @@ const styles = StyleSheet.create({
   },
   priceLabel: { fontSize: 9, color: "#6b6b6b", marginBottom: 4 },
   priceValue: { fontSize: 24, fontWeight: 700 },
+  discountNote: { fontSize: 8, color: "#a67c00", marginTop: 4 },
   footer: {
     position: "absolute",
     bottom: 30,
@@ -75,6 +87,12 @@ const styles = StyleSheet.create({
   },
 });
 
+interface OrderItemLine {
+  title: string;
+  materialLabel: string | null;
+  price: number | null;
+}
+
 interface Props {
   isReceipt: boolean;
   orderId: string;
@@ -82,11 +100,10 @@ interface Props {
   clientName: string;
   clientPhone: string | null;
   vehicle: string;
-  serviceName: string | null;
-  materialName: string | null;
-  colorName: string | null;
+  items: OrderItemLine[];
   description: string;
-  price: number | null;
+  totalPrice: number | null;
+  couponTitle: string | null;
   businessName: string;
   businessAddress: string;
   businessPhone: string;
@@ -99,11 +116,10 @@ export function CotizacionDocument({
   clientName,
   clientPhone,
   vehicle,
-  serviceName,
-  materialName,
-  colorName,
+  items,
   description,
-  price,
+  totalPrice,
+  couponTitle,
   businessName,
   businessAddress,
   businessPhone,
@@ -151,47 +167,55 @@ export function CotizacionDocument({
               <Text style={styles.value}>{clientPhone}</Text>
             </View>
           ) : null}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Vehículo y servicio</Text>
           <View style={styles.row}>
             <Text style={styles.label}>Vehículo</Text>
             <Text style={styles.value}>{vehicle || "No especificado"}</Text>
           </View>
-          {serviceName ? (
-            <View style={styles.row}>
-              <Text style={styles.label}>Servicio</Text>
-              <Text style={styles.value}>{serviceName}</Text>
-            </View>
-          ) : null}
-          {materialName ? (
-            <View style={styles.row}>
-              <Text style={styles.label}>Material</Text>
-              <Text style={styles.value}>
-                {materialName}
-                {colorName ? ` · ${colorName}` : ""}
-              </Text>
-            </View>
-          ) : null}
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Descripción</Text>
-          <Text style={{ lineHeight: 1.5 }}>{description}</Text>
+          <Text style={styles.sectionTitle}>Servicios</Text>
+          {items.map((item, i) => (
+            <View key={i} style={styles.itemRow}>
+              <View style={styles.itemLeft}>
+                <Text style={styles.itemTitle}>
+                  {items.length > 1 ? `${i + 1}. ` : ""}
+                  {item.title}
+                </Text>
+                {item.materialLabel ? (
+                  <Text style={styles.itemMaterial}>{item.materialLabel}</Text>
+                ) : null}
+              </View>
+              <Text style={styles.itemPrice}>
+                {item.price !== null ? `$${item.price.toLocaleString("es-MX")}` : "—"}
+              </Text>
+            </View>
+          ))}
         </View>
+
+        {description ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Descripción adicional</Text>
+            <Text style={{ lineHeight: 1.5 }}>{description}</Text>
+          </View>
+        ) : null}
 
         <View style={styles.divider} />
 
         <View style={styles.priceBox}>
           <Text style={styles.priceLabel}>
-            {isReceipt ? "Total pagado" : "Precio estimado"}
+            {isReceipt ? "Total pagado" : "Precio total estimado"}
           </Text>
           <Text style={styles.priceValue}>
-            {price !== null
-              ? `$${price.toLocaleString("es-MX")} MXN`
+            {totalPrice !== null
+              ? `$${totalPrice.toLocaleString("es-MX")} MXN`
               : "Pendiente de cotizar"}
           </Text>
+          {couponTitle ? (
+            <Text style={styles.discountNote}>
+              Incluye descuento del cupón &quot;{couponTitle}&quot;
+            </Text>
+          ) : null}
         </View>
 
         <Text style={{ fontSize: 8, color: "#9a9a9a", textAlign: "center" }}>

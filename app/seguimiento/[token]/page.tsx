@@ -4,11 +4,6 @@ import { Calendar, Car } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-interface HistoryEntry {
-    status: string;
-    created_at: string;
-}
-
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
   cotizado: "Cotizado",
@@ -20,6 +15,17 @@ const statusLabels: Record<string, string> = {
   cancelado: "Cancelado",
 };
 
+interface HistoryEntry {
+  status: string;
+  created_at: string;
+}
+
+interface ItemEntry {
+  service_title: string;
+  material_label: string | null;
+  price: number | null;
+}
+
 interface Props {
   params: Promise<{ token: string }>;
 }
@@ -28,9 +34,10 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
   const { token } = await params;
   const supabase = await createClient();
 
-  const [{ data: orderData }, { data: history }] = await Promise.all([
+  const [{ data: orderData }, { data: history }, { data: itemsData }] = await Promise.all([
     supabase.rpc("get_order_by_share_token", { p_token: token }),
     supabase.rpc("get_order_history_by_share_token", { p_token: token }),
+    supabase.rpc("get_order_items_by_share_token", { p_token: token }),
   ]);
 
   const order = orderData?.[0];
@@ -39,6 +46,7 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
     notFound();
   }
 
+  const items = (itemsData as ItemEntry[] | null) ?? [];
   const vehicle = [order.vehicle_make, order.vehicle_model].filter(Boolean).join(" ");
 
   return (
@@ -66,10 +74,6 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
           </span>
         </div>
 
-        {order.service_title ? (
-          <p className="mb-4 text-sm text-muted">{order.service_title}</p>
-        ) : null}
-
         <div className="mb-4 flex items-center gap-1.5 text-xs text-muted">
           <Calendar size={12} />
           Iniciado el{" "}
@@ -79,6 +83,42 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
             year: "numeric",
           })}
         </div>
+
+        {items.length > 0 ? (
+          <div className="mb-4 border-t border-black/10 pt-4 dark:border-white/10">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+              Servicios
+            </p>
+            <div className="space-y-2">
+              {items.map((item, i) => (
+                <div key={i} className="flex items-center justify-between text-sm">
+                  <div>
+                    <p className="text-foreground">
+                      {items.length > 1 ? `${i + 1}. ` : ""}
+                      {item.service_title}
+                    </p>
+                    {item.material_label ? (
+                      <p className="text-xs text-muted">{item.material_label}</p>
+                    ) : null}
+                  </div>
+                  {item.price !== null ? (
+                    <p className="font-medium text-foreground">
+                      ${item.price.toLocaleString("es-MX")}
+                    </p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            {order.total_price !== null ? (
+              <div className="mt-3 flex items-center justify-between border-t border-black/10 pt-3 text-sm font-semibold dark:border-white/10">
+                <span className="text-foreground">Total</span>
+                <span className="text-foreground">
+                  ${order.total_price.toLocaleString("es-MX")}
+                </span>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
         <div className="border-t border-black/10 pt-4 dark:border-white/10">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
