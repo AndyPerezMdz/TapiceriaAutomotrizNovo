@@ -2,6 +2,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { QuickSearch } from "@/components/admin/QuickSearch";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
@@ -38,6 +39,9 @@ export default async function AdminLayout({
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 lg:px-6 lg:pl-6">
           <ChatWidget variant="header" />
+          <div className="mb-4">
+            <QuickSearch isAdmin={isAdmin} />
+          </div>
           <Link href="/admin/perfil" className="flex items-center gap-2">
             {profile?.avatar_url ? (
               <img
