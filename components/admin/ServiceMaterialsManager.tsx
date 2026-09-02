@@ -1,6 +1,7 @@
 "use client";
 
 import { MaterialImageUploader } from "@/components/admin/MaterialImageUploader";
+import { useConfirm } from "@/lib/hooks/useConfirm";
 import { createClient } from "@/lib/supabase/client";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,6 +25,7 @@ const inputClassName =
   "rounded-md border border-black/15 bg-surface px-2.5 py-1.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 
 export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
+  const { confirm, dialog } = useConfirm();
   const [materials, setMaterials] = useState<MaterialType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -95,7 +97,12 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
   }
 
   async function deleteMaterial(id: string) {
-    if (!confirm("¿Eliminar este material y todos sus colores?")) return;
+    const ok = await confirm({
+      title: "Eliminar material",
+      description: "Se eliminará este material y todos sus colores asociados.",
+      confirmLabel: "Sí, eliminar",
+    });
+    if (!ok) return;
     const supabase = createClient();
     await supabase.from("material_types").delete().eq("id", id);
     loadMaterials();
@@ -126,6 +133,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="space-y-4">
+      {dialog}
       <div className="rounded-md border border-brand-yellow/30 bg-brand-yellow/10 p-3 text-xs text-brand-yellow-dark dark:text-brand-yellow">
         <strong>Regla para las fotos:</strong> la imagen debe mostrar únicamente el material, de
         punta a punta, sin fondo, personas, ni ningún otro objeto en la foto.

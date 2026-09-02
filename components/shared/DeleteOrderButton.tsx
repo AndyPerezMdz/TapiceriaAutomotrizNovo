@@ -1,5 +1,6 @@
 "use client";
 
+import { useConfirm } from "@/lib/hooks/useConfirm";
 import { createClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -14,21 +15,22 @@ export function DeleteOrderButton({
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { confirm, dialog } = useConfirm();
 
   async function handleDelete() {
-    const confirmed = window.confirm(
-      "¿Seguro que quieres eliminar este pedido? Ya no podrás consultar su información, aunque seguirá apareciendo en el historial.",
-    );
-    if (!confirmed) return;
+    const ok = await confirm({
+      title: "Eliminar pedido",
+      description:
+        "Este pedido se marcará como eliminado. Seguirá visible en el historial, pero ya no se podrá consultar su detalle.",
+      confirmLabel: "Sí, eliminar",
+    });
+    if (!ok) return;
 
     setIsDeleting(true);
     const supabase = createClient();
-    const { error } = await supabase.rpc("soft_delete_order", {
-      order_id: orderId,
-    });
+    const { error } = await supabase.rpc("soft_delete_order", { p_order_id: orderId });
 
     if (error) {
-      alert("No se pudo eliminar el pedido. Intenta de nuevo.");
       setIsDeleting(false);
       return;
     }
@@ -38,13 +40,15 @@ export function DeleteOrderButton({
   }
 
   return (
-    <button
-      onClick={handleDelete}
-      disabled={isDeleting}
-      className="flex w-full items-center justify-center gap-1.5 rounded-md border border-brand-red/30 px-4 py-2.5 text-sm font-medium text-brand-red transition hover:bg-brand-red/5 disabled:opacity-60"
-    >
-      <Trash2 size={16} />
-      {isDeleting ? "Eliminando..." : "Eliminar pedido"}
-    </button>
+    <>
+      {dialog}
+      <button
+        onClick={handleDelete}
+        disabled={isDeleting}
+        className="flex items-center gap-1.5 text-sm text-muted transition hover:text-brand-red disabled:opacity-50"
+      >
+        <Trash2 size={14} /> {isDeleting ? "Eliminando..." : "Eliminar pedido"}
+      </button>
+    </>
   );
 }

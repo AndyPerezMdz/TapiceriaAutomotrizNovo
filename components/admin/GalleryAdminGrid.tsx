@@ -1,5 +1,6 @@
 "use client";
 
+import { useConfirm } from "@/lib/hooks/useConfirm";
 import { createClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -21,10 +22,15 @@ export function GalleryAdminGrid({
 }) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { confirm, dialog } = useConfirm();
 
   async function handleDelete(id: string) {
-    const confirmed = window.confirm("¿Eliminar esta foto de la galería?");
-    if (!confirmed) return;
+    const ok = await confirm({
+      title: "Eliminar foto",
+      description: "Esta foto se eliminará permanentemente de la galería.",
+      confirmLabel: "Sí, eliminar",
+    });
+    if (!ok) return;
 
     setDeletingId(id);
     const supabase = createClient();
@@ -48,44 +54,47 @@ export function GalleryAdminGrid({
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((item) => (
-        <div
-          key={item.id}
-          className="overflow-hidden rounded-lg border border-black/10 bg-surface dark:border-white/10"
-        >
-          <div className="grid grid-cols-2 gap-0.5 bg-black/10 dark:bg-white/10">
-            {item.image_before_url ? (
-              <img
-                src={item.image_before_url}
-                alt="Antes"
-                className="aspect-square object-cover"
-              />
-            ) : null}
-            {item.image_after_url ? (
-              <img
-                src={item.image_after_url}
-                alt="Después"
-                className="aspect-square object-cover"
-              />
-            ) : null}
+    <>
+      {dialog}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="overflow-hidden rounded-lg border border-black/10 bg-surface dark:border-white/10"
+          >
+            <div className="grid grid-cols-2 gap-0.5 bg-black/10 dark:bg-white/10">
+              {item.image_before_url ? (
+                <img
+                  src={item.image_before_url}
+                  alt="Antes"
+                  className="aspect-square object-cover"
+                />
+              ) : null}
+              {item.image_after_url ? (
+                <img
+                  src={item.image_after_url}
+                  alt="Después"
+                  className="aspect-square object-cover"
+                />
+              ) : null}
+            </div>
+            <div className="flex items-center justify-between p-3">
+              <p className="truncate text-sm text-muted">
+                {item.caption ?? "Sin descripción"}
+              </p>
+              {isAdmin ? (
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  disabled={deletingId === item.id}
+                  className="shrink-0 text-muted transition hover:text-brand-red disabled:opacity-50"
+                >
+                  <Trash2 size={16} />
+                </button>
+              ) : null}
+            </div>
           </div>
-          <div className="flex items-center justify-between p-3">
-            <p className="truncate text-sm text-muted">
-              {item.caption ?? "Sin descripción"}
-            </p>
-            {isAdmin ? (
-              <button
-                onClick={() => handleDelete(item.id)}
-                disabled={deletingId === item.id}
-                className="shrink-0 text-muted transition hover:text-brand-red disabled:opacity-50"
-              >
-                <Trash2 size={16} />
-              </button>
-            ) : null}
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }
