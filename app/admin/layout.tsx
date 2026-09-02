@@ -35,11 +35,11 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isAdmin={isAdmin} pendingCount={pendingCount ?? 0} />
-        <div className="mb-4">
-          <QuickSearch isAdmin={isAdmin} />
-        </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 lg:px-6 lg:pl-6">
+          <div className="mb-4">
+            <QuickSearch isAdmin={isAdmin} />
+          </div>
           <ChatWidget variant="header" />
           <Link href="/admin/perfil" className="flex items-center gap-2">
             {profile?.avatar_url ? (
