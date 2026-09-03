@@ -22,12 +22,15 @@ export function CouponForm({ services }: { services: Service[] }) {
   const [audience, setAudience] = useState<"clientes" | "frecuentes" | "ambos">("ambos");
   const [serviceId, setServiceId] = useState<string>("");
   const [expiresAt, setExpiresAt] = useState("");
+  const [notifySubscribers, setNotifySubscribers] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [notifyResult, setNotifyResult] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setNotifyResult(null);
 
     if (!title.trim()) {
       setError("Ingresa un título para el cupón.");
@@ -46,20 +49,51 @@ export function CouponForm({ services }: { services: Service[] }) {
 
     setIsSaving(true);
     const supabase = createClient();
-    const { error: insertError } = await supabase.from("coupons").insert({
-      title: title.trim(),
-      description: description.trim() || null,
-      discount_type: discountType,
-      discount_value: value,
-      audience,
-      service_id: serviceId || null,
-      expires_at: expiresAt || null,
-    });
+    const { data: newCoupon, error: insertError } = await supabase
+      .from("coupons")
+      .insert({
+        title: title.trim(),
+        description: description.trim() || null,
+        discount_type: discountType,
+        discount_value: value,
+        audience,
+        service_id: serviceId || null,
+        expires_at: expiresAt || null,
+      })
+      .select("id")
+      .single();
 
-    if (insertError) {
+    if (insertError || !newCoupon) {
       setError("No se pudo crear el cupón. Intenta de nuevo.");
       setIsSaving(false);
       return;
+    }
+
+    if (notifySubscribers) {
+      const service = services.find((s) => s.id === serviceId);
+      const discountLabel =
+        discountType === "percentage" ? `${value}% de descuento` : `$${value.toLocaleString("es-MX")} de descuento`;
+
+      const res = await fetch("/api/notify/marketing-blast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: `Nuevo cupón: ${title.trim()}`,
+          title: title.trim(),
+          message: `${discountLabel}${service ? ` en ${service.title}` : ", aplica en cualquier servicio"}.${
+            description.trim() ? `\n\n${description.trim()}` : ""
+          }${expiresAt ? `\n\nVálido hasta el ${new Date(`${expiresAt}T00:00:00`).toLocaleDateString("es-MX", { day: "numeric", month: "long" })}.` : ""}`,
+          buttonText: "Ver mis cupones",
+          buttonUrl: "https://tapiceriaautomotrizbynovo.com/portal/cupones",
+        }),
+      });
+
+      const notifyData = await res.json();
+      if (res.ok) {
+        setNotifyResult(`Cupón creado y correo enviado a ${notifyData.sentCount} suscritos.`);
+      } else {
+        setNotifyResult(`Cupón creado, pero no se pudo avisar por correo: ${notifyData.error}`);
+      }
     }
 
     setTitle("");
@@ -67,6 +101,7 @@ export function CouponForm({ services }: { services: Service[] }) {
     setDiscountValue("");
     setServiceId("");
     setExpiresAt("");
+    setNotifySubscribers(false);
     setIsSaving(false);
     router.refresh();
   }
@@ -78,6 +113,12 @@ export function CouponForm({ services }: { services: Service[] }) {
       {error ? (
         <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
           {error}
+        </div>
+      ) : null}
+
+      {notifyResult ? (
+        <div className="rounded-md border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-sm text-green-700 dark:text-green-400">
+          {notifyResult}
         </div>
       ) : null}
 
@@ -176,6 +217,19 @@ export function CouponForm({ services }: { services: Service[] }) {
           />
         </div>
       </div>
+
+      <label className="flex items-start gap-2 text-sm text-foreground">
+        <input
+          type="checkbox"
+          checked={notifySubscribers}
+          onChange={(e) => setNotifySubscribers(e.target.checked)}
+          disabled={isSaving}
+          className="mt-0.5"
+        />
+        <span>
+          Avisar por correo a los clientes suscritos a promociones en cuanto se cree este cupón.
+        </span>
+      </label>
 
       <button
         type="submit"
