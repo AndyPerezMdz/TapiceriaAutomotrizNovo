@@ -1,7 +1,6 @@
 "use client";
 
 import { FooterLogo } from "@/components/FooterLogo";
-import { QuickSearch } from "@/components/admin/QuickSearch";
 import {
   Award,
   BarChart3,
@@ -128,10 +127,6 @@ export function AdminSidebar({
             >
               <X size={18} />
             </button>
-          </div>
-
-          <div className="mb-4">
-            <QuickSearch isAdmin={isAdmin} />
           </div>
 
           <nav className="flex-1">
