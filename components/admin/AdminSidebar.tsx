@@ -1,6 +1,7 @@
 "use client";
 
 import { FooterLogo } from "@/components/FooterLogo";
+import { QuickSearch } from "@/components/admin/QuickSearch";
 import {
   Award,
   BarChart3,
@@ -58,9 +59,9 @@ const groups: NavGroup[] = [
     items: [
       { href: "/admin/cupones", label: "Cupones", icon: Tag, adminOnly: true },
       { href: "/admin/puntos", label: "Puntos", icon: Award, adminOnly: true },
+      { href: "/admin/referidos", label: "Referidos", icon: Users, adminOnly: true },
       { href: "/admin/resenas", label: "Reseñas", icon: Star },
       { href: "/admin/contactos", label: "Contactos", icon: MessageSquare },
-      { href: "/admin/referidos", label: "Referidos", icon: Users, adminOnly: true },
     ],
   },
   {
@@ -127,6 +128,10 @@ export function AdminSidebar({
             >
               <X size={18} />
             </button>
+          </div>
+
+          <div className="mb-4">
+            <QuickSearch isAdmin={isAdmin} />
           </div>
 
           <nav className="flex-1">

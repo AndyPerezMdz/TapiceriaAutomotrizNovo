@@ -1,6 +1,5 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { ChatWidget } from "@/components/chat/ChatWidget";
-import { QuickSearch } from "@/components/admin/QuickSearch";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
