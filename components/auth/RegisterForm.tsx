@@ -25,6 +25,7 @@ export function RegisterForm() {
     <Partial<Record<keyof RegisterFormData, string>>
   >({});
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [wantsMarketing, setWantsMarketing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formLoadedAt] = useState(() => Date.now());
 
@@ -96,6 +97,7 @@ export function RegisterForm() {
         data: {
           full_name: parsed.data.fullName,
           phone: parsed.data.phone,
+          marketing_opt_in: wantsMarketing,
         },
       },
     });
@@ -229,6 +231,20 @@ export function RegisterForm() {
               Aviso de Privacidad
             </Link>
             .
+          </span>
+        </label>
+
+        <label className="flex items-start gap-2 text-sm text-foreground">
+          <input
+            type="checkbox"
+            checked={wantsMarketing}
+            onChange={(e) => setWantsMarketing(e.target.checked)}
+            disabled={isLoading}
+            className="mt-0.5"
+          />
+          <span>
+            Quiero recibir correos sobre promociones, cupones nuevos y novedades
+            <span className="text-muted"> (opcional, puedes darte de baja cuando quieras)</span>.
           </span>
         </label>
 

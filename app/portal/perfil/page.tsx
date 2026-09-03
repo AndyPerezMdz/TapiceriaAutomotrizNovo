@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Calendar, ClipboardList, Star } from "lucide-react";
 import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
 import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
+import { MarketingOptInToggle } from "@/components/portal/MarketingOptInToggle";
 
 export default async function PerfilPage() {
   const supabase = await createClient();
@@ -17,7 +18,7 @@ export default async function PerfilPage() {
       user
         ? supabase
             .from("profiles")
-            .select("full_name, phone, email, avatar_url, created_at")
+            .select("full_name, phone, email, avatar_url, created_at, marketing_opt_in")
             .eq("id", user.id)
             .single()
         : Promise.resolve({ data: null }),
@@ -128,7 +129,10 @@ export default async function PerfilPage() {
           />
         </div>
       </div>
-    </div>
 
+      <div className="mt-6">
+        <MarketingOptInToggle initialValue={profile?.marketing_opt_in ?? false} />
+      </div>
+    </div>
   );
 }
