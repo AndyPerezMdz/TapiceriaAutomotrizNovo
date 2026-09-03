@@ -19,14 +19,10 @@ export function MarketingOptInToggle({ initialValue }: { initialValue: boolean }
     } = await supabase.auth.getUser();
 
     if (user) {
-      await supabase
-        .from("profiles")
-        .update({ marketing_opt_in: newValue })
-        .eq("id", user.id);
+        await supabase.rpc("set_marketing_opt_in", { p_value: newValue });
     }
-
-    setIsSaving(false);
-  }
+        setIsSaving(false);
+    }
 
   return (
     <div className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
