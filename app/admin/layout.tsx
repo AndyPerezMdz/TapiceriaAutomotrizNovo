@@ -1,8 +1,8 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { SignOutButton } from "@/components/auth/SignOutButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { QuickSearch } from "@/components/admin/QuickSearch";
+import { SignOutButton } from "@/components/auth/SignOutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
@@ -35,28 +35,32 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isAdmin={isAdmin} pendingCount={pendingCount ?? 0} />
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-end gap-3 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 lg:px-6 lg:pl-6">
-          <ChatWidget variant="header" />
-          <Link href="/admin/perfil" className="flex items-center gap-2">
-            {profile?.avatar_url ? (
-              <img
-                src={profile.avatar_url}
-                alt=""
-                className="h-8 w-8 rounded-full object-cover"
-              />
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
-                {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
+        <header className="flex items-center justify-between gap-3 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 lg:justify-end lg:px-6 lg:pl-6">
+          <div className="w-64 lg:hidden" />
+          <div className="flex items-center gap-3">
+            <ChatWidget variant="header" />
+            <Link href="/admin/perfil" className="flex items-center gap-2">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                  {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
+                </div>
+              )}
+              <div className="hidden text-right sm:block">
+                <p className="text-sm font-medium text-foreground">{profile?.full_name}</p>
+                <p className="text-xs capitalize text-muted">{profile?.role}</p>
               </div>
-            )}
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-foreground">{profile?.full_name}</p>
-              <p className="text-xs capitalize text-muted">{profile?.role}</p>
-            </div>
-          </Link>
-          <ThemeToggle />
-          <SignOutButton />
+            </Link>
+            <ThemeToggle />
+            <SignOutButton />
+          </div>
         </header>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
