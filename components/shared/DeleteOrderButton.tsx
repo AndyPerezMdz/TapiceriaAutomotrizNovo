@@ -28,7 +28,7 @@ export function DeleteOrderButton({
 
     setIsDeleting(true);
     const supabase = createClient();
-    const { error } = await supabase.rpc("soft_delete_order", { p_order_id: orderId });
+    const { error } = await supabase.rpc("soft_delete_order", { order_id: orderId });
 
     if (error) {
       setIsDeleting(false);
