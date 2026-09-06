@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   open: boolean;
@@ -26,6 +26,16 @@ export function ConfirmDialog({
   onCancel,
   isLoading = false,
 }: Props) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      const timer = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(timer);
+    }
+    setVisible(false);
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     function handleKey(e: KeyboardEvent) {
@@ -39,12 +49,16 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 transition-opacity duration-200 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
       onClick={onCancel}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-lg border border-black/10 bg-surface p-6 shadow-2xl dark:border-white/10"
+        className={`w-full max-w-sm rounded-lg border border-black/10 bg-surface p-6 shadow-2xl transition-all duration-200 dark:border-white/10 ${
+          visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-2 scale-95 opacity-0"
+        }`}
       >
         <div className="mb-4 flex items-start gap-3">
           <div

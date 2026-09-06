@@ -200,8 +200,7 @@ export function ChatWidget({ variant = "floating" }: Props) {
         </button>
 
         {isOpen ? (
-          <div className="fixed inset-x-4 top-16 z-50 flex h-[70vh] flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:h-[480px] sm:w-96 dark:border-white/10">
-            {chatBody}
+      <div className="fixed inset-x-4 top-16 z-50 flex h-[70vh] origin-top animate-panel-in flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:h-[480px] sm:w-96 dark:border-white/10">            {chatBody}
           </div>
         ) : null}
       </div>
