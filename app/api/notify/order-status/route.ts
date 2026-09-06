@@ -2,6 +2,7 @@ import { emailWrapper, sendEmail } from "@/lib/email/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { sendPushToClient } from "@/lib/push/sendPush";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
   const { data: order } = await adminClient
     .from("orders")
     .select(
-      "vehicle_make, vehicle_model, status, estimated_price, profiles!orders_client_id_fkey(full_name, email)",
+      "client_id, vehicle_make, vehicle_model, status, estimated_price, profiles!orders_client_id_fkey(full_name, email)",
     )
     .eq("id", orderId)
     .single();
@@ -86,6 +87,12 @@ export async function POST(request: Request) {
     subject: `Tu pedido está: ${statusLabel}`,
     html,
   });
+
+  sendPushToClient(order.client_id, {
+    title: "Actualización de tu pedido",
+    body: `Tu pedido${vehicle ? ` de ${vehicle}` : ""} cambió de estado a: ${statusLabel}`,
+    url: "/portal",
+  }).catch(() => {});
 
   return NextResponse.json(result);
 }

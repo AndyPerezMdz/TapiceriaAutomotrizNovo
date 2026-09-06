@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { ToastProvider } from "@/components/shared/ToastProvider";
+import { RegisterServiceWorker } from "@/components/shared/RegisterServiceWorker";
 
 export const metadata: Metadata = {
   title: "Tapicería Automotriz by NOVO",
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body>
+        <RegisterServiceWorker />
         <ThemeProvider>
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>

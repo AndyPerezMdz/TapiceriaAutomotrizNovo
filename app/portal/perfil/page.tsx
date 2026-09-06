@@ -6,6 +6,7 @@ import { Calendar, ClipboardList, Star } from "lucide-react";
 import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
 import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
 import { MarketingOptInToggle } from "@/components/portal/MarketingOptInToggle";
+import { PushNotificationToggle } from "@/components/portal/PushNotificationToggle";
 
 export default async function PerfilPage() {
   const supabase = await createClient();
@@ -132,6 +133,9 @@ export default async function PerfilPage() {
 
       <div className="mt-6">
         <MarketingOptInToggle initialValue={profile?.marketing_opt_in ?? false} />
+      </div>
+      <div className="mt-6">
+        <PushNotificationToggle />
       </div>
     </div>
   );
