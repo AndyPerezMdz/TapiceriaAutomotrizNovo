@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { z } from "zod";
+import { useToast } from "@/components/shared/ToastProvider";
 
 const schema = z
   .object({
@@ -19,15 +20,14 @@ const fieldClassName =
 const labelClassName = "mb-1.5 block text-sm font-medium text-foreground";
 
 export function ChangePasswordForm() {
+  const { showToast } = useToast();
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     setError(null);
-    setSuccess(false);
     setIsSaving(true);
 
     const formData = new FormData(form);
@@ -50,11 +50,12 @@ export function ChangePasswordForm() {
 
     if (updateError) {
       setError("No se pudo actualizar la contraseña.");
+      showToast("No se pudo actualizar la contraseña.", "error");
       setIsSaving(false);
       return;
     }
 
-    setSuccess(true);
+    showToast("Contraseña actualizada correctamente.");
     setIsSaving(false);
     form.reset();
   }
@@ -64,12 +65,6 @@ export function ChangePasswordForm() {
       {error ? (
         <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
           {error}
-        </div>
-      ) : null}
-
-      {success ? (
-        <div className="rounded-md border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-sm text-green-700 dark:text-green-400">
-          Contraseña actualizada.
         </div>
       ) : null}
 

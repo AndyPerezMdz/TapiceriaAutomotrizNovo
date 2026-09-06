@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { ToastProvider } from "@/components/shared/ToastProvider";
 
 export const metadata: Metadata = {
   title: "Tapicería Automotriz by NOVO",
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
