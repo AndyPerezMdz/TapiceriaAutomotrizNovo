@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { OrderCard } from "@/components/portal/OrderCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -83,16 +84,14 @@ export default async function PortalDashboardPage() {
         <h2 className="mb-4 text-sm font-semibold text-foreground">Mis pedidos</h2>
 
         {!activeOrders || activeOrders.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-            <p className="text-muted">Aún no tienes pedidos activos.</p>
-            <Link
-              href="/portal/nuevo-pedido"
-              className="mt-4 inline-block text-sm font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow"
-            >
-              Solicita tu primera cotización
-            </Link>
-          </div>
-        ) : (
+            <EmptyState
+              icon={PlusCircle}
+              title="Aún no has pedido nada"
+              description="Cuando quieras renovar el interior de tu carro, tu primer pedido va a aparecer aquí."
+              actionLabel="Solicitar mi primera cotización"
+              actionHref="/portal/nuevo-pedido"
+            />
+          ) : (
           <div className="space-y-3">
             {activeOrders.map((order) => (
               <OrderCard

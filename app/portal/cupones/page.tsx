@@ -1,4 +1,5 @@
 import { ActivateCouponButton } from "@/components/portal/ActivateCouponButton";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
 import { Tag } from "lucide-react";
 
@@ -91,18 +92,25 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
         ))}
       </div>
 
-      {currentItems.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
-          <Tag size={24} className="mx-auto mb-2 text-muted" />
-          <p className="text-sm text-muted">
-            {activeTab === "activos"
-              ? "No tienes cupones disponibles por ahora."
-              : activeTab === "canjeados"
-                ? "Aún no has usado ningún cupón."
-                : "No tienes cupones caducados."}
-          </p>
-        </div>
-      ) : (
+          {currentItems.length === 0 ? (
+            <EmptyState
+              icon={Tag}
+              title={
+                activeTab === "activos"
+                  ? "Aún no tienes cupones"
+                  : activeTab === "canjeados"
+                    ? "Aún no has canjeado ninguno"
+                    : "Sin cupones caducados"
+              }
+              description={
+                activeTab === "activos"
+                  ? "Síguenos en Facebook para enterarte cuando lancemos descuentos nuevos."
+                  : activeTab === "canjeados"
+                    ? "Los cupones que uses van a aparecer aquí como historial."
+                    : "Aquí aparecerían los cupones que ya vencieron sin usarse."
+              }
+            />
+          ) : (
         <div className="space-y-3">
           {currentItems.map((c) => {
             const service = (c.services as unknown as { title: string } | null)?.title;

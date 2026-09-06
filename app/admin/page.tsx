@@ -1,4 +1,5 @@
 import { AdminOrderRow } from "@/components/admin/AdminOrderRow";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
 import {
   AlertTriangle,
@@ -165,9 +166,11 @@ export default async function AdminDashboardPage() {
           </h2>
 
           {formattedAttention.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
-              <p className="text-sm text-muted">No hay pedidos pendientes de revisión.</p>
-            </div>
+              <EmptyState
+                icon={CheckCircle2}
+                title="Todo al día"
+                description="No hay pedidos pendientes de revisión en este momento."
+              />
           ) : (
             <div className="space-y-3">
               {formattedAttention.map((order) => {
@@ -204,11 +207,13 @@ export default async function AdminDashboardPage() {
             </Link>
           </div>
 
-          {!recentActivity || recentActivity.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
-              <p className="text-sm text-muted">Sin actividad todavía.</p>
-            </div>
-          ) : (
+            {!recentActivity || recentActivity.length === 0 ? (
+              <EmptyState
+                icon={History}
+                title="Sin actividad todavía"
+                description="Los cambios que hagas tú o tu equipo van a aparecer aquí."
+              />
+            ) : (
             <div className="space-y-2">
               {recentActivity.map((entry) => (
                 <div

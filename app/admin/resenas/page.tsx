@@ -1,4 +1,5 @@
 import { ReviewPublishToggle } from "@/components/admin/ReviewPublishToggle";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
 import { Star } from "lucide-react";
 
@@ -52,11 +53,13 @@ export default async function AdminResenasPage({ searchParams }: Props) {
         ))}
       </div>
 
-      {!reviews || reviews.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-          <p className="text-muted">No hay reseñas en este filtro.</p>
-        </div>
-      ) : (
+        {!reviews || reviews.length === 0 ? (
+          <EmptyState
+            icon={Star}
+            title="Sin reseñas todavía"
+            description="Cuando tus clientes dejen su opinión después de un pedido entregado, van a aparecer aquí."
+          />
+        ) : (
         <div className="space-y-3">
           {reviews.map((review) => {
             const client = review.profiles as unknown as { full_name: string } | null;
