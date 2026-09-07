@@ -88,9 +88,13 @@ export async function POST(request: Request) {
     html,
   });
 
+const isDelivered = order.status === "entregado";
+
   sendPushToClient(order.client_id, {
-    title: "Actualización de tu pedido",
-    body: `Tu pedido${vehicle ? ` de ${vehicle}` : ""} cambió de estado a: ${statusLabel}`,
+    title: isDelivered ? "¡Tu pedido fue entregado!" : "Actualización de tu pedido",
+    body: isDelivered
+      ? `Tu pedido${vehicle ? ` de ${vehicle}` : ""} está listo. Cuéntanos cómo fue tu experiencia.`
+      : `Tu pedido${vehicle ? ` de ${vehicle}` : ""} cambió de estado a: ${statusLabel}`,
     url: "/portal",
   }).catch(() => {});
 
