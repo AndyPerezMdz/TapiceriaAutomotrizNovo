@@ -87,7 +87,7 @@ export async function Footer() {
                 </a>
               </li>
               <li>
-                
+                <a
                   href={businessInfo.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
