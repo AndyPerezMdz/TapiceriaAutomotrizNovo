@@ -1,28 +1,34 @@
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, Award, Clock, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: services }, settings, { data: reviews }] = await Promise.all([
-    supabase
-      .from("services")
-      .select("slug, title, short_description")
-      .eq("is_active", true)
-      .order("order", { ascending: true })
-      .limit(3),
-    getBusinessSettings(),
-    supabase
-      .from("reviews")
-      .select("rating, comment, profiles!reviews_client_id_fkey(full_name)")
-      .eq("is_published", true)
-      .order("created_at", { ascending: false })
-      .limit(3),
-  ]);
+  const [{ data: services }, settings, { data: reviews }, { data: galleryPreview }] =
+    await Promise.all([
+      supabase
+        .from("services")
+        .select("slug, title, short_description")
+        .eq("is_active", true)
+        .order("order", { ascending: true })
+        .limit(3),
+      getBusinessSettings(),
+      supabase
+        .from("reviews")
+        .select("rating, comment, profiles!reviews_client_id_fkey(full_name)")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false })
+        .limit(3),
+      supabase
+        .from("gallery_items")
+        .select("id, image_after_url, image_before_url, caption")
+        .order("created_at", { ascending: false })
+        .limit(6),
+    ]);
 
   const whatsappHref = buildWhatsAppLink(
     "Hola, me gustaría más información sobre sus servicios",
@@ -44,7 +50,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/70 to-brand-black/40" />
         </div>
 
-        <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="mx-auto max-w-6xl animate-fade-up px-6 py-24">
           <span className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-yellow">
             Tapicería Automotriz by NOVO
           </span>
@@ -76,8 +82,25 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Franja de confianza */}
+      <section className="border-b border-black/10 bg-surface dark:border-white/10">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 py-10 sm:grid-cols-4">
+          {[
+            { icon: Award, label: "Materiales de calidad" },
+            { icon: ShieldCheck, label: "Trabajo garantizado" },
+            { icon: Clock, label: "Seguimiento en línea" },
+            { icon: Sparkles, label: "Atención al detalle" },
+          ].map((item) => (
+            <div key={item.label} className="flex flex-col items-center gap-2 text-center">
+              <item.icon size={22} className="text-brand-yellow-dark dark:text-brand-yellow" />
+              <p className="text-xs font-medium text-foreground sm:text-sm">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Servicios destacados */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6 py-20">
         <div className="mb-10 flex items-end justify-between">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -119,10 +142,95 @@ export default async function HomePage() {
         </Link>
       </section>
 
+      {/* Por qué elegirnos */}
+      <section className="border-t border-black/10 bg-surface py-20 dark:border-white/10">
+        <div className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6">
+          <h2 className="mb-12 text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            ¿Por qué elegirnos?
+          </h2>
+          <div className="grid gap-10 sm:grid-cols-3">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow/15 text-brand-yellow-dark dark:text-brand-yellow">
+                <Sparkles size={24} />
+              </div>
+              <h3 className="font-semibold text-foreground">Atención personalizada</h3>
+              <p className="mt-2 text-sm text-muted">
+                Cada vehículo es distinto, y así lo tratamos: revisamos tu caso
+                a detalle antes de cotizar.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow/15 text-brand-yellow-dark dark:text-brand-yellow">
+                <Clock size={24} />
+              </div>
+              <h3 className="font-semibold text-foreground">Seguimiento en línea</h3>
+              <p className="mt-2 text-sm text-muted">
+                Da seguimiento a tu pedido paso a paso desde tu celular, sin
+                tener que llamar para preguntar.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow/15 text-brand-yellow-dark dark:text-brand-yellow">
+                <Award size={24} />
+              </div>
+              <h3 className="font-semibold text-foreground">Materiales de calidad</h3>
+              <p className="mt-2 text-sm text-muted">
+                Trabajamos con piel, vinil y telas seleccionadas, pensadas para
+                durar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vista previa de galería */}
+      {galleryPreview && galleryPreview.length > 0 ? (
+        <section className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6 py-20">
+          <div className="mb-10 flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                Nuestro trabajo
+              </h2>
+              <p className="mt-2 text-muted">Antes y después de algunos proyectos recientes.</p>
+            </div>
+            <Link
+              href="/galeria"
+              className="hidden shrink-0 items-center gap-1 text-sm font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow sm:flex"
+            >
+              Ver galería completa <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {galleryPreview.map((item) => (
+              <div
+                key={item.id}
+                className="group relative aspect-square overflow-hidden rounded-lg border border-black/10 dark:border-white/10"
+              >
+                {item.image_after_url ? (
+                  <img
+                    src={item.image_after_url}
+                    alt={item.caption ?? ""}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  />
+                ) : null}
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/galeria"
+            className="mt-6 flex items-center justify-center gap-1 text-sm font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow sm:hidden"
+          >
+            Ver galería completa <ArrowRight size={14} />
+          </Link>
+        </section>
+      ) : null}
+
       {/* Reseñas */}
       {reviews && reviews.length > 0 ? (
         <section className="border-t border-black/10 bg-surface py-16 dark:border-white/10">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6">
             <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Lo que dicen nuestros clientes
             </h2>
@@ -164,7 +272,7 @@ export default async function HomePage() {
 
       {/* CTA final */}
       <section className="border-t border-black/10 bg-surface dark:border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-16 text-center">
+        <div className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6 py-16 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             ¿Listo para renovar tu interior?
           </h2>

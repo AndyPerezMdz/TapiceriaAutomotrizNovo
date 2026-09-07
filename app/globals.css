@@ -86,3 +86,34 @@
 .animate-panel-in {
   animation: panel-in 0.18s ease-out;
 }
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out;
+}
+
+.animate-fade-up-on-scroll {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fade-up 0.6s ease-out forwards;
+  animation-timeline: view();
+  animation-range: entry 0% cover 30%;
+}
+
+@supports not (animation-timeline: view()) {
+  .animate-fade-up-on-scroll {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
