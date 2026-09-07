@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { Bell, BellOff } from "lucide-react";
+import { Bell, BellOff, Share, SquarePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function urlBase64ToUint8Array(base64String: string) {
@@ -11,17 +11,28 @@ function urlBase64ToUint8Array(base64String: string) {
   return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
 }
 
+type Status = "unsupported" | "denied" | "granted" | "default" | "ios-needs-install";
+
 export function PushNotificationToggle() {
-  const [status, setStatus] = useState<"unsupported" | "denied" | "granted" | "default">(
-    "default",
-  );
+  const [status, setStatus] = useState<Status>("default");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) {
+    const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+
+    if (isIos && !isStandalone) {
+      setStatus("ios-needs-install");
+      return;
+    }
+
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
       setStatus("unsupported");
       return;
     }
+
     setStatus(Notification.permission as "denied" | "granted" | "default");
   }, []);
 
@@ -65,7 +76,57 @@ export function PushNotificationToggle() {
     setIsLoading(false);
   }
 
-  if (status === "unsupported") return null;
+  if (status === "ios-needs-install") {
+    return (
+      <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+        <div className="mb-2 flex items-center gap-2.5">
+          <Bell size={16} className="text-muted" />
+          <p className="text-sm font-medium text-foreground">Activar notificaciones</p>
+        </div>
+        <p className="mb-3 text-xs text-muted">
+          En iPhone, primero necesitas agregar esta página a tu pantalla de inicio para poder
+          recibir notificaciones:
+        </p>
+        <ol className="space-y-2 text-xs text-foreground">
+          <li className="flex items-center gap-2">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow/20 text-[10px] font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+              1
+            </span>
+            Toca el ícono de compartir <Share size={13} className="inline" /> en la barra de
+            Safari.
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow/20 text-[10px] font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+              2
+            </span>
+            Elige <SquarePlus size={13} className="inline" /> &quot;Agregar a pantalla de
+            inicio&quot;.
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-yellow/20 text-[10px] font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+              3
+            </span>
+            Abre la app desde el ícono nuevo en tu pantalla de inicio, y activa notificaciones
+            desde ahí.
+          </li>
+        </ol>
+      </div>
+    );
+  }
+
+  if (status === "unsupported") {
+    return (
+      <div className="flex items-center gap-2.5 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+        <BellOff size={16} className="text-muted" />
+        <div>
+          <p className="text-sm font-medium text-foreground">Notificaciones no disponibles</p>
+          <p className="text-xs text-muted">
+            Tu navegador actual no soporta esta función.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (status === "granted") {
     return (
