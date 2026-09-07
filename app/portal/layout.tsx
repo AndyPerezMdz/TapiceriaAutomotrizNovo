@@ -19,7 +19,6 @@ export default async function PortalLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   const { data: profile } = user
     ? await supabase
         .from("profiles")
@@ -27,25 +26,27 @@ export default async function PortalLayout({
         .eq("id", user.id)
         .single()
     : { data: null };
-
   const notifications = user ? await getPortalNotifications(supabase, user.id) : [];
 
   return (
     <div className="flex min-h-screen overflow-x-hidden bg-background">
       <PortalSidebar />
-
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-b border-black/10 bg-surface dark:border-white/10">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3 lg:justify-end">
+          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:justify-end">
             <Link href="/portal" className="lg:hidden">
               <FooterLogo />
             </Link>
 
-            <div className="flex items-center gap-3">
-              <Link
-                href="/portal/perfil"
-                className="hidden items-center gap-2 sm:flex"
-              >
+            {/* Celular: solo lo esencial */}
+            <div className="flex items-center gap-1 sm:hidden">
+              <ChatWidget variant="header" />
+              <NotificationBell notifications={notifications} />
+            </div>
+
+            {/* Escritorio: todo visible */}
+            <div className="hidden items-center gap-3 sm:flex">
+              <Link href="/portal/perfil" className="flex items-center gap-2">
                 {profile?.avatar_url ? (
                   <img
                     src={profile.avatar_url}
@@ -66,12 +67,10 @@ export default async function PortalLayout({
             </div>
           </div>
         </header>
-
         <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10 pb-24 lg:pb-10">
           {children}
         </main>
       </div>
-
       <BottomNav />
       <ApplyPendingReferral />
     </div>

@@ -1,12 +1,12 @@
 "use client";
-
+import { SignOutButton } from "@/components/auth/SignOutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Award, Gift, Tag, User, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 export function MoreSheet({ onClose }: { onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
@@ -47,6 +47,15 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
               {item.label}
             </Link>
           ))}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between border-t border-black/10 pt-3 dark:border-white/10">
+          <span className="px-3 text-sm text-foreground">Apariencia</span>
+          <ThemeToggle />
+        </div>
+
+        <div className="mt-1 px-3">
+          <SignOutButton />
         </div>
       </div>
     </div>
