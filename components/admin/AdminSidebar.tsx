@@ -7,6 +7,7 @@ import {
   Calendar,
   ChevronDown,
   ClipboardList,
+  HelpCircle,
   History,
   ImageIcon,
   LayoutDashboard,
@@ -70,6 +71,7 @@ const groups: NavGroup[] = [
     items: [
       { href: "/admin/servicios", label: "Servicios", icon: Wrench },
       { href: "/admin/galeria", label: "Galería", icon: ImageIcon },
+      { href: "/admin/faqs", label: "Preguntas frecuentes", icon: HelpCircle },
     ],
   },
   {

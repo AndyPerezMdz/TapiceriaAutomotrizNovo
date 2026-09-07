@@ -4,11 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { ArrowRight, Award, Clock, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { FAQSection } from "@/components/public/FAQSection";
 
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: services }, settings, { data: reviews }, { data: galleryPreview }] =
+  const [{ data: services }, settings, { data: reviews }, { data: galleryPreview }, { data: faqs }] =
     await Promise.all([
       supabase
         .from("services")
@@ -28,6 +29,11 @@ export default async function HomePage() {
         .select("id, image_after_url, image_before_url, caption")
         .order("created_at", { ascending: false })
         .limit(6),
+      supabase
+        .from("faqs")
+        .select("id, question, answer")
+        .eq("is_active", true)
+        .order("order", { ascending: true }),
     ]);
 
   const whatsappHref = buildWhatsAppLink(
@@ -269,6 +275,8 @@ export default async function HomePage() {
           </div>
         </section>
       ) : null}
+
+      <FAQSection faqs={faqs ?? []} />
 
       {/* CTA final */}
       <section className="border-t border-black/10 bg-surface dark:border-white/10">
