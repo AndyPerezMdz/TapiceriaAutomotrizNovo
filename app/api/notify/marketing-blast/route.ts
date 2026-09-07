@@ -2,6 +2,7 @@ import { emailWrapper, sendEmail } from "@/lib/email/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { sendPushToAllSubscribed } from "@/lib/push/sendPush";
 
 export async function POST(request: Request) {
   const sessionClient = await createClient();
@@ -68,5 +69,12 @@ export async function POST(request: Request) {
     if (!result.error) sentCount += batch.length;
   }
 
+  sendPushToAllSubscribed({
+    title,
+    body: message.length > 100 ? `${message.slice(0, 100)}...` : message,
+    url: buttonUrl || "/portal",
+  }).catch(() => {});
+
   return NextResponse.json({ success: true, sentCount, total: emails.length });
+
 }
