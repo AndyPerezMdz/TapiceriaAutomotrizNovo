@@ -16,6 +16,7 @@ type Status = "unsupported" | "denied" | "granted" | "default" | "ios-needs-inst
 export function PushNotificationToggle() {
   const [status, setStatus] = useState<Status>("default");
   const [isLoading, setIsLoading] = useState(false);
+  const [debugError, setDebugError] = useState<string | null>(null);
 
   useEffect(() => {
     const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
@@ -38,6 +39,7 @@ export function PushNotificationToggle() {
 
   async function handleEnable() {
     setIsLoading(true);
+    setDebugError(null);
 
     const permission = await Notification.requestPermission();
     setStatus(permission as "denied" | "granted" | "default");
@@ -61,7 +63,7 @@ export function PushNotificationToggle() {
         data: { session },
       } = await supabase.auth.getSession();
 
-      await fetch("/api/push/subscribe", {
+      const res = await fetch("/api/push/subscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,11 +71,33 @@ export function PushNotificationToggle() {
         },
         body: JSON.stringify(subscription.toJSON()),
       });
-    } catch {
-      // Si algo falla en la suscripción, el usuario puede intentar de nuevo.
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setDebugError(`Error al guardar (${res.status}): ${data.error ?? "desconocido"}`);
+      }
+    } catch (err) {
+      setDebugError(
+        `Error al suscribirse: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
 
     setIsLoading(false);
+  }
+
+  if (debugError) {
+    return (
+      <div className="rounded-lg border border-brand-red/30 bg-brand-red/5 p-4">
+        <p className="text-sm font-medium text-brand-red">No se pudo activar</p>
+        <p className="mt-1 break-words text-xs text-brand-red/80">{debugError}</p>
+        <button
+          onClick={() => setDebugError(null)}
+          className="mt-2 text-xs font-medium text-brand-red underline"
+        >
+          Intentar de nuevo
+        </button>
+      </div>
+    );
   }
 
   if (status === "ios-needs-install") {
