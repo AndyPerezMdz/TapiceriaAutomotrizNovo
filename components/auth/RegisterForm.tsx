@@ -11,9 +11,74 @@ import {
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
+import { Check, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+
+function StyledCheckbox({
+  checked,
+  onChange,
+  disabled,
+  children,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="flex cursor-pointer items-start gap-2.5 text-sm text-foreground">
+      <span className="relative mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          disabled={disabled}
+          className="peer absolute h-[18px] w-[18px] cursor-pointer appearance-none rounded border border-black/25 transition checked:border-brand-yellow checked:bg-brand-yellow disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/25"
+        />
+        <Check
+          size={12}
+          strokeWidth={3}
+          className="pointer-events-none absolute text-brand-black opacity-0 transition peer-checked:opacity-100"
+        />
+      </span>
+      <span className="leading-snug">{children}</span>
+    </label>
+  );
+}
+
+function PasswordInput({
+  id,
+  name,
+  disabled,
+}: {
+  id: string;
+  name: string;
+  disabled?: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="relative">
+      <input
+        id={id}
+        name={name}
+        type={visible ? "text" : "password"}
+        autoComplete="new-password"
+        className={`${inputClassName} pr-10`}
+        disabled={disabled}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        tabIndex={-1}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition hover:text-foreground"
+      >
+        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+}
 
 export function RegisterForm() {
   const router = useRouter();
@@ -79,8 +144,6 @@ export function RegisterForm() {
       return;
     }
 
-    // Guarda el referido ANTES de crear la cuenta, para que sobreviva
-    // aunque tenga que confirmar su correo antes de tener sesión.
     if (refId) {
       try {
         localStorage.setItem("pending_referral", refId);
@@ -136,7 +199,7 @@ export function RegisterForm() {
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {formError ? (
           <div className={formErrorClassName}>{formError}</div>
         ) : null}
@@ -163,65 +226,56 @@ export function RegisterForm() {
           />
         </AuthField>
 
-        <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            className={inputClassName}
-            disabled={isLoading}
-          />
-        </AuthField>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              className={inputClassName}
+              disabled={isLoading}
+            />
+          </AuthField>
 
-        <AuthField id="phone" label="Teléfono (10 dígitos)" error={fieldErrors.phone}>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            inputMode="numeric"
-            placeholder="9999999999"
-            autoComplete="tel"
-            className={inputClassName}
-            disabled={isLoading}
-          />
-        </AuthField>
+          <AuthField id="phone" label="Teléfono (10 dígitos)" error={fieldErrors.phone}>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              inputMode="numeric"
+              placeholder="9999999999"
+              autoComplete="tel"
+              className={inputClassName}
+              disabled={isLoading}
+            />
+          </AuthField>
+        </div>
 
-        <AuthField id="password" label="Contraseña" error={fieldErrors.password}>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            className={inputClassName}
-            disabled={isLoading}
-          />
-        </AuthField>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AuthField id="password" label="Contraseña" error={fieldErrors.password}>
+            <PasswordInput id="password" name="password" disabled={isLoading} />
+          </AuthField>
 
-        <AuthField
-          id="confirmPassword"
-          label="Confirmar contraseña"
-          error={fieldErrors.confirmPassword}
-        >
-          <input
+          <AuthField
             id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            className={inputClassName}
-            disabled={isLoading}
-          />
-        </AuthField>
+            label="Confirmar contraseña"
+            error={fieldErrors.confirmPassword}
+          >
+            <PasswordInput
+              id="confirmPassword"
+              name="confirmPassword"
+              disabled={isLoading}
+            />
+          </AuthField>
+        </div>
 
-        <label className="flex items-start gap-2 text-sm text-foreground">
-          <input
-            type="checkbox"
+        <div className="space-y-3 rounded-lg border border-black/10 bg-surface/50 p-4 dark:border-white/10">
+          <StyledCheckbox
             checked={acceptedTerms}
-            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            onChange={setAcceptedTerms}
             disabled={isLoading}
-            className="mt-0.5"
-          />
-          <span>
+          >
             Acepto los{" "}
             <Link href="/terminos" target="_blank" className="underline hover:no-underline">
               Términos y Condiciones
@@ -231,22 +285,17 @@ export function RegisterForm() {
               Aviso de Privacidad
             </Link>
             .
-          </span>
-        </label>
+          </StyledCheckbox>
 
-        <label className="flex items-start gap-2 text-sm text-foreground">
-          <input
-            type="checkbox"
+          <StyledCheckbox
             checked={wantsMarketing}
-            onChange={(e) => setWantsMarketing(e.target.checked)}
+            onChange={setWantsMarketing}
             disabled={isLoading}
-            className="mt-0.5"
-          />
-          <span>
+          >
             Quiero recibir correos sobre promociones, cupones nuevos y novedades
-            <span className="text-muted"> (opcional, puedes darte de baja cuando quieras)</span>.
-          </span>
-        </label>
+            <span className="text-muted"> (opcional).</span>
+          </StyledCheckbox>
+        </div>
 
         <button
           type="submit"
