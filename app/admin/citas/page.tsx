@@ -1,4 +1,4 @@
-import { AppointmentStatusButton } from "@/components/admin/AppointmentStatusButton";
+import { AppointmentActions } from "@/components/admin/AppointmentActions";
 import { createClient } from "@/lib/supabase/server";
 import { Calendar, MessageSquare, Phone } from "lucide-react";
 
@@ -46,7 +46,12 @@ export default async function AdminCitasPage() {
                     <Phone size={12} /> {a.client_phone}
                   </p>
                 </div>
-                <AppointmentStatusButton id={a.id} status={a.status} />
+                <AppointmentActions
+                  id={a.id}
+                  status={a.status}
+                  appointmentDate={a.appointment_date}
+                  appointmentTime={a.appointment_time}
+                />
               </div>
 
               {a.reason ? (

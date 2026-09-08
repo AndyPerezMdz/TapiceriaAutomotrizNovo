@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const schema = z.object({
-  action: z.enum(["change_role", "toggle_active", "resend_invite"]),
+  action: z.enum(["change_role", "toggle_active", "resend_invite", "delete"]),
   userId: z.string().uuid(),
   role: z.enum(["empleado", "admin"]).optional(),
 });
@@ -87,6 +87,34 @@ export async function POST(request: Request) {
       data: { full_name: profile.full_name, role: profile.role },
       redirectTo: `${origin}/auth/confirm?next=/staff/aceptar-invitacion`,
     });
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+  }
+
+  if (action === "delete") {
+    if (userId === user.id) {
+      return NextResponse.json(
+        { error: "No puedes eliminar tu propia cuenta." },
+        { status: 400 },
+      );
+    }
+
+    const { data: target } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", userId)
+      .single();
+
+    if (!target || target.role === "cliente") {
+      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
+    }
+
+    // Borra la cuenta de autenticación; el perfil se borra en cascada,
+    // y el historial (audit_log, order_status_history) conserva el nombre
+    // guardado como texto, solo se desvincula la referencia.
+    const { error } = await adminClient.auth.admin.deleteUser(userId);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });

@@ -1,6 +1,7 @@
 "use client";
 
-import { RefreshCw, ShieldCheck, UserX, UserCheck } from "lucide-react";
+import { useConfirm } from "@/lib/hooks/useConfirm";
+import { RefreshCw, ShieldCheck, Trash2, UserCheck, UserX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -16,6 +17,7 @@ interface StaffMember {
 
 export function StaffMemberRow({ member }: { member: StaffMember }) {
   const router = useRouter();
+  const { confirm, dialog } = useConfirm();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -45,10 +47,21 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
     router.refresh();
   }
 
+  async function handleDelete() {
+    const ok = await confirm({
+      title: "Eliminar usuario",
+      description: `Se eliminará la cuenta de ${member.full_name} por completo. Su historial de acciones pasadas se conserva, pero ya no podrá iniciar sesión. Esta acción no se puede deshacer.`,
+      confirmLabel: "Sí, eliminar",
+    });
+    if (!ok) return;
+    callAction("delete");
+  }
+
   const hasActivated = Boolean(member.last_sign_in_at);
 
   return (
     <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+      {dialog}
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium text-foreground">{member.full_name}</p>
@@ -113,6 +126,15 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
         >
           {member.is_active ? <UserX size={13} /> : <UserCheck size={13} />}
           {member.is_active ? "Desactivar" : "Reactivar"}
+        </button>
+
+        <button
+          onClick={handleDelete}
+          disabled={isLoading !== null}
+          className="flex items-center gap-1.5 rounded-md border border-brand-red/30 px-3 py-1.5 text-xs font-medium text-brand-red transition hover:bg-brand-red/5 disabled:opacity-50"
+        >
+          <Trash2 size={13} />
+          {isLoading === "delete" ? "Eliminando..." : "Eliminar"}
         </button>
       </div>
     </div>
