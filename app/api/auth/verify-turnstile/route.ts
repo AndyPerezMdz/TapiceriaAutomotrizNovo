@@ -17,6 +17,12 @@ export async function POST(request: Request) {
   });
 
   const data = await res.json();
+    if (!data.success) {
+    console.error("Turnstile rechazado:", data["error-codes"]);
+  }
 
-  return NextResponse.json({ success: data.success === true });
+  return NextResponse.json({
+    success: data.success === true,
+    errorCodes: data["error-codes"] ?? [],
+  });
 }
