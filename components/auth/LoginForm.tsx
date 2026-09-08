@@ -70,6 +70,7 @@ export function LoginForm() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setFormError(null);
     setFieldErrors({});
 
@@ -95,7 +96,7 @@ export function LoginForm() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const values = {
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
