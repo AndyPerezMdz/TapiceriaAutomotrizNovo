@@ -14,7 +14,6 @@ export default async function AdminLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   const { data: profile } = user
     ? await supabase
         .from("profiles")
@@ -22,9 +21,7 @@ export default async function AdminLayout({
         .eq("id", user.id)
         .single()
     : { data: null };
-
   const isAdmin = profile?.role === "admin";
-
   const { count: pendingCount } = await supabase
     .from("orders")
     .select("*", { count: "exact", head: true })
@@ -34,11 +31,18 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isAdmin={isAdmin} pendingCount={pendingCount ?? 0} />
-
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 lg:justify-end lg:px-6 lg:pl-6">
+        <header className="flex items-center justify-between gap-2 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 sm:gap-3 lg:justify-end lg:px-6 lg:pl-6">
           <div className="w-64 lg:hidden" />
-          <div className="flex items-center gap-3">
+
+          {/* Celular: solo lo esencial */}
+          <div className="flex items-center gap-1.5 sm:hidden">
+            <ChatWidget variant="header" />
+            <SignOutButton variant="icon" />
+          </div>
+
+          {/* Escritorio: todo visible */}
+          <div className="hidden items-center gap-3 sm:flex">
             <ChatWidget variant="header" />
             <Link href="/admin/perfil" className="flex items-center gap-2">
               {profile?.avatar_url ? (
@@ -61,7 +65,6 @@ export default async function AdminLayout({
             <SignOutButton />
           </div>
         </header>
-
         <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
       </div>
     </div>
