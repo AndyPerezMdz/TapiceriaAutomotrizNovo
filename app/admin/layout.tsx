@@ -36,8 +36,26 @@ export default async function AdminLayout({
           <div className="w-64 lg:hidden" />
 
           {/* Celular: solo lo esencial */}
+{/* Celular: solo lo esencial */}
           <div className="flex items-center gap-1.5 sm:hidden">
             <ChatWidget variant="header" />
+            <Link
+              href="/admin/perfil"
+              aria-label="Mi perfil"
+              className="flex h-8 w-8 items-center justify-center rounded-full"
+            >
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                  {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
+                </div>
+              )}
+            </Link>
             <SignOutButton variant="icon" />
           </div>
 
