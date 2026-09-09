@@ -120,8 +120,8 @@ export function LoginForm() {
       password: parsed.data.password,
     });
 
-    if (error) {
-      setFormError(getAuthErrorMessage(error));
+if (error) {
+      setFormError(`[DEBUG] ${error.message} (código: ${error.status ?? "sin código"})`);
       setIsLoading(false);
       window.turnstile?.reset(widgetIdRef.current ?? undefined);
       setTurnstileToken(null);
