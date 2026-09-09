@@ -1,3 +1,4 @@
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
@@ -120,14 +121,7 @@ export default async function ServicioDetallePage({ params }: Props) {
         >
           <Sparkles size={16} /> Cotizar en línea
         </Link>
-        <a
-          href={whatsappHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-6 py-3 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-        >
-          <MessageCircle size={16} /> Preguntar por WhatsApp
-        </a>
+      <WhatsAppLink href={whatsappHref} label="Preguntar por WhatsApp" />
       </div>
 
       {materials && materials.length > 0 ? (

@@ -1,7 +1,8 @@
 import { AdminOrderRow } from "@/components/admin/AdminOrderRow";
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft, Mail, MessageCircle, Phone, User } from "lucide-react";
+import { ArrowLeft, Mail, Phone, User } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -79,14 +80,9 @@ export default async function AdminClienteDetallePage({ params }: Props) {
       </div>
 
       {whatsappHref ? (
-        <a
-          href={whatsappHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mb-8 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-        >
-          <MessageCircle size={16} /> Contactar por WhatsApp
-        </a>
+        <div className="mb-8">
+          <WhatsAppLink href={whatsappHref} label="Contactar por WhatsApp" />
+        </div>
       ) : null}
 
       <h2 className="mb-4 text-sm font-semibold text-foreground">

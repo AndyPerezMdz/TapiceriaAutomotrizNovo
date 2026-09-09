@@ -13,6 +13,7 @@ import { RepeatOrderButton } from "@/components/portal/RepeatOrderButton";
 import { ShareTrackingButton } from "@/components/portal/ShareTrackingButton";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -246,14 +247,9 @@ export default async function PedidoDetallePage({ params }: Props) {
                 visitar el taller en persona, o escribirnos por WhatsApp para que lo agreguemos
                 como nota en tu pedido.
               </p>
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-              >
-                <MessageCircle size={16} /> Escribir por WhatsApp
-              </a>
+              <div className="mt-3">
+                <WhatsAppLink href={whatsappHref} label="Escribir por WhatsApp" />
+              </div>
             </div>
           ) : null}
 

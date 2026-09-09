@@ -1,9 +1,10 @@
 import { ContactStatusButton } from "@/components/admin/ContactStatusButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/server";
-import { Download, MessageCircle, Phone } from "lucide-react";
+import { Download, Phone } from "lucide-react";
 
 const PAGE_SIZE = 20;
 
@@ -102,14 +103,9 @@ export default async function AdminContactosPage({ searchParams }: Props) {
                   </p>
                   <p className="mt-2 break-words text-sm text-foreground">{s.message}</p>
 
-                  <a
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-                  >
-                    <MessageCircle size={16} /> Contactar por WhatsApp
-                  </a>
+                  <div className="mt-3">
+                    <WhatsAppLink href={whatsappHref} label="Contactar por WhatsApp" />
+                  </div>
                 </div>
               );
             })}

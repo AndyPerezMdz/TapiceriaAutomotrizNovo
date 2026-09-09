@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { MessageCircle, AlertTriangle, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { WhatsAppLink } from "../shared/WhatsAppLink";
 
 function getAllowedStatuses(current: string): string[] {
   const transitions: Record<string, string[]> = {
@@ -343,14 +344,7 @@ export function OrderStaffPanel({
         </button>
 
         {whatsappHref ? (
-          <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2.5 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-          >
-            <MessageCircle size={16} /> Avisar por WhatsApp
-          </a>
+          <WhatsAppLink href={whatsappHref} label="Avisar por WhatsApp" />
         ) : null}
       </div>
     </div>

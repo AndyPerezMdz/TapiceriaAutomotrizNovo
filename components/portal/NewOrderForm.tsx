@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { WhatsAppLink } from "../shared/WhatsAppLink";
 
 const fieldClassName =
   "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15 dark:focus:border-white dark:focus:ring-white";
@@ -383,7 +384,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               >
                 Agendar visita en línea
               </a>
-              <a
+              <WhatsAppLink
                 href={
                   whatsappNumber
                     ? buildWhatsAppLink(
@@ -392,12 +393,8 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                       )
                     : "#"
                 }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-fit items-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-2 text-sm font-medium text-[#25D366] transition hover:bg-[#25D366]/20"
-              >
-                <MessageCircle size={16} /> WhatsApp
-              </a>
+                label="WhatsApp"
+              />
             </div>
           </div>
         ) : (

@@ -5,6 +5,7 @@ import { ArrowRight, Award, Clock, MessageCircle, ShieldCheck, Sparkles } from "
 import Image from "next/image";
 import Link from "next/link";
 import { FAQSection } from "@/components/public/FAQSection";
+import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -295,14 +296,7 @@ export default async function HomePage() {
             >
               Solicitar cotización
             </Link>
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-md border border-black/15 bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:border-black/30 dark:border-white/15 dark:hover:border-white/30"
-            >
-              <MessageCircle size={16} /> WhatsApp
-            </a>
+          <WhatsAppLink href={whatsappHref} label="WhatsApp" /> 
           </div>
         </div>
       </section>
