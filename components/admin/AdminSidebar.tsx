@@ -47,12 +47,6 @@ const groups: NavGroup[] = [
     title: "Principal",
     items: [
       { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/admin/reportes", label: "Reportes", icon: BarChart3, adminOnly: true },
-    ],
-  },
-  {
-    title: "Operación",
-    items: [
       { href: "/admin/pedidos", label: "Pedidos", icon: ClipboardList, badgeKey: "pending" },
       { href: "/admin/clientes", label: "Clientes", icon: Users2 },
       { href: "/admin/citas", label: "Citas", icon: Calendar },
@@ -60,8 +54,11 @@ const groups: NavGroup[] = [
     ],
   },
   {
-    title: "Marketing",
+    title: "Contenido y promociones",
     items: [
+      { href: "/admin/servicios", label: "Servicios", icon: Wrench },
+      { href: "/admin/galeria", label: "Galería", icon: ImageIcon },
+      { href: "/admin/faqs", label: "Preguntas frecuentes", icon: HelpCircle },
       { href: "/admin/cupones", label: "Cupones", icon: Tag, adminOnly: true },
       { href: "/admin/puntos", label: "Puntos", icon: Award, adminOnly: true },
       { href: "/admin/referidos", label: "Referidos", icon: Users, adminOnly: true },
@@ -71,16 +68,9 @@ const groups: NavGroup[] = [
     ],
   },
   {
-    title: "Catálogo",
+    title: "Administración",
     items: [
-      { href: "/admin/servicios", label: "Servicios", icon: Wrench },
-      { href: "/admin/galeria", label: "Galería", icon: ImageIcon },
-      { href: "/admin/faqs", label: "Preguntas frecuentes", icon: HelpCircle },
-    ],
-  },
-  {
-    title: "Sistema",
-    items: [
+      { href: "/admin/reportes", label: "Reportes", icon: BarChart3, adminOnly: true },
       { href: "/admin/historial", label: "Historial", icon: History },
       { href: "/admin/usuarios", label: "Usuarios", icon: Users, adminOnly: true },
       { href: "/admin/configuracion", label: "Configuración", icon: Settings, adminOnly: true },
