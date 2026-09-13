@@ -1,19 +1,22 @@
 "use client";
 
-import { BrandLogo } from "@/components/auth/BrandLogo";
+import {
+  AuthField,
+  AuthLayout,
+  AuthLink,
+  formErrorClassName,
+  inputClassName,
+  submitButtonClassName,
+} from "@/components/auth/AuthLayout";
 import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
+import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type LoginMode = "password" | "magic";
-
-const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 
 function PasswordInput({
   id,
@@ -32,7 +35,7 @@ function PasswordInput({
         name={name}
         type={visible ? "text" : "password"}
         autoComplete="current-password"
-        className={`${fieldClassName} pr-10`}
+        className={`${inputClassName} pr-10`}
         disabled={disabled}
       />
       <button
@@ -112,105 +115,73 @@ export function StaffLoginForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-brand-black px-4 py-12">
-      <div className="w-full max-w-sm rounded-lg border border-white/10 bg-surface p-8 shadow-2xl">
-        <div className="mb-6 flex justify-center">
-          <BrandLogo />
-        </div>
-
-        <div className="mb-7 text-center">
-          <span className="mb-3 inline-block rounded-full bg-brand-yellow/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-brand-yellow-dark dark:text-brand-yellow">
-            Acceso interno
-          </span>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Panel de staff
-          </h1>
-          <p className="mt-1.5 text-sm text-muted">
-            Acceso exclusivo para personal del taller
-          </p>
-        </div>
-
-        <div className="mb-5 grid grid-cols-2 gap-1 rounded-md border border-black/15 p-1 dark:border-white/15">
-          <button
-            type="button"
-            onClick={() => setMode("password")}
-            className={`rounded-sm py-1.5 text-sm font-medium transition ${
-              mode === "password"
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "text-muted hover:text-foreground"
-            }`}
-          >
-            Contraseña
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("magic")}
-            className={`rounded-sm py-1.5 text-sm font-medium transition ${
-              mode === "magic"
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "text-muted hover:text-foreground"
-            }`}
-          >
-            Sin contraseña
-          </button>
-        </div>
-
-        {mode === "password" ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {formError ? (
-              <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
-                {formError}
-              </div>
-            ) : null}
-
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
-                Correo electrónico
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                className={fieldClassName}
-                disabled={isLoading}
-              />
-              {fieldErrors.email ? (
-                <p className="mt-1 text-sm text-brand-red">{fieldErrors.email}</p>
-              ) : null}
-            </div>
-
-            <div>
-              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-foreground">
-                Contraseña
-              </label>
-              <PasswordInput id="password" name="password" disabled={isLoading} />
-              {fieldErrors.password ? (
-                <p className="mt-1 text-sm text-brand-red">{fieldErrors.password}</p>
-              ) : null}
-            </div>
-
-            <div className="text-right">
-              <Link
-                href="/staff/recuperar"
-                className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
-              >
-                ¿Olvidaste tu contraseña?
-              </Link>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-brand-black"
-            >
-              {isLoading ? "Verificando..." : "Iniciar sesión"}
-            </button>
-          </form>
-        ) : (
-          <MagicLinkForm redirectPath="/admin" />
-        )}
+    <AuthLayout
+      title="Panel de staff"
+      subtitle="Acceso exclusivo para personal del taller"
+      footer={
+        <>
+          <ShieldCheck size={13} className="inline align-text-bottom" /> Acceso interno —
+          si no trabajas en el taller, esta pantalla no es para ti.
+        </>
+      }
+    >
+      <div className="mb-5 grid grid-cols-2 gap-1 rounded-md border border-black/15 p-1 dark:border-white/15">
+        <button
+          type="button"
+          onClick={() => setMode("password")}
+          className={`rounded-sm py-1.5 text-sm font-medium transition ${
+            mode === "password"
+              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
+              : "text-muted hover:text-foreground"
+          }`}
+        >
+          Contraseña
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("magic")}
+          className={`rounded-sm py-1.5 text-sm font-medium transition ${
+            mode === "magic"
+              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
+              : "text-muted hover:text-foreground"
+          }`}
+        >
+          Sin contraseña
+        </button>
       </div>
-    </main>
+
+      {mode === "password" ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <div className={formErrorClassName}>{formError}</div>
+          ) : null}
+
+          <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              className={inputClassName}
+              disabled={isLoading}
+            />
+          </AuthField>
+
+          <AuthField id="password" label="Contraseña" error={fieldErrors.password}>
+            <PasswordInput id="password" name="password" disabled={isLoading} />
+          </AuthField>
+
+          <div className="text-right">
+            <AuthLink href="/staff/recuperar">¿Olvidaste tu contraseña?</AuthLink>
+          </div>
+
+          <button type="submit" disabled={isLoading} className={submitButtonClassName}>
+            {isLoading ? "Verificando..." : "Iniciar sesión"}
+          </button>
+        </form>
+      ) : (
+        <MagicLinkForm redirectPath="/admin" />
+      )}
+    </AuthLayout>
   );
 }
