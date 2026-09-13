@@ -5,6 +5,7 @@ import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +14,38 @@ type LoginMode = "password" | "magic";
 
 const fieldClassName =
   "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
+
+function PasswordInput({
+  id,
+  name,
+  disabled,
+}: {
+  id: string;
+  name: string;
+  disabled?: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="relative">
+      <input
+        id={id}
+        name={name}
+        type={visible ? "text" : "password"}
+        autoComplete="current-password"
+        className={`${fieldClassName} pr-10`}
+        disabled={disabled}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        tabIndex={-1}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition hover:text-foreground"
+      >
+        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+}
 
 export function StaffLoginForm() {
   const router = useRouter();
@@ -26,11 +59,12 @@ export function StaffLoginForm() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setFormError(null);
     setFieldErrors({});
     setIsLoading(true);
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const values = {
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
@@ -150,14 +184,7 @@ export function StaffLoginForm() {
               <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-foreground">
                 Contraseña
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                className={fieldClassName}
-                disabled={isLoading}
-              />
+              <PasswordInput id="password" name="password" disabled={isLoading} />
               {fieldErrors.password ? (
                 <p className="mt-1 text-sm text-brand-red">{fieldErrors.password}</p>
               ) : null}
