@@ -24,7 +24,7 @@ export default async function MisQuejasPage() {
     ? await supabase
         .from("complaints")
         .select(
-          "id, description, status, resolution_note, source, created_at, order_id, orders(vehicle_make, vehicle_model)",
+          "id, description, status, source, created_at, satisfaction_rating, order_id, orders(vehicle_make, vehicle_model)",
         )
         .eq("client_id", user.id)
         .order("created_at", { ascending: false })
@@ -53,18 +53,16 @@ export default async function MisQuejasPage() {
             const vehicle = [order?.vehicle_make, order?.vehicle_model].filter(Boolean).join(" ");
 
             return (
-              <div
+              <Link
                 key={c.id}
-                className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
+                href={`/portal/quejas/${c.id}`}
+                className="block rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <Link
-                      href={`/portal/pedidos/${c.order_id}`}
-                      className="text-sm font-medium text-brand-yellow-dark hover:underline dark:text-brand-yellow"
-                    >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground">
                       {vehicle || "Pedido"} · Folio {c.order_id.slice(0, 8).toUpperCase()}
-                    </Link>
+                    </p>
                     <p className="mt-1 flex items-center gap-1.5 text-xs text-muted">
                       <Calendar size={11} />
                       {new Date(c.created_at).toLocaleDateString("es-MX", {
@@ -74,21 +72,22 @@ export default async function MisQuejasPage() {
                       })}{" "}
                       · {c.source === "web" ? "Reportada en línea" : "Reportada por WhatsApp"}
                     </p>
+                    <p className="mt-1.5 truncate text-sm text-muted">{c.description}</p>
                   </div>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[c.status]}`}
-                  >
-                    {statusLabels[c.status]}
-                  </span>
+                  <div className="flex shrink-0 flex-col items-end gap-1.5">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[c.status]}`}
+                    >
+                      {statusLabels[c.status]}
+                    </span>
+                    {c.satisfaction_rating ? (
+                      <span className="text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                        {"★".repeat(c.satisfaction_rating)}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
-                <p className="mt-2 break-words text-sm text-foreground">{c.description}</p>
-                {c.resolution_note ? (
-                  <div className="mt-2 rounded-md bg-black/5 p-2.5 dark:bg-white/5">
-                    <p className="text-xs font-medium text-muted">Respuesta del taller:</p>
-                    <p className="mt-0.5 text-sm text-foreground">{c.resolution_note}</p>
-                  </div>
-                ) : null}
-              </div>
+              </Link>
             );
           })}
         </div>
