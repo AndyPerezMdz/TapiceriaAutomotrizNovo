@@ -14,6 +14,7 @@ import { ShareTrackingButton } from "@/components/portal/ShareTrackingButton";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
+import { ComplaintForm } from "@/components/portal/ComplaintForm";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -143,6 +144,9 @@ export default async function PedidoDetallePage({ params }: Props) {
               month: "long",
               year: "numeric",
             })}
+          </p>
+          <p className="mt-1 text-xs text-muted">
+            Folio: <span className="font-mono font-medium text-foreground">{order.id.slice(0, 8).toUpperCase()}</span>
           </p>
         </div>
         <span className="rounded-full bg-brand-yellow/20 px-3 py-1 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
@@ -280,7 +284,7 @@ export default async function PedidoDetallePage({ params }: Props) {
               <p className="text-sm text-muted">Aún no hay fotos en este pedido.</p>
             )}
           </div>
-
+          <ComplaintForm orderId={order.id} />
           <DeleteOrderButton orderId={order.id} redirectTo="/portal/pedidos" />
         </div>
 
