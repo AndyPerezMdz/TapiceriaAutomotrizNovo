@@ -27,12 +27,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+type BadgeKey = "pending" | "complaints";
+
 interface NavItem {
   href: string;
   label: string;
   icon: typeof LayoutDashboard;
   adminOnly?: boolean;
-  badge?: boolean;
+  badgeKey?: BadgeKey;
 }
 
 interface NavGroup {
@@ -51,10 +53,10 @@ const groups: NavGroup[] = [
   {
     title: "Operación",
     items: [
-      { href: "/admin/pedidos", label: "Pedidos", icon: ClipboardList, badge: true },
+      { href: "/admin/pedidos", label: "Pedidos", icon: ClipboardList, badgeKey: "pending" },
       { href: "/admin/clientes", label: "Clientes", icon: Users2 },
       { href: "/admin/citas", label: "Citas", icon: Calendar },
-      { href: "/admin/quejas", label: "Quejas", icon: AlertTriangle},
+      { href: "/admin/quejas", label: "Quejas", icon: AlertTriangle, badgeKey: "complaints" },
     ],
   },
   {
@@ -89,13 +91,20 @@ const groups: NavGroup[] = [
 export function AdminSidebar({
   isAdmin,
   pendingCount,
+  complaintsCount,
 }: {
   isAdmin: boolean;
   pendingCount: number;
+  complaintsCount: number;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
+  const badgeValues: Record<BadgeKey, number> = {
+    pending: pendingCount,
+    complaints: complaintsCount,
+  };
 
   function toggleGroup(title: string) {
     setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }));
@@ -158,6 +167,7 @@ export function AdminSidebar({
                     <div className="mb-3 mt-1 space-y-0.5">
                       {visibleItems.map((item) => {
                         const isActive = pathname === item.href;
+                        const badgeValue = item.badgeKey ? badgeValues[item.badgeKey] : 0;
                         return (
                           <Link
                             key={item.href}
@@ -171,9 +181,9 @@ export function AdminSidebar({
                           >
                             <item.icon size={16} className="shrink-0" />
                             <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                            {item.badge && pendingCount > 0 ? (
+                            {badgeValue > 0 ? (
                               <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-semibold text-white">
-                                {pendingCount}
+                                {badgeValue}
                               </span>
                             ) : null}
                           </Link>
