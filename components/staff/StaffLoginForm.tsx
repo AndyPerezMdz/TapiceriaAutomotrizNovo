@@ -137,7 +137,6 @@ export function StaffLoginForm() {
           backgroundSize: "40px 40px",
         }}
       />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-brand-yellow/10 blur-3xl" />
 
       <div className="relative w-full max-w-sm">
         {/* Indicador "en vivo" */}
