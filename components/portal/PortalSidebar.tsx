@@ -3,6 +3,7 @@
 import { FooterLogo } from "@/components/FooterLogo";
 import {
   Award,
+  AlertTriangle,
   CalendarDays,
   ChevronDown,
   Gift,
@@ -40,6 +41,7 @@ const groups: NavGroup[] = [
     items: [
       { href: "/portal/pedidos", label: "Historial", icon: History },
       { href: "/portal/mis-citas", label: "Mis citas", icon: CalendarDays },
+      { href: "/portal/quejas", label: "Quejas", icon: AlertTriangle },
     ],
   },
   {

@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Award, Gift, Tag, User, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { AlertTriangle } from "lucide-react"; 
 
 export function MoreSheet({ onClose }: { onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -20,6 +21,7 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
     { href: "/portal/puntos", label: "Puntos", icon: Award },
     { href: "/portal/perfil", label: "Mi perfil", icon: User },
     { href: "/portal/referidos", label: "Referidos", icon: Gift },
+    { href: "/portal/quejas", label: "Quejas", icon: AlertTriangle },
   ];
 
   return (

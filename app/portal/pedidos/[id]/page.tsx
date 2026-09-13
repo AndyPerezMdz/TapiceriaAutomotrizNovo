@@ -284,7 +284,9 @@ export default async function PedidoDetallePage({ params }: Props) {
               <p className="text-sm text-muted">Aún no hay fotos en este pedido.</p>
             )}
           </div>
-          <ComplaintForm orderId={order.id} />
+
+          {order.status === "entregado" ? <ComplaintForm orderId={order.id} /> : null}
+
           <DeleteOrderButton orderId={order.id} redirectTo="/portal/pedidos" />
         </div>
 

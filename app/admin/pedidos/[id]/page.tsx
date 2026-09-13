@@ -2,6 +2,7 @@ import { OrderStaffPanel } from "@/components/admin/OrderStaffPanel";
 import { OrderTimeline } from "@/components/portal/OrderTimeline";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
 import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
+import { StaffComplaintForm } from "@/components/admin/ComplaintForm";
 import { statusLabels } from "@/lib/validations/admin-order";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft, Calendar, Car } from "lucide-react";
@@ -131,6 +132,9 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
               year: "numeric",
             })}
           </p>
+          <p className="mt-1 text-xs text-muted">
+            Folio: <span className="font-mono font-medium text-foreground">{order.id.slice(0, 8).toUpperCase()}</span>
+          </p>
         </div>
         <span className="rounded-full bg-brand-yellow/20 px-3 py-1 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
           {statusLabels[order.status] ?? order.status}
@@ -208,6 +212,17 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
               <p className="text-sm text-muted">Sin actualizaciones todavía.</p>
             )}
           </div>
+
+          {order.status === "entregado" ? (
+            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
+              <h2 className="mb-2 text-sm font-semibold text-foreground">Quejas</h2>
+              <p className="mb-2 text-xs text-muted">
+                Si el cliente reportó un problema por WhatsApp (no desde la página), regístralo
+                aquí.
+              </p>
+              <StaffComplaintForm orderId={order.id} />
+            </div>
+          ) : null}
 
           <DeleteOrderButton orderId={order.id} redirectTo="/admin/pedidos" />
         </div>
