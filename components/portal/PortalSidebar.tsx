@@ -34,27 +34,19 @@ const groups: NavGroup[] = [
     items: [
       { href: "/portal", label: "Mis pedidos", icon: LayoutDashboard },
       { href: "/portal/nuevo-pedido", label: "Nuevo pedido", icon: PlusCircle },
-    ],
-  },
-  {
-    title: "Seguimiento",
-    items: [
       { href: "/portal/pedidos", label: "Historial", icon: History },
       { href: "/portal/mis-citas", label: "Mis citas", icon: CalendarDays },
       { href: "/portal/quejas", label: "Quejas", icon: AlertTriangle },
     ],
   },
   {
-    title: "Beneficios",
+    title: "Beneficios y cuenta",
     items: [
       { href: "/portal/cupones", label: "Cupones", icon: Tag },
       { href: "/portal/puntos", label: "Puntos", icon: Award },
       { href: "/portal/referidos", label: "Referidos", icon: Gift },
+      { href: "/portal/perfil", label: "Mi perfil", icon: User },
     ],
-  },
-  {
-    title: "Cuenta",
-    items: [{ href: "/portal/perfil", label: "Mi perfil", icon: User }],
   },
 ];
 
