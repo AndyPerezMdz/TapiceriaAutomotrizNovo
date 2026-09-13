@@ -1,4 +1,5 @@
 "use client";
+import { appointmentStatusTone, statusTone } from "@/lib/constants/status-colors";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,11 +12,6 @@ const labels: Record<string, string> = {
   pendiente: "Pendiente",
   confirmada: "Confirmada",
   completada: "Completada",
-};
-const colors: Record<string, string> = {
-  pendiente: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  confirmada: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  completada: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
 };
 export function AppointmentStatusButton({ id, status }: { id: string; status: string }) {
   const router = useRouter();
@@ -40,13 +36,12 @@ export function AppointmentStatusButton({ id, status }: { id: string; status: st
     }
     setIsUpdating(false);
   }
+  const tone = appointmentStatusTone[current] ?? "neutral";
   return (
     <button
       onClick={handleClick}
       disabled={isUpdating}
-      className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition hover:opacity-80 disabled:opacity-50 ${
-        colors[current] ?? "bg-gray-100 text-gray-600"
-      }`}
+      className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition hover:opacity-80 disabled:opacity-50 ${statusTone[tone]}`}
     >
       {labels[current] ?? current}
     </button>
