@@ -1,7 +1,7 @@
 "use client";
 
 import { NoviAvatar } from "@/components/chat/NoviAvatar";
-import { Send, Sparkles, X } from "lucide-react";
+import { History, Plus, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface ChatMessage {
@@ -9,11 +9,19 @@ interface ChatMessage {
   content: string;
 }
 
+interface Conversation {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  updatedAt: number;
+}
+
 interface Props {
   variant?: "header" | "floating";
 }
 
-const STORAGE_KEY = "novi_chat_history";
+const STORAGE_KEY = "novi_conversations";
+const MAX_STORED_CONVERSATIONS = 20;
 
 const cuteWaitingMessages = [
   "Ten paciencia, es su primer día...",
@@ -35,8 +43,55 @@ const defaultGreeting: ChatMessage = {
     "¡Hola! Soy Novi, el asistente de Tapicería Automotriz by NOVO. ¿En qué puedo ayudarte?",
 };
 
+function makeNewConversation(): Conversation {
+  return {
+    id: crypto.randomUUID(),
+    title: "Nueva conversación",
+    messages: [defaultGreeting],
+    updatedAt: Date.now(),
+  };
+}
+
+function loadConversations(): Conversation[] {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved) as Conversation[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveConversations(conversations: Conversation[]) {
+  try {
+    const trimmed = conversations
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, MAX_STORED_CONVERSATIONS);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+  } catch {
+    // No es crítico si el navegador bloquea localStorage.
+  }
+}
+
+function relativeDate(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "Ahora";
+  if (minutes < 60) return `Hace ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `Hace ${hours} h`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return "Ayer";
+  if (days < 7) return `Hace ${days} días`;
+  return new Date(timestamp).toLocaleDateString("es-MX", { day: "numeric", month: "short" });
+}
+
 export function ChatWidget({ variant = "floating" }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([defaultGreeting]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -48,28 +103,38 @@ export function ChatWidget({ variant = "floating" }: Props) {
   const sessionIdRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Carga el historial guardado, si existe, al montar el componente.
+  // Al montar: carga conversaciones guardadas, o crea la primera.
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as ChatMessage[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(parsed);
-        }
-      }
-    } catch {
-      // Si falla, simplemente empieza con el saludo de siempre.
+    const loaded = loadConversations();
+    if (loaded.length > 0) {
+      const mostRecent = [...loaded].sort((a, b) => b.updatedAt - a.updatedAt)[0];
+      setConversations(loaded);
+      setActiveId(mostRecent.id);
+      setMessages(mostRecent.messages);
+    } else {
+      const fresh = makeNewConversation();
+      setConversations([fresh]);
+      setActiveId(fresh.id);
+      setMessages(fresh.messages);
     }
   }, []);
 
-  // Guarda el historial cada vez que cambia.
+  // Cada vez que cambian los mensajes, actualiza la conversación activa y guarda.
   useEffect(() => {
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch {
-      // No es crítico si el navegador bloquea sessionStorage.
-    }
+    if (!activeId) return;
+    setConversations((prev) => {
+      const updated = prev.map((c) => {
+        if (c.id !== activeId) return c;
+        const firstUserMessage = messages.find((m) => m.role === "user");
+        const title = firstUserMessage
+          ? firstUserMessage.content.slice(0, 40) + (firstUserMessage.content.length > 40 ? "..." : "")
+          : "Nueva conversación";
+        return { ...c, messages, title, updatedAt: Date.now() };
+      });
+      saveConversations(updated);
+      return updated;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
   useEffect(() => {
@@ -81,23 +146,39 @@ export function ChatWidget({ variant = "floating" }: Props) {
     function handleClick(e: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setIsOpen(false);
+        setShowHistory(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [variant]);
 
-  function handleClearChat() {
+  function handleNewChat() {
     sessionIdRef.current += 1;
     abortControllerRef.current?.abort();
     setIsLoading(false);
     setShowSlowNotice(false);
-    setMessages([defaultGreeting]);
-    try {
-      sessionStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // No es crítico.
-    }
+
+    const fresh = makeNewConversation();
+    setConversations((prev) => {
+      const updated = [...prev, fresh];
+      saveConversations(updated);
+      return updated;
+    });
+    setActiveId(fresh.id);
+    setMessages(fresh.messages);
+    setShowHistory(false);
+  }
+
+  function handleSelectConversation(conversation: Conversation) {
+    sessionIdRef.current += 1;
+    abortControllerRef.current?.abort();
+    setIsLoading(false);
+    setShowSlowNotice(false);
+
+    setActiveId(conversation.id);
+    setMessages(conversation.messages);
+    setShowHistory(false);
   }
 
   async function sendMessage() {
@@ -130,7 +211,6 @@ export function ChatWidget({ variant = "floating" }: Props) {
 
       const data = await res.json();
 
-      // Si mientras esperábamos se dio "Nuevo chat", ignoramos esta respuesta por completo.
       if (sessionIdRef.current !== requestSessionId) return;
 
       if (!res.ok) {
@@ -171,6 +251,8 @@ export function ChatWidget({ variant = "floating" }: Props) {
     }
   }
 
+  const sortedConversations = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt);
+
   const chatBody = (
     <>
       <div className="flex items-center justify-between bg-brand-black px-4 py-3">
@@ -188,79 +270,115 @@ export function ChatWidget({ variant = "floating" }: Props) {
         </div>
         <div className="flex items-center gap-1">
           <button
-            onClick={handleClearChat}
-            className="rounded px-2 py-1 text-[11px] text-white/60 transition hover:bg-white/10 hover:text-white"
-            title="Empezar una conversación nueva"
+            onClick={() => setShowHistory((v) => !v)}
+            className={`rounded p-1.5 transition hover:bg-white/10 ${
+              showHistory ? "text-brand-yellow" : "text-white/70 hover:text-white"
+            }`}
+            title="Ver conversaciones anteriores"
           >
-            Nuevo chat
+            <History size={16} />
+          </button>
+          <button
+            onClick={handleNewChat}
+            className="rounded p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white"
+            title="Nueva conversación"
+          >
+            <Plus size={16} />
           </button>
           <button
             onClick={() => setIsOpen(false)}
-            className="text-white/70 transition hover:text-white"
+            className="rounded p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white"
           >
             <X size={18} />
           </button>
         </div>
       </div>
 
-      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
-          >
-            {m.role === "assistant" ? (
-              <NoviAvatar size={22} className="mb-1 shrink-0" />
-            ) : null}
-            <div
-              className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                m.role === "user"
-                  ? "bg-brand-yellow text-brand-black"
-                  : "bg-black/5 text-foreground dark:bg-white/10"
-              }`}
-            >
-              {m.content}
+      {showHistory ? (
+        <div className="flex-1 overflow-y-auto p-2">
+          {sortedConversations.length === 0 ? (
+            <p className="p-4 text-center text-sm text-muted">Sin conversaciones guardadas.</p>
+          ) : (
+            <div className="space-y-1">
+              {sortedConversations.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => handleSelectConversation(c)}
+                  className={`flex w-full flex-col items-start rounded-md px-3 py-2 text-left transition ${
+                    c.id === activeId
+                      ? "bg-brand-yellow/15"
+                      : "hover:bg-black/5 dark:hover:bg-white/5"
+                  }`}
+                >
+                  <span className="w-full truncate text-sm text-foreground">{c.title}</span>
+                  <span className="text-xs text-muted">{relativeDate(c.updatedAt)}</span>
+                </button>
+              ))}
             </div>
-          </div>
-        ))}
-        {isLoading ? (
-          <div className="flex items-end gap-2">
-            <NoviAvatar size={22} className="mb-1 shrink-0" />
-            <div className="max-w-[80%] rounded-lg bg-black/5 px-3 py-2.5 dark:bg-white/10">
-              <div className="flex items-center gap-1">
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.3s]" />
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.15s]" />
-                <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted" />
+          )}
+        </div>
+      ) : (
+        <>
+          <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                {m.role === "assistant" ? (
+                  <NoviAvatar size={22} className="mb-1 shrink-0" />
+                ) : null}
+                <div
+                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
+                    m.role === "user"
+                      ? "bg-brand-yellow text-brand-black"
+                      : "bg-black/5 text-foreground dark:bg-white/10"
+                  }`}
+                >
+                  {m.content}
+                </div>
               </div>
-              <p className="mt-1.5 text-[11px] text-muted">{waitingMessage}</p>
-              {showSlowNotice ? (
-                <p className="mt-1 text-[11px] text-muted">
-                  A veces tardo un poco más de lo normal — sigo aquí.
-                </p>
-              ) : null}
-            </div>
+            ))}
+            {isLoading ? (
+              <div className="flex items-end gap-2">
+                <NoviAvatar size={22} className="mb-1 shrink-0" />
+                <div className="max-w-[80%] rounded-lg bg-black/5 px-3 py-2.5 dark:bg-white/10">
+                  <div className="flex items-center gap-1">
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.3s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.15s]" />
+                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted" />
+                  </div>
+                  <p className="mt-1.5 text-[11px] text-muted">{waitingMessage}</p>
+                  {showSlowNotice ? (
+                    <p className="mt-1 text-[11px] text-muted">
+                      A veces tardo un poco más de lo normal — sigo aquí.
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
           </div>
-        ) : null}
-      </div>
 
-      <div className="flex items-end gap-2 border-t border-black/10 p-3 dark:border-white/10">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Escribe tu pregunta..."
-          rows={1}
-          disabled={isLoading}
-          className="max-h-24 flex-1 resize-none rounded-md border border-black/15 bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:opacity-60 dark:border-white/15"
-        />
-        <button
-          onClick={sendMessage}
-          disabled={isLoading || !input.trim()}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand-black text-white transition hover:bg-brand-black/85 disabled:opacity-50 dark:bg-white dark:text-brand-black"
-        >
-          <Send size={16} />
-        </button>
-      </div>
+          <div className="flex items-end gap-2 border-t border-black/10 p-3 dark:border-white/10">
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Escribe tu pregunta..."
+              rows={1}
+              disabled={isLoading}
+              className="max-h-24 flex-1 resize-none rounded-md border border-black/15 bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:opacity-60 dark:border-white/15"
+            />
+            <button
+              onClick={sendMessage}
+              disabled={isLoading || !input.trim()}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand-black text-white transition hover:bg-brand-black/85 disabled:opacity-50 dark:bg-white dark:text-brand-black"
+            >
+              <Send size={16} />
+            </button>
+          </div>
+        </>
+      )}
     </>
   );
 
