@@ -45,6 +45,8 @@ export function ChatWidget({ variant = "floating" }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const slowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sessionIdRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Carga el historial guardado, si existe, al montar el componente.
   useEffect(() => {
@@ -86,6 +88,10 @@ export function ChatWidget({ variant = "floating" }: Props) {
   }, [variant]);
 
   function handleClearChat() {
+    sessionIdRef.current += 1;
+    abortControllerRef.current?.abort();
+    setIsLoading(false);
+    setShowSlowNotice(false);
     setMessages([defaultGreeting]);
     try {
       sessionStorage.removeItem(STORAGE_KEY);
@@ -98,6 +104,7 @@ export function ChatWidget({ variant = "floating" }: Props) {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
+    const requestSessionId = sessionIdRef.current;
     const newMessages: ChatMessage[] = [...messages, { role: "user", content: trimmed }];
     setMessages(newMessages);
     setInput("");
@@ -106,6 +113,7 @@ export function ChatWidget({ variant = "floating" }: Props) {
     setWaitingMessage(cuteWaitingMessages[Math.floor(Math.random() * cuteWaitingMessages.length)]);
 
     const controller = new AbortController();
+    abortControllerRef.current = controller;
     const abortTimer = setTimeout(() => controller.abort(), 30000);
     slowTimerRef.current = setTimeout(() => setShowSlowNotice(true), 6000);
 
@@ -122,6 +130,9 @@ export function ChatWidget({ variant = "floating" }: Props) {
 
       const data = await res.json();
 
+      // Si mientras esperábamos se dio "Nuevo chat", ignoramos esta respuesta por completo.
+      if (sessionIdRef.current !== requestSessionId) return;
+
       if (!res.ok) {
         setMessages((prev) => [
           ...prev,
@@ -131,6 +142,8 @@ export function ChatWidget({ variant = "floating" }: Props) {
         setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
       }
     } catch (err) {
+      if (sessionIdRef.current !== requestSessionId) return;
+
       const isTimeout = err instanceof Error && err.name === "AbortError";
       setMessages((prev) => [
         ...prev,
@@ -144,8 +157,10 @@ export function ChatWidget({ variant = "floating" }: Props) {
     } finally {
       clearTimeout(abortTimer);
       if (slowTimerRef.current) clearTimeout(slowTimerRef.current);
-      setShowSlowNotice(false);
-      setIsLoading(false);
+      if (sessionIdRef.current === requestSessionId) {
+        setShowSlowNotice(false);
+        setIsLoading(false);
+      }
     }
   }
 
