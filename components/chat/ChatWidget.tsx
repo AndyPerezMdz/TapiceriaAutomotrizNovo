@@ -13,21 +13,62 @@ interface Props {
   variant?: "header" | "floating";
 }
 
+const STORAGE_KEY = "novi_chat_history";
+
+const cuteWaitingMessages = [
+  "Ten paciencia, es su primer día...",
+  "Eres su primer cliente, dale chance...",
+  "Apenas está entablando conversación contigo...",
+  "Está pensando muy bien su respuesta...",
+  "Todavía se está acostumbrando a esto...",
+  "Su CV dice que es tímido...",
+  "Está buscando la respuesta en su memoria RAM...",
+  "Está consultando con sus compañeros de IA...",
+  "Está buscando en Google...",
+  "Está recordando lo que aprendió en la universidad...",
+  "Está buscando en su base de datos de conocimientos...",
+];
+
+const defaultGreeting: ChatMessage = {
+  role: "assistant",
+  content:
+    "¡Hola! Soy Novi, el asistente de Tapicería Automotriz by NOVO. ¿En qué puedo ayudarte?",
+};
+
 export function ChatWidget({ variant = "floating" }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: "assistant",
-      content:
-        "¡Hola! Soy Novi, el asistente de Tapicería Automotriz by NOVO. ¿En qué puedo ayudarte?",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([defaultGreeting]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showSlowNotice, setShowSlowNotice] = useState(false);
+  const [waitingMessage, setWaitingMessage] = useState(cuteWaitingMessages[0]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const slowTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Carga el historial guardado, si existe, al montar el componente.
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as ChatMessage[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
+      }
+    } catch {
+      // Si falla, simplemente empieza con el saludo de siempre.
+    }
+  }, []);
+
+  // Guarda el historial cada vez que cambia.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch {
+      // No es crítico si el navegador bloquea sessionStorage.
+    }
+  }, [messages]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -44,6 +85,15 @@ export function ChatWidget({ variant = "floating" }: Props) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [variant]);
 
+  function handleClearChat() {
+    setMessages([defaultGreeting]);
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // No es crítico.
+    }
+  }
+
   async function sendMessage() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
@@ -53,6 +103,7 @@ export function ChatWidget({ variant = "floating" }: Props) {
     setInput("");
     setIsLoading(true);
     setShowSlowNotice(false);
+    setWaitingMessage(cuteWaitingMessages[Math.floor(Math.random() * cuteWaitingMessages.length)]);
 
     const controller = new AbortController();
     const abortTimer = setTimeout(() => controller.abort(), 30000);
@@ -120,12 +171,21 @@ export function ChatWidget({ variant = "floating" }: Props) {
             <p className="text-xs text-white/60">Asistente con IA</p>
           </div>
         </div>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="text-white/70 transition hover:text-white"
-        >
-          <X size={18} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleClearChat}
+            className="rounded px-2 py-1 text-[11px] text-white/60 transition hover:bg-white/10 hover:text-white"
+            title="Empezar una conversación nueva"
+          >
+            Nuevo chat
+          </button>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="text-white/70 transition hover:text-white"
+          >
+            <X size={18} />
+          </button>
+        </div>
       </div>
 
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
@@ -157,8 +217,9 @@ export function ChatWidget({ variant = "floating" }: Props) {
                 <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted [animation-delay:-0.15s]" />
                 <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted" />
               </div>
+              <p className="mt-1.5 text-[11px] text-muted">{waitingMessage}</p>
               {showSlowNotice ? (
-                <p className="mt-1.5 text-[11px] text-muted">
+                <p className="mt-1 text-[11px] text-muted">
                   A veces tardo un poco más de lo normal — sigo aquí.
                 </p>
               ) : null}
@@ -200,7 +261,8 @@ export function ChatWidget({ variant = "floating" }: Props) {
         </button>
 
         {isOpen ? (
-      <div className="fixed inset-x-4 top-16 z-50 flex h-[70vh] origin-top animate-panel-in flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:h-[480px] sm:w-96 dark:border-white/10">            {chatBody}
+          <div className="fixed inset-x-4 top-16 z-50 flex h-[70vh] origin-top animate-panel-in flex-col overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:h-[480px] sm:w-96 dark:border-white/10">
+            {chatBody}
           </div>
         ) : null}
       </div>
