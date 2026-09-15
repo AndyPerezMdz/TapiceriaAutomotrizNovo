@@ -10,7 +10,11 @@ Reglas importantes:
 - Si no tienes la información para responder algo, dilo honestamente.
 - Los precios que menciones son siempre "de referencia" — el precio final lo confirma el taller al revisar cada solicitud.
 - No das consejos técnicos de mecánica ni de otros temas fuera de tapicería automotriz.
-- Sé conciso: respuestas de 2-4 líneas normalmente, salvo que te pidan más detalle.`;
+- Sé conciso: respuestas de 2-4 líneas normalmente, salvo que te pidan más detalle.
+
+Política de garantía: todos los trabajos realizados por el taller cuentan con garantía. Si un cliente nota algún detalle después de recibir su vehículo, debe contactar al taller y se revisa sin costo adicional.
+
+Política de quejas: si un cliente tuvo un problema con un pedido ya entregado, puede levantar una queja desde el detalle de ese pedido en su portal (botón "¿Tuviste un problema con este pedido?"), o puede reportarlo por WhatsApp para que el staff la registre. Puede ver el estado de sus quejas (Abierta, Atendida, Cerrada) en la sección "Mis quejas" de su cuenta, y una vez atendida, puede calificar qué tan bien se resolvió.`;
 
 export async function POST(request: Request) {
   try {
@@ -129,12 +133,26 @@ export async function POST(request: Request) {
           });
         }
 
+        const { data: openComplaints } = await supabase
+          .from("complaints")
+          .select("status, description, order_id")
+          .eq("client_id", user.id)
+          .neq("status", "cerrada");
+
+        if (openComplaints && openComplaints.length > 0) {
+          roleContext += "\nQuejas abiertas o en atención de este cliente:\n";
+          openComplaints.forEach((c) => {
+            roleContext += `- Folio ${c.order_id.slice(0, 8).toUpperCase()}: ${c.status} — "${c.description}"\n`;
+          });
+        }
+
         personalizedGreeting = ` El cliente con el que hablas se llama ${profile.full_name}, puedes usar su nombre si es natural. Es un CLIENTE, no personal del taller.`;
       } else if (profile?.role === "admin" || profile?.role === "empleado") {
         const [
           { count: pendientes },
           { count: cotizados },
           { count: citasPendientes },
+          { count: quejasAbiertas },
         ] = await Promise.all([
           supabase
             .from("orders")
@@ -150,14 +168,19 @@ export async function POST(request: Request) {
             .from("appointments")
             .select("*", { count: "exact", head: true })
             .eq("status", "pendiente"),
+          supabase
+            .from("complaints")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "abierta"),
         ]);
 
         roleContext += `\nResumen operativo actual del taller:\n`;
         roleContext += `- Pedidos pendientes de revisión: ${pendientes ?? 0}\n`;
         roleContext += `- Pedidos cotizados esperando respuesta del cliente: ${cotizados ?? 0}\n`;
         roleContext += `- Citas pendientes de confirmar: ${citasPendientes ?? 0}\n`;
+        roleContext += `- Quejas abiertas sin atender: ${quejasAbiertas ?? 0}\n`;
 
-        personalizedGreeting = ` Hablas con ${profile.full_name}, quien es PERSONAL DEL TALLER (rol: ${profile.role}), no un cliente. Puedes ayudarle con preguntas operativas del negocio (cupones, puntos, políticas, resumen de pedidos), y hablarle de forma más directa y técnica que a un cliente. No le sugieras "contactar al taller por WhatsApp", porque él ES el taller.`;
+        personalizedGreeting = ` Hablas con ${profile.full_name}, quien es PERSONAL DEL TALLER (rol: ${profile.role}), no un cliente. Puedes ayudarle con preguntas operativas del negocio (cupones, puntos, políticas, resumen de pedidos, quejas), y hablarle de forma más directa y técnica que a un cliente. No le sugieras "contactar al taller por WhatsApp", porque él ES el taller.`;
       }
     }
 
