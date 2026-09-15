@@ -1,7 +1,8 @@
 "use client";
 
 import { NoviAvatar } from "@/components/chat/NoviAvatar";
-import { History, Plus, Send, Sparkles, X } from "lucide-react";
+import { ArrowRight, History, Plus, Send, Sparkles, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 interface ChatMessage {
@@ -18,6 +19,24 @@ interface Conversation {
 
 interface Props {
   variant?: "header" | "floating";
+}
+
+interface ParsedMessage {
+  text: string;
+  buttonLabel: string | null;
+  buttonHref: string | null;
+}
+
+function parseMessage(content: string): ParsedMessage {
+  const match = content.match(/\[BOTON:([^|]+)\|([^\]]+)\]/);
+  if (!match) {
+    return { text: content, buttonLabel: null, buttonHref: null };
+  }
+  return {
+    text: content.replace(match[0], "").trim(),
+    buttonLabel: match[1].trim(),
+    buttonHref: match[2].trim(),
+  };
 }
 
 const STORAGE_KEY = "novi_conversations";
@@ -320,25 +339,37 @@ export function ChatWidget({ variant = "floating" }: Props) {
       ) : (
         <>
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {m.role === "assistant" ? (
-                  <NoviAvatar size={22} className="mb-1 shrink-0" />
-                ) : null}
+            {messages.map((m, i) => {
+              const parsed = m.role === "assistant" ? parseMessage(m.content) : null;
+              return (
                 <div
-                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                    m.role === "user"
-                      ? "bg-brand-yellow text-brand-black"
-                      : "bg-black/5 text-foreground dark:bg-white/10"
-                  }`}
+                  key={i}
+                  className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  {m.content}
+                  {m.role === "assistant" ? (
+                    <NoviAvatar size={22} className="mb-1 shrink-0" />
+                  ) : null}
+                  <div
+                    className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
+                      m.role === "user"
+                        ? "bg-brand-yellow text-brand-black"
+                        : "bg-black/5 text-foreground dark:bg-white/10"
+                    }`}
+                  >
+                    {parsed ? parsed.text : m.content}
+                    {parsed?.buttonHref && parsed?.buttonLabel ? (
+                      <Link
+                        href={parsed.buttonHref}
+                        onClick={() => setIsOpen(false)}
+                        className="mt-2 flex w-fit items-center gap-1.5 rounded-md bg-brand-yellow px-3 py-1.5 text-xs font-semibold text-brand-black transition hover:bg-brand-yellow-dark"
+                      >
+                        {parsed.buttonLabel} <ArrowRight size={12} />
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {isLoading ? (
               <div className="flex items-end gap-2">
                 <NoviAvatar size={22} className="mb-1 shrink-0" />
