@@ -310,7 +310,7 @@ export function ChatCore() {
         </button>
         <button
           onClick={(e) => handleDeleteConversation(c.id, e)}
-          className="mr-2 shrink-0 rounded p-1.5 text-muted opacity-0 transition hover:bg-brand-red/10 hover:text-brand-red group-hover:opacity-100"
+          className="mr-2 shrink-0 rounded p-1.5 text-muted transition hover:bg-brand-red/10 hover:text-brand-red sm:opacity-0 sm:group-hover:opacity-100"
           title="Eliminar conversación"
         >
           <Trash2 size={14} />

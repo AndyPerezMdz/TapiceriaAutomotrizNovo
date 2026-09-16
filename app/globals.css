@@ -120,10 +120,10 @@
 
 @keyframes novi-sway {
   0%, 100% {
-    transform: translateX(-6px) rotate(-4deg);
+    transform: rotate(-12deg);
   }
   50% {
-    transform: translateX(6px) rotate(4deg);
+    transform: rotate(12deg);
   }
 }
 

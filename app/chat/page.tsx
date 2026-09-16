@@ -5,6 +5,7 @@ import { ChatCore } from "@/components/chat/ChatCore";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -21,7 +22,14 @@ export default function ChatPage() {
         <div className="relative flex h-24 w-24 items-center justify-center">
           <div className="absolute inset-0 animate-spin rounded-full border-4 border-white/10 border-t-brand-yellow" />
           <div className="animate-novi-sway">
-            <BrandLogo />
+            <Image
+              src="/images/novi-avatar.png"
+              alt="Novi"
+              width={64}
+              height={64}
+              className="rounded-full"
+              priority
+            />
           </div>
         </div>
       </div>
