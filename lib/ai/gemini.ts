@@ -3,10 +3,34 @@ interface GeminiMessage {
   content: string;
 }
 
+export interface FunctionDeclaration {
+  name: string;
+  description: string;
+  parameters: {
+    type: "object";
+    properties: Record<string, { type: string; description: string }>;
+    required: string[];
+  };
+}
+
+interface FunctionCallResult {
+  type: "text";
+  text: string;
+} 
+
+interface FunctionCallRequest {
+  type: "function_call";
+  name: string;
+  args: Record<string, unknown>;
+}
+
+export type GeminiResult = FunctionCallResult | FunctionCallRequest;
+
 export async function askGemini(
   systemPrompt: string,
   messages: GeminiMessage[],
-): Promise<string> {
+  tools?: FunctionDeclaration[],
+): Promise<GeminiResult> {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -15,7 +39,7 @@ export async function askGemini(
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
 
-  const body = {
+  const body: Record<string, unknown> = {
     system_instruction: {
       parts: [{ text: systemPrompt }],
     },
@@ -24,6 +48,10 @@ export async function askGemini(
       parts: [{ text: m.content }],
     })),
   };
+
+  if (tools && tools.length > 0) {
+    body.tools = [{ function_declarations: tools }];
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25000);
@@ -52,12 +80,24 @@ export async function askGemini(
   }
 
   const data = await response.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const parts = data?.candidates?.[0]?.content?.parts;
 
-  if (!text) {
-    console.error("Respuesta de Gemini sin texto:", JSON.stringify(data));
+  if (!parts || parts.length === 0) {
+    console.error("Respuesta de Gemini sin contenido:", JSON.stringify(data));
     throw new Error("Respuesta vacía de la IA");
   }
 
-  return text;
+  const functionCallPart = parts.find((p: { functionCall?: unknown }) => p.functionCall);
+  if (functionCallPart) {
+    const call = functionCallPart.functionCall as { name: string; args: Record<string, unknown> };
+    return { type: "function_call", name: call.name, args: call.args ?? {} };
+  }
+
+  const text = parts.find((p: { text?: string }) => p.text)?.text;
+  if (!text) {
+    console.error("Respuesta de Gemini sin texto ni function call:", JSON.stringify(data));
+    throw new Error("Respuesta vacía de la IA");
+  }
+
+  return { type: "text", text };
 }

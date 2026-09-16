@@ -1,4 +1,9 @@
 import { askGemini } from "@/lib/ai/gemini";
+import {
+  appointmentFunctionDeclarations,
+  consultarHorariosDisponibles,
+  crearCitaDesdeChat,
+} from "@/lib/ai/appointment-tools";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -16,6 +21,14 @@ Reglas importantes:
   - Para staff: /admin/pedidos, /admin/citas, /admin/quejas, /admin/clientes.
   - Usa como máximo UN botón por respuesta, solo cuando de verdad ayude a la persona a llegar a donde necesita. No lo uses en cada mensaje.
 - Si un CLIENTE describe un problema o necesidad relacionada con tapicería (por ejemplo "se me rompió el asiento", "quiero cambiar la alfombra", "el volante está gastado"), identifica cuál servicio del catálogo aplica mejor y sugiere el botón así: [BOTON:Cotizar <nombre del servicio>|/portal/nuevo-pedido?service=<id exacto del servicio>]. Solo hazlo si estás razonablemente seguro de que el servicio aplica; si no hay un servicio claro, no inventes uno.
+
+Si un CLIENTE quiere agendar una cita:
+1. Pregunta la fecha y el motivo si no los ha dado.
+2. Usa la función consultar_horarios_disponibles para esa fecha.
+3. Muéstrale las opciones de horario reales que te devuelva la función. Nunca inventes horarios.
+4. Espera a que el cliente confirme fecha, hora y motivo exactos.
+5. Solo entonces usa la función agendar_cita.
+6. Después de agendar con éxito, avisa al cliente que su cita quedó pendiente de confirmar, y que el taller la confirmará pronto.
 
 Política de garantía: todos los trabajos realizados por el taller cuentan con garantía. Si un cliente nota algún detalle después de recibir su vehículo, debe contactar al taller y se revisa sin costo adicional.
 
@@ -213,7 +226,49 @@ export async function POST(request: Request) {
       { role: "user" as const, content: message },
     ];
 
-    const reply = await askGemini(systemPrompt, geminiMessages);
+    const isClient = user !== null;
+    const tools = isClient ? appointmentFunctionDeclarations : undefined;
+
+    let result = await askGemini(systemPrompt, geminiMessages, tools);
+
+    // Si el modelo pidió usar una herramienta, la ejecutamos y le devolvemos el resultado.
+    if (result.type === "function_call" && user) {
+      let functionResultText = "";
+
+      if (result.name === "consultar_horarios_disponibles") {
+        const fecha = String(result.args.fecha ?? "");
+        const { disponibles, mensaje } = await consultarHorariosDisponibles(fecha);
+        functionResultText =
+          disponibles.length > 0
+            ? `Horarios disponibles el ${fecha}: ${disponibles.join(", ")}.`
+            : mensaje || "No hay horarios disponibles ese día.";
+      } else if (result.name === "agendar_cita") {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, phone")
+          .eq("id", user.id)
+          .single();
+
+        const outcome = await crearCitaDesdeChat({
+          fecha: String(result.args.fecha ?? ""),
+          hora: String(result.args.hora ?? ""),
+          motivo: String(result.args.motivo ?? ""),
+          clientId: user.id,
+          clientName: profile?.full_name ?? "Cliente",
+          clientPhone: profile?.phone ?? null,
+        });
+        functionResultText = outcome.mensaje;
+      }
+
+      // Le damos el resultado de la función al modelo para que arme la respuesta final en texto.
+      const followUpMessages = [
+        ...geminiMessages,
+        { role: "model" as const, content: `[Resultado de la acción: ${functionResultText}]` },
+      ];
+      result = await askGemini(systemPrompt, followUpMessages);
+    }
+
+    const reply = result.type === "text" ? result.text : "No pude completar esa acción, intenta de nuevo.";
 
     return NextResponse.json({ reply });
   } catch (error) {
