@@ -1,40 +1,52 @@
 "use client";
 
-import { NoviAvatar } from "@/components/chat/NoviAvatar";
-import { Sparkles } from "lucide-react";
-import Link from "next/link";
+import { BrandLogo } from "@/components/auth/BrandLogo";
+import { ChatCore } from "@/components/chat/ChatCore";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-interface Props {
-  variant?: "header" | "floating";
-}
+export default function ChatPage() {
+  const router = useRouter();
+  const [isEntering, setIsEntering] = useState(true);
 
-export function ChatWidget({ variant = "floating" }: Props) {
-  if (variant === "header") {
+  useEffect(() => {
+    const timer = setTimeout(() => setIsEntering(false), 900);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isEntering) {
     return (
-      <Link
-        href="/chat"
-        aria-label="Hablar con Novi, asistente de IA"
-        className="relative flex h-8 w-8 items-center justify-center rounded-full text-muted transition hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
-      >
-        <NoviAvatar size={26} />
-      </Link>
+      <div className="flex min-h-screen items-center justify-center bg-brand-black">
+        <div className="relative flex h-24 w-24 items-center justify-center">
+          <div className="absolute inset-0 animate-spin rounded-full border-4 border-white/10 border-t-brand-yellow" />
+          <div className="animate-novi-sway">
+            <BrandLogo />
+          </div>
+        </div>
+      </div>
     );
   }
 
-  // variant "floating" (solo sitio público)
   return (
-    <Link
-      href="/chat"
-      aria-label="Hablar con Novi, asistente de IA"
-      className="fixed bottom-5 left-5 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition hover:scale-105"
-      style={{
-        animation: "novi-bounce 3s ease-in-out infinite, novi-pulse-ring 2.5s ease-out infinite",
-      }}
-    >
-      <NoviAvatar size={40} />
-      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-red text-white shadow">
-        <Sparkles size={11} />
-      </span>
-    </Link>
+    <div className="relative min-h-screen overflow-hidden bg-background">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+      <div className="relative mx-auto max-w-5xl px-4 py-6">
+        <button
+          onClick={() => router.back()}
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-foreground"
+        >
+          <ArrowLeft size={16} /> Volver
+        </button>
+        <ChatCore />
+      </div>
+    </div>
   );
 }

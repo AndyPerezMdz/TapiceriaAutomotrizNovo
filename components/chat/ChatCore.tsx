@@ -1,7 +1,8 @@
 "use client";
 
 import { NoviAvatar } from "@/components/chat/NoviAvatar";
-import { ArrowRight, History, Plus, Send, Sparkles } from "lucide-react";
+import { useConfirm } from "@/lib/hooks/useConfirm";
+import { ArrowRight, History, Plus, Send, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -50,6 +51,13 @@ const cuteWaitingMessages = [
   "Está buscando en Google...",
   "Está recordando lo que aprendió en la universidad...",
   "Está buscando en su base de datos de conocimientos...",
+];
+
+const suggestedPrompts = [
+  "¿Qué servicios ofrecen?",
+  "Quiero cotizar el tapizado de mis asientos",
+  "¿Cómo funcionan los puntos de lealtad?",
+  "¿Tienen garantía en el trabajo?",
 ];
 
 const defaultGreeting: ChatMessage = {
@@ -103,6 +111,7 @@ function relativeDate(timestamp: number): string {
 }
 
 export function ChatCore() {
+  const { confirm, dialog } = useConfirm();
   const [showHistory, setShowHistory] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -152,12 +161,15 @@ export function ChatCore() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, showSlowNotice]);
 
-  function handleNewChat() {
+  function resetActiveRequest() {
     sessionIdRef.current += 1;
     abortControllerRef.current?.abort();
     setIsLoading(false);
     setShowSlowNotice(false);
+  }
 
+  function handleNewChat() {
+    resetActiveRequest();
     const fresh = makeNewConversation();
     setConversations((prev) => {
       const updated = [...prev, fresh];
@@ -170,18 +182,46 @@ export function ChatCore() {
   }
 
   function handleSelectConversation(conversation: Conversation) {
-    sessionIdRef.current += 1;
-    abortControllerRef.current?.abort();
-    setIsLoading(false);
-    setShowSlowNotice(false);
-
+    resetActiveRequest();
     setActiveId(conversation.id);
     setMessages(conversation.messages);
     setShowHistory(false);
   }
 
-  async function sendMessage() {
-    const trimmed = input.trim();
+  async function handleDeleteConversation(id: string, e: React.MouseEvent) {
+    e.stopPropagation();
+
+    const ok = await confirm({
+      title: "Eliminar conversación",
+      description: "Esto elimina la conversación por completo. No se puede deshacer.",
+      confirmLabel: "Sí, eliminar",
+    });
+    if (!ok) return;
+
+    setConversations((prev) => {
+      const updated = prev.filter((c) => c.id !== id);
+      saveConversations(updated);
+
+      if (id === activeId) {
+        resetActiveRequest();
+        if (updated.length > 0) {
+          const next = [...updated].sort((a, b) => b.updatedAt - a.updatedAt)[0];
+          setActiveId(next.id);
+          setMessages(next.messages);
+        } else {
+          const fresh = makeNewConversation();
+          setActiveId(fresh.id);
+          setMessages(fresh.messages);
+          return [fresh];
+        }
+      }
+
+      return updated;
+    });
+  }
+
+  async function sendMessage(overrideText?: string) {
+    const trimmed = (overrideText ?? input).trim();
     if (!trimmed || isLoading) return;
 
     const requestSessionId = sessionIdRef.current;
@@ -251,9 +291,38 @@ export function ChatCore() {
   }
 
   const sortedConversations = [...conversations].sort((a, b) => b.updatedAt - a.updatedAt);
+  const isFreshConversation = messages.length === 1;
+
+  function renderConversationRow(c: Conversation) {
+    return (
+      <div
+        key={c.id}
+        className={`group flex items-center rounded-md transition ${
+          c.id === activeId ? "bg-brand-yellow/15" : "hover:bg-black/5 dark:hover:bg-white/5"
+        }`}
+      >
+        <button
+          onClick={() => handleSelectConversation(c)}
+          className="flex min-w-0 flex-1 flex-col items-start px-3 py-2 text-left"
+        >
+          <span className="w-full truncate text-sm text-foreground">{c.title}</span>
+          <span className="text-xs text-muted">{relativeDate(c.updatedAt)}</span>
+        </button>
+        <button
+          onClick={(e) => handleDeleteConversation(c.id, e)}
+          className="mr-2 shrink-0 rounded p-1.5 text-muted opacity-0 transition hover:bg-brand-red/10 hover:text-brand-red group-hover:opacity-100"
+          title="Eliminar conversación"
+        >
+          <Trash2 size={14} />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex h-[calc(100vh-8rem)] max-w-3xl overflow-hidden rounded-lg border border-black/10 bg-surface shadow-sm dark:border-white/10">
+      {dialog}
+
       {/* Sidebar de historial, siempre visible en escritorio */}
       <div className="hidden w-64 shrink-0 flex-col border-r border-black/10 dark:border-white/10 sm:flex">
         <div className="border-b border-black/10 p-3 dark:border-white/10">
@@ -265,18 +334,7 @@ export function ChatCore() {
           </button>
         </div>
         <div className="flex-1 space-y-1 overflow-y-auto p-2">
-          {sortedConversations.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => handleSelectConversation(c)}
-              className={`flex w-full flex-col items-start rounded-md px-3 py-2 text-left transition ${
-                c.id === activeId ? "bg-brand-yellow/15" : "hover:bg-black/5 dark:hover:bg-white/5"
-              }`}
-            >
-              <span className="w-full truncate text-sm text-foreground">{c.title}</span>
-              <span className="text-xs text-muted">{relativeDate(c.updatedAt)}</span>
-            </button>
-          ))}
+          {sortedConversations.map(renderConversationRow)}
         </div>
       </div>
 
@@ -312,18 +370,7 @@ export function ChatCore() {
             >
               <Plus size={14} /> Nueva conversación
             </button>
-            {sortedConversations.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => handleSelectConversation(c)}
-                className={`flex w-full flex-col items-start rounded-md px-3 py-2 text-left transition ${
-                  c.id === activeId ? "bg-brand-yellow/15" : "hover:bg-black/5 dark:hover:bg-white/5"
-                }`}
-              >
-                <span className="w-full truncate text-sm text-foreground">{c.title}</span>
-                <span className="text-xs text-muted">{relativeDate(c.updatedAt)}</span>
-              </button>
-            ))}
+            {sortedConversations.map(renderConversationRow)}
           </div>
         ) : (
           <>
@@ -376,6 +423,23 @@ export function ChatCore() {
                   </div>
                 </div>
               ) : null}
+
+              {isFreshConversation && !isLoading ? (
+                <div className="pt-2">
+                  <p className="mb-2 text-xs font-medium text-muted">Prueba preguntando:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedPrompts.map((prompt) => (
+                      <button
+                        key={prompt}
+                        onClick={() => sendMessage(prompt)}
+                        className="rounded-full border border-black/15 px-3 py-1.5 text-xs text-foreground transition hover:border-brand-yellow-dark hover:bg-brand-yellow/10 dark:border-white/15 dark:hover:border-brand-yellow"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <div className="flex items-end gap-2 border-t border-black/10 p-3 dark:border-white/10">
@@ -389,7 +453,7 @@ export function ChatCore() {
                 className="max-h-24 flex-1 resize-none rounded-md border border-black/15 bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:opacity-60 dark:border-white/15"
               />
               <button
-                onClick={sendMessage}
+                onClick={() => sendMessage()}
                 disabled={isLoading || !input.trim()}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-brand-black text-white transition hover:bg-brand-black/85 disabled:opacity-50 dark:bg-white dark:text-brand-black"
               >

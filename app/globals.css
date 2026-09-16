@@ -117,3 +117,16 @@
     animation: none;
   }
 }
+
+@keyframes novi-sway {
+  0%, 100% {
+    transform: translateX(-6px) rotate(-4deg);
+  }
+  50% {
+    transform: translateX(6px) rotate(4deg);
+  }
+}
+
+.animate-novi-sway {
+  animation: novi-sway 1.4s ease-in-out infinite;
+}
