@@ -93,8 +93,17 @@ export async function askGemini(
     return { type: "function_call", name: call.name, args: call.args ?? {} };
   }
 
+  const finishReason = data?.candidates?.[0]?.finishReason;
   const text = parts.find((p: { text?: string }) => p.text)?.text;
+
   if (!text) {
+    if (finishReason === "MALFORMED_FUNCTION_CALL") {
+      // Gemini a veces arma mal la llamada a función; le pedimos que responda solo en texto.
+      return {
+        type: "text",
+        text: "Tuve un problema armando esa acción. ¿Puedes confirmarme de nuevo la fecha, hora y motivo?",
+      };
+    }
     console.error("Respuesta de Gemini sin texto ni function call:", JSON.stringify(data));
     throw new Error("Respuesta vacía de la IA");
   }
