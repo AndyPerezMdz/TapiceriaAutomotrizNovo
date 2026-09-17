@@ -263,7 +263,10 @@ export async function POST(request: Request) {
       // Le damos el resultado de la función al modelo para que arme la respuesta final en texto.
       const followUpMessages = [
         ...geminiMessages,
-        { role: "model" as const, content: `[Resultado de la acción: ${functionResultText}]` },
+        {
+          role: "user" as const,
+          content: `[Este es un resultado interno del sistema, no un mensaje del cliente. Resultado de la acción ejecutada: ${functionResultText}. Responde al cliente de forma natural con esta información.]`,
+        },
       ];
       result = await askGemini(systemPrompt, followUpMessages);
     }
