@@ -17,12 +17,15 @@ Reglas importantes:
 - No das consejos técnicos de mecánica ni de otros temas fuera de tapicería automotriz.
 - Sé conciso: respuestas de 2-4 líneas normalmente, salvo que te pidan más detalle.
 - Cuando sea útil llevar al usuario a una pantalla específica del sitio, agrega al FINAL de tu respuesta una etiqueta con este formato exacto: [BOTON:Texto del botón|/ruta]. Ejemplos de rutas disponibles según a quién le hables:
-  - Para un cliente: /portal (mis pedidos), /portal/nuevo-pedido (cotizar), /portal/pedidos (historial), /portal/mis-citas, /portal/cupones, /portal/puntos, /portal/quejas, /portal/referidos.
+  - Para alguien SIN sesión iniciada: /login (iniciar sesión), /registro (crear cuenta), /servicios, /galeria, /contacto. NUNCA sugieras rutas que empiecen con /portal o /admin a alguien sin sesión.
+  - Para un cliente CON sesión: /portal (mis pedidos), /portal/nuevo-pedido (cotizar), /portal/pedidos (historial), /portal/mis-citas, /portal/cupones, /portal/puntos, /portal/quejas, /portal/referidos.
   - Para staff: /admin/pedidos, /admin/citas, /admin/quejas, /admin/clientes.
   - Usa como máximo UN botón por respuesta, solo cuando de verdad ayude a la persona a llegar a donde necesita. No lo uses en cada mensaje.
 - Si un CLIENTE describe un problema o necesidad relacionada con tapicería (por ejemplo "se me rompió el asiento", "quiero cambiar la alfombra", "el volante está gastado"), identifica cuál servicio del catálogo aplica mejor y sugiere el botón así: [BOTON:Cotizar <nombre del servicio>|/portal/nuevo-pedido?service=<id exacto del servicio>]. Solo hazlo si estás razonablemente seguro de que el servicio aplica; si no hay un servicio claro, no inventes uno.
 
-Si un CLIENTE quiere agendar una cita:
+Si la persona con la que hablas NO tiene sesión iniciada y pide agendar una cita, dile amablemente que para agendar necesita crear una cuenta o iniciar sesión primero, y sugiere el botón: [BOTON:Iniciar sesión|/login]. No intentes seguir ningún paso de agendar cita con alguien sin sesión.
+
+Si un CLIENTE CON SESIÓN INICIADA quiere agendar una cita:
 1. Pregunta la fecha y el motivo si no los ha dado.
 2. Usa la función consultar_horarios_disponibles para esa fecha.
 3. Muéstrale las opciones de horario reales que te devuelva la función. Nunca inventes horarios.
@@ -178,7 +181,7 @@ export async function POST(request: Request) {
           });
         }
 
-        personalizedGreeting = ` El cliente con el que hablas se llama ${profile.full_name}, puedes usar su nombre si es natural. Es un CLIENTE, no personal del taller.`;
+        personalizedGreeting = ` El cliente con el que hablas se llama ${profile.full_name}, puedes usar su nombre si es natural. Es un CLIENTE CON SESIÓN INICIADA, no personal del taller.`;
       } else if (profile?.role === "admin" || profile?.role === "empleado") {
         const [
           { count: pendientes },
@@ -214,6 +217,8 @@ export async function POST(request: Request) {
 
         personalizedGreeting = ` Hablas con ${profile.full_name}, quien es PERSONAL DEL TALLER (rol: ${profile.role}), no un cliente. Puedes ayudarle con preguntas operativas del negocio (cupones, puntos, políticas, resumen de pedidos, quejas), y hablarle de forma más directa y técnica que a un cliente. No le sugieras "contactar al taller por WhatsApp", porque él ES el taller.`;
       }
+    } else {
+      personalizedGreeting = " Hablas con alguien SIN SESIÓN INICIADA (un visitante). No sabes su nombre ni tienes acceso a ningún dato personal suyo.";
     }
 
     const systemPrompt = `${SYSTEM_PROMPT_BASE}${personalizedGreeting}\n\n${contextText}${roleContext}`;
@@ -261,6 +266,7 @@ export async function POST(request: Request) {
       }
 
       // Le damos el resultado de la función al modelo para que arme la respuesta final en texto.
+      // Gemini exige que la conversación termine en turno "user", así que se lo pasamos como tal.
       const followUpMessages = [
         ...geminiMessages,
         {
