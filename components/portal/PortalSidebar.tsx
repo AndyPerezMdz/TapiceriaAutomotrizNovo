@@ -9,6 +9,7 @@ import {
   Gift,
   History,
   LayoutDashboard,
+  Lightbulb,
   PlusCircle,
   Tag,
   User,
@@ -37,6 +38,7 @@ const groups: NavGroup[] = [
       { href: "/portal/pedidos", label: "Historial", icon: History },
       { href: "/portal/mis-citas", label: "Mis citas", icon: CalendarDays },
       { href: "/portal/quejas", label: "Quejas", icon: AlertTriangle },
+      { href: "/portal/sugerencias", label: "Sugerencias", icon: Lightbulb },
     ],
   },
   {

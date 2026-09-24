@@ -12,6 +12,7 @@ import {
   History,
   ImageIcon,
   LayoutDashboard,
+  Lightbulb,
   Mail,
   Menu,
   MessageSquare,
@@ -51,6 +52,7 @@ const groups: NavGroup[] = [
       { href: "/admin/clientes", label: "Clientes", icon: Users2 },
       { href: "/admin/citas", label: "Citas", icon: Calendar },
       { href: "/admin/quejas", label: "Quejas", icon: AlertTriangle, badgeKey: "complaints" },
+      { href: "/admin/sugerencias", label: "Sugerencias", icon: Lightbulb },
     ],
   },
   {
