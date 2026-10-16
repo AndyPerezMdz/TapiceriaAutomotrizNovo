@@ -1,10 +1,11 @@
 import { ServiceForm } from "@/components/admin/ServiceForm";
 import { ServiceImageUploader } from "@/components/admin/ServiceImageUploader";
 import { ServiceMaterialsManager } from "@/components/admin/ServiceMaterialsManager";
+import { ServiceStagesManager } from "@/components/admin/ServiceStagesManager";
+import { ServiceStitchingManager } from "@/components/admin/ServiceStitchingManager";
 import { createClient } from "@/lib/supabase/server";
 import { ClipboardList, ImageIcon } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
-import { ServiceStitchingManager } from "@/components/admin/ServiceStitchingManager";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -64,6 +65,17 @@ export default async function EditarServicioPage({ params }: Props) {
       </div>
 
       <ServiceForm service={service} />
+
+      <div className="mt-10 max-w-xl">
+        <h2 className="mb-1 text-sm font-semibold text-foreground">
+          Etapas del proceso
+        </h2>
+        <p className="mb-4 text-xs text-muted">
+          El cliente ve estas etapas mientras su pedido está &quot;En proceso&quot;. Puedes
+          agregar, reordenar o desactivar etapas cuando cambie la forma de trabajar.
+        </p>
+        <ServiceStagesManager serviceId={service.id} />
+      </div>
 
       <div className="mt-10 max-w-xl">
         <h2 className="mb-4 text-sm font-semibold text-foreground">
