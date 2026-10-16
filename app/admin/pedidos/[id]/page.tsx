@@ -1,3 +1,4 @@
+import { OrderStagesPanel } from "@/components/admin/OrderStagesPanel";
 import { OrderStaffPanel } from "@/components/admin/OrderStaffPanel";
 import { OrderTimeline } from "@/components/portal/OrderTimeline";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
@@ -39,7 +40,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       supabase
         .from("order_items")
         .select(
-          "id, price, service_id, services(title), material_types(name), material_colors(name, hex_color)",
+          "id, price, service_id, current_stage_id, services(title), material_types(name), material_colors(name, hex_color)",
         )
         .eq("order_id", id)
         .order("order", { ascending: true }),
@@ -103,6 +104,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       id: item.id,
       serviceTitle: service?.title ?? null,
       serviceId: item.service_id,
+      currentStageId: item.current_stage_id as string | null,
       materialLabel:
         material?.name && color?.name
           ? `${material.name} · ${color.name}`
@@ -133,7 +135,10 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             })}
           </p>
           <p className="mt-1 text-xs text-muted">
-            Folio: <span className="font-mono font-medium text-foreground">{order.id.slice(0, 8).toUpperCase()}</span>
+            Folio:{" "}
+            <span className="font-mono font-medium text-foreground">
+              {order.id.slice(0, 8).toUpperCase()}
+            </span>
           </p>
         </div>
         <span className="rounded-full bg-brand-yellow/20 px-3 py-1 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
@@ -227,7 +232,11 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
           <DeleteOrderButton orderId={order.id} redirectTo="/admin/pedidos" />
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 space-y-6">
+          {order.status === "en_proceso" ? (
+            <OrderStagesPanel items={formattedItems} />
+          ) : null}
+
           <OrderStaffPanel
             orderId={order.id}
             currentStatus={order.status}
