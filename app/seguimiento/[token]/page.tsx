@@ -3,6 +3,10 @@ import { businessInfo } from "@/lib/constants/business";
 import { Calendar, Car } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import {
+  ServiceStageProgress,
+  type ProgressStage,
+} from "@/components/shared/ServiceStageProgress";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -26,6 +30,47 @@ interface ItemEntry {
   price: number | null;
 }
 
+interface StageRow {
+  item_id: string;
+  item_order: number;
+  service_title: string;
+  stage_id: string;
+  stage_name: string;
+  client_description: string | null;
+  stage_order: number;
+  is_current: boolean;
+}
+
+interface StageGroup {
+  itemId: string;
+  serviceTitle: string;
+  currentStageId: string | null;
+  stages: ProgressStage[];
+}
+
+function groupStages(rows: StageRow[]): StageGroup[] {
+  const groups = new Map<string, StageGroup>();
+  for (const row of rows) {
+    let group = groups.get(row.item_id);
+    if (!group) {
+      group = {
+        itemId: row.item_id,
+        serviceTitle: row.service_title,
+        currentStageId: null,
+        stages: [],
+      };
+      groups.set(row.item_id, group);
+    }
+    group.stages.push({
+      id: row.stage_id,
+      name: row.stage_name,
+      client_description: row.client_description,
+    });
+    if (row.is_current) group.currentStageId = row.stage_id;
+  }
+  return [...groups.values()];
+}
+
 interface Props {
   params: Promise<{ token: string }>;
 }
@@ -34,11 +79,13 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
   const { token } = await params;
   const supabase = await createClient();
 
-  const [{ data: orderData }, { data: history }, { data: itemsData }] = await Promise.all([
-    supabase.rpc("get_order_by_share_token", { p_token: token }),
-    supabase.rpc("get_order_history_by_share_token", { p_token: token }),
-    supabase.rpc("get_order_items_by_share_token", { p_token: token }),
-  ]);
+  const [{ data: orderData }, { data: history }, { data: itemsData }, { data: stagesData }] =
+    await Promise.all([
+      supabase.rpc("get_order_by_share_token", { p_token: token }),
+      supabase.rpc("get_order_history_by_share_token", { p_token: token }),
+      supabase.rpc("get_order_items_by_share_token", { p_token: token }),
+      supabase.rpc("get_order_stages_by_share_token", { p_token: token }),
+    ]);
 
   const order = orderData?.[0];
 
@@ -48,6 +95,13 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
 
   const items = (itemsData as ItemEntry[] | null) ?? [];
   const vehicle = [order.vehicle_make, order.vehicle_model].filter(Boolean).join(" ");
+
+  const showStages = ["aprobado", "en_proceso", "listo_para_entrega", "entregado"].includes(
+    order.status,
+  );
+  const stagesCompleted =
+    order.status === "listo_para_entrega" || order.status === "entregado";
+  const stageGroups = showStages ? groupStages((stagesData as StageRow[] | null) ?? []) : [];
 
   return (
     <div className="mx-auto min-h-screen max-w-lg px-6 py-16">
@@ -117,6 +171,26 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
                 </span>
               </div>
             ) : null}
+          </div>
+        ) : null}
+
+        {stageGroups.length > 0 ? (
+          <div className="mb-4 border-t border-black/10 pt-4 dark:border-white/10">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+              Avance por servicio
+            </p>
+            <div className="space-y-4">
+              {stageGroups.map((group) => (
+                <div key={group.itemId}>
+                  <p className="text-sm text-foreground">{group.serviceTitle}</p>
+                  <ServiceStageProgress
+                    stages={group.stages}
+                    currentStageId={group.currentStageId}
+                    completed={stagesCompleted}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         ) : null}
 

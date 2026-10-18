@@ -15,6 +15,10 @@ import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import { ComplaintForm } from "@/components/portal/ComplaintForm";
+import {
+  ServiceStageProgress,
+  type ProgressStage,
+} from "@/components/shared/ServiceStageProgress";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -49,7 +53,7 @@ export default async function PedidoDetallePage({ params }: Props) {
       supabase
         .from("order_items")
         .select(
-          "id, price, services(title), material_types(name), material_colors(name, hex_color)",
+          "id, price, service_id, current_stage_id, services(title), material_types(name), material_colors(name, hex_color)",
         )
         .eq("order_id", id)
         .order("order", { ascending: true }),
@@ -71,6 +75,18 @@ export default async function PedidoDetallePage({ params }: Props) {
   if (!order) {
     notFound();
   }
+
+  const serviceIds = [
+    ...new Set((items ?? []).map((i) => i.service_id).filter((s): s is string => Boolean(s))),
+  ];
+  const { data: stagesData } = serviceIds.length
+    ? await supabase
+        .from("service_stages")
+        .select("id, service_id, name, client_description, order, is_active")
+        .in("service_id", serviceIds)
+        .order("order", { ascending: true })
+    : { data: [] };
+  const allStages = stagesData ?? [];
 
   if (order.deleted_at) {
     return (
@@ -99,6 +115,9 @@ export default async function PedidoDetallePage({ params }: Props) {
   const isApprovedOrLater = !["pendiente_revision", "cotizado", "rechazado"].includes(
     order.status,
   );
+  const showStages = isApprovedOrLater && order.status !== "cancelado";
+  const stagesCompleted =
+    order.status === "listo_para_entrega" || order.status === "entregado";
 
   const formattedItems =
     items?.map((item) => {
@@ -113,6 +132,18 @@ export default async function PedidoDetallePage({ params }: Props) {
             ? `${material.name} · ${color.name}`
             : material?.name ?? null,
         price: item.price,
+        currentStageId: (item.current_stage_id as string | null) ?? null,
+        stages: allStages
+          .filter(
+            (s) =>
+              s.service_id === item.service_id &&
+              (s.is_active || s.id === item.current_stage_id),
+          )
+          .map<ProgressStage>((s) => ({
+            id: s.id,
+            name: s.name,
+            client_description: s.client_description,
+          })),
       };
     }) ?? [];
 
@@ -196,21 +227,30 @@ export default async function PedidoDetallePage({ params }: Props) {
               {formattedItems.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between border-b border-black/5 pb-3 last:border-0 last:pb-0 dark:border-white/5"
+                  className="border-b border-black/5 pb-3 last:border-0 last:pb-0 dark:border-white/5"
                 >
-                  <div>
-                    <p className="text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                      {formattedItems.length > 1 ? `${index + 1}. ` : ""}
-                      {item.title}
-                    </p>
-                    {item.materialLabel ? (
-                      <p className="text-xs text-muted">{item.materialLabel}</p>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
+                        {formattedItems.length > 1 ? `${index + 1}. ` : ""}
+                        {item.title}
+                      </p>
+                      {item.materialLabel ? (
+                        <p className="text-xs text-muted">{item.materialLabel}</p>
+                      ) : null}
+                    </div>
+                    {item.price !== null ? (
+                      <p className="text-sm font-medium text-foreground">
+                        ${item.price.toLocaleString("es-MX")}
+                      </p>
                     ) : null}
                   </div>
-                  {item.price !== null ? (
-                    <p className="text-sm font-medium text-foreground">
-                      ${item.price.toLocaleString("es-MX")}
-                    </p>
+                  {showStages ? (
+                    <ServiceStageProgress
+                      stages={item.stages}
+                      currentStageId={item.currentStageId}
+                      completed={stagesCompleted}
+                    />
                   ) : null}
                 </div>
               ))}
