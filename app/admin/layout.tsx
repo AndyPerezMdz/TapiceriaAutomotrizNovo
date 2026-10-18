@@ -36,14 +36,14 @@ export default async function AdminLayout({
   ]);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="theme-taller flex min-h-screen bg-background text-foreground">
       <AdminSidebar
         isAdmin={isAdmin}
         pendingCount={pendingCount ?? 0}
         complaintsCount={complaintsCount ?? 0}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-2 border-b border-black/10 bg-surface px-4 py-3 pl-16 dark:border-white/10 sm:gap-3 lg:justify-end lg:px-6 lg:pl-6">
+        <header className="flex items-center justify-between gap-2 px-4 pb-1 pt-3 pl-16 sm:gap-3 lg:justify-end lg:px-10 lg:pl-10 lg:pt-4">
           <div className="w-64 lg:hidden" />
 
           {/* Celular: solo lo esencial */}
@@ -58,10 +58,10 @@ export default async function AdminLayout({
                 <img
                   src={profile.avatar_url}
                   alt=""
-                  className="h-8 w-8 rounded-full object-cover"
+                  className="h-9 w-9 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
                   {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
                 </div>
               )}
@@ -77,16 +77,16 @@ export default async function AdminLayout({
                 <img
                   src={profile.avatar_url}
                   alt=""
-                  className="h-8 w-8 rounded-full object-cover"
+                  className="h-9 w-9 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
                   {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
                 </div>
               )}
               <div className="hidden text-right sm:block">
-                <p className="text-sm font-medium text-foreground">{profile?.full_name}</p>
-                <p className="text-xs capitalize text-muted">{profile?.role}</p>
+                <p className="text-[15px] font-semibold text-foreground">{profile?.full_name}</p>
+                <p className="text-[13px] capitalize text-muted">{profile?.role}</p>
               </div>
             </Link>
             <ThemeToggle />
@@ -94,7 +94,7 @@ export default async function AdminLayout({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-4 sm:px-8 lg:px-10">{children}</main>
       </div>
     </div>
   );

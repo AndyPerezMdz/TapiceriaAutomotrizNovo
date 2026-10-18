@@ -25,6 +25,47 @@
   --color-muted: #a0a0a0;
 }
 
+/* ------------------------------------------------------------------
+   Rediseño "taller": portal del cliente + staff/admin.
+   Se activa con la clase .theme-taller en el layout; la landing no cambia.
+   ------------------------------------------------------------------ */
+@theme inline {
+  --font-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  --font-taller: var(--font-barlow), system-ui, sans-serif;
+  --font-code: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+@theme {
+  --color-ink: #1a1a1a;
+  --color-ink-soft: #2a2927;
+  --color-on-ink: #f5f5f5;
+  --color-on-ink-muted: #a8a49c;
+  --color-seam: #e0dbd0;
+  --color-field: #faf9f6;
+  --color-field-border: #ddd8cd;
+  --color-highlight: #fbf6e3;
+  --color-yellow-text: #7a5c00;
+}
+
+.theme-taller {
+  --color-background: #f3f1ec;
+  --color-muted: #5c5a55;
+  font-family: var(--font-taller);
+}
+
+.dark .theme-taller {
+  --color-background: #121211;
+  --color-surface: #1f1e1c;
+  --color-muted: #a8a49c;
+  --color-ink: #0b0b0a;
+  --color-ink-soft: #262522;
+  --color-seam: #37352f;
+  --color-field: #282724;
+  --color-field-border: #3d3b36;
+  --color-highlight: #2b2615;
+  --color-yellow-text: #f5c518;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

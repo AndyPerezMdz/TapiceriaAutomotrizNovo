@@ -1,22 +1,20 @@
 "use client";
 
-import { FooterLogo } from "@/components/FooterLogo";
 import {
   Award,
-  AlertTriangle,
   CalendarDays,
-  ChevronDown,
   Gift,
   History,
   LayoutDashboard,
   Lightbulb,
+  MessageSquareWarning,
   PlusCircle,
   Tag,
   User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 interface NavItem {
   href: string;
@@ -25,94 +23,87 @@ interface NavItem {
 }
 
 interface NavGroup {
-  title: string;
+  title: string | null;
   items: NavItem[];
 }
 
 const groups: NavGroup[] = [
   {
-    title: "Principal",
+    title: null,
     items: [
       { href: "/portal", label: "Mis pedidos", icon: LayoutDashboard },
       { href: "/portal/nuevo-pedido", label: "Nuevo pedido", icon: PlusCircle },
       { href: "/portal/pedidos", label: "Historial", icon: History },
       { href: "/portal/mis-citas", label: "Mis citas", icon: CalendarDays },
-      { href: "/portal/quejas", label: "Quejas", icon: AlertTriangle },
-      { href: "/portal/sugerencias", label: "Sugerencias", icon: Lightbulb },
     ],
   },
   {
-    title: "Beneficios y cuenta",
+    title: "Beneficios",
     items: [
       { href: "/portal/cupones", label: "Cupones", icon: Tag },
       { href: "/portal/puntos", label: "Puntos", icon: Award },
       { href: "/portal/referidos", label: "Referidos", icon: Gift },
+    ],
+  },
+  {
+    title: "Cuenta",
+    items: [
       { href: "/portal/perfil", label: "Mi perfil", icon: User },
+      { href: "/portal/quejas", label: "Quejas", icon: MessageSquareWarning },
+      { href: "/portal/sugerencias", label: "Sugerencias", icon: Lightbulb },
     ],
   },
 ];
 
 export function PortalSidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
-  function toggleGroup(title: string) {
-    setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }));
+  function isActive(href: string) {
+    return href === "/portal" ? pathname === "/portal" : pathname.startsWith(href);
   }
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-black/10 bg-surface lg:block dark:border-white/10">
-      <div className="sticky top-0 flex h-screen flex-col overflow-y-auto p-4">
-        <div className="mb-6 px-1">
-          <Link href="/portal">
-            <FooterLogo />
-          </Link>
-        </div>
+    <aside className="hidden w-64 shrink-0 bg-ink text-on-ink lg:block">
+      <div className="sticky top-0 flex h-screen flex-col overflow-y-auto px-4 py-7">
+        <Link href="/portal" className="block px-2.5">
+          <Image
+            src="/images/logo-amarillo-wbg.png"
+            alt="Tapicería Automotriz by NOVO"
+            width={160}
+            height={64}
+            className="h-auto w-[128px]"
+          />
+        </Link>
+        <div className="mx-2.5 mt-5 border-t-2 border-dashed border-brand-yellow/50" />
 
-        <nav className="flex-1">
-          {groups.map((group) => {
-            const isCollapsed = collapsed[group.title];
-
-            return (
-              <div key={group.title} className="mb-1">
-                <button
-                  onClick={() => toggleGroup(group.title)}
-                  className="flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted transition hover:text-foreground"
-                >
+        <nav aria-label="Portal" className="mt-6 flex-1 space-y-6">
+          {groups.map((group) => (
+            <div key={group.title ?? "principal"} className="space-y-1">
+              {group.title ? (
+                <p className="px-3 pb-1 text-[11px] uppercase tracking-[0.16em] text-on-ink-muted">
                   {group.title}
-                  <ChevronDown
-                    size={12}
-                    className={`transition-transform ${isCollapsed ? "-rotate-90" : ""}`}
-                  />
-                </button>
-
-                {!isCollapsed ? (
-                  <div className="mb-3 mt-1 space-y-0.5">
-                    {group.items.map((item) => {
-                      const isActive =
-                        item.href === "/portal"
-                          ? pathname === "/portal"
-                          : pathname.startsWith(item.href);
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition ${
-                            isActive
-                              ? "bg-brand-yellow/15 font-medium text-brand-yellow-dark dark:text-brand-yellow"
-                              : "text-foreground hover:bg-black/5 dark:hover:bg-white/5"
-                          }`}
-                        >
-                          <item.icon size={16} className="shrink-0" />
-                          <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
+                </p>
+              ) : null}
+              {group.items.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-[15px] transition ${
+                      active
+                        ? "bg-brand-yellow font-semibold text-ink"
+                        : "text-[#e6e3dc] hover:bg-white/5"
+                    }`}
+                  >
+                    <item.icon size={18} className="shrink-0" />
+                    <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </div>
     </aside>

@@ -29,11 +29,11 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-end bg-black/40 lg:hidden">
       <div
         ref={ref}
-        className="w-full rounded-t-2xl border-t border-black/10 bg-surface p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] dark:border-white/10"
+        className="w-full rounded-t-[22px] bg-surface p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] dark:ring-1 dark:ring-white/10"
       >
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-sm font-semibold text-foreground">Más opciones</p>
-          <button onClick={onClose} className="text-muted">
+          <p className="font-display text-2xl font-bold uppercase text-foreground">Más opciones</p>
+          <button onClick={onClose} aria-label="Cerrar" className="flex h-11 w-11 items-center justify-center rounded-xl text-muted hover:bg-black/5 dark:hover:bg-white/5">
             <X size={18} />
           </button>
         </div>
@@ -44,7 +44,7 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className="flex items-center gap-3 rounded-md px-3 py-3 text-sm text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
+              className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-base text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
             >
               <item.icon size={18} />
               {item.label}
@@ -52,8 +52,8 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
           ))}
         </div>
 
-        <div className="mt-3 flex items-center justify-between border-t border-black/10 pt-3 dark:border-white/10">
-          <span className="px-3 text-sm text-foreground">Apariencia</span>
+        <div className="mt-3 flex items-center justify-between border-t-2 border-dashed border-seam pt-3">
+          <span className="px-3 text-base text-foreground">Apariencia</span>
           <ThemeToggle />
         </div>
 
