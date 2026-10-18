@@ -74,14 +74,14 @@ export function AvatarUploader({
           <img
             src={currentAvatarUrl}
             alt=""
-            className="h-24 w-24 rounded-full border border-black/10 object-cover dark:border-white/10"
+            className="h-24 w-24 rounded-full ring-1 ring-black/10 dark:ring-white/10 object-cover"
           />
         ) : (
-          <div className="flex h-24 w-24 items-center justify-center rounded-full border border-black/10 bg-brand-yellow/20 text-2xl font-semibold text-brand-yellow-dark dark:border-white/10 dark:text-brand-yellow">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full ring-1 ring-black/10 dark:ring-white/10 bg-highlight text-2xl font-semibold text-yellow-text">
             {initial !== "?" ? initial : <User size={32} />}
           </div>
         )}
-        <label className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-brand-black text-white shadow dark:bg-white dark:text-brand-black">
+        <label className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-brand-yellow hover:bg-[#e8b90f] text-ink shadow">
           <Camera size={15} />
           <input
             type="file"
@@ -94,10 +94,10 @@ export function AvatarUploader({
       </div>
       <div className="text-center sm:text-left">
         <p className="text-lg font-semibold text-foreground">{fullName || "Sin nombre"}</p>
-        <p className="text-xs text-muted">
+        <p className="text-[13px] text-muted">
           {isUploading ? "Subiendo..." : "Click en la cámara para cambiar tu foto"}
         </p>
-        {error ? <p className="text-xs text-brand-red">{error}</p> : null}
+        {error ? <p className="text-[13px] text-brand-red">{error}</p> : null}
       </div>
     </div>
   );

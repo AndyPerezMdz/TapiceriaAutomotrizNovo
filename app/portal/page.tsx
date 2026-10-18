@@ -240,7 +240,7 @@ export default async function PortalDashboardPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-[17px] font-semibold text-foreground">{vehicleOf(o)}</p>
-                      <p className="mt-0.5 truncate text-sm text-muted">
+                      <p className="mt-0.5 truncate text-[15px] text-muted">
                         Te mandamos la cotización pronto
                       </p>
                     </div>
@@ -303,7 +303,7 @@ export default async function PortalDashboardPage() {
           <article className="relative overflow-hidden rounded-[18px] bg-brand-yellow p-5 text-ink sm:p-7">
             <span aria-hidden="true" className="absolute inset-2 rounded-xl border-2 border-dashed border-ink/35" />
             <div className="relative">
-              <p className="text-xs uppercase tracking-[0.14em] text-[#3d3200]">Cupón activo</p>
+              <p className="text-[13px] uppercase tracking-[0.14em] text-[#3d3200]">Cupón activo</p>
               <p className={`${displayClass} mt-2.5 text-[40px]`}>{couponLabel}</p>
               <p className="mt-1.5 text-[15px] text-[#2b2400]">{coupon?.title}</p>
               <Link href="/portal/cupones" className="mt-1 inline-flex min-h-11 items-center text-[15px] font-semibold">
@@ -349,7 +349,7 @@ export default async function PortalDashboardPage() {
                 >
                   <div className="min-w-0">
                     <p className="text-[17px] font-semibold text-foreground">{vehicleOf(o)}</p>
-                    <p className="mt-0.5 truncate text-sm text-muted">
+                    <p className="mt-0.5 truncate text-[15px] text-muted">
                       {[firstService, delivered ? `entregado ${delivered}` : null]
                         .filter(Boolean)
                         .join(" · ")}

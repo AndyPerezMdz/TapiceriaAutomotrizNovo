@@ -216,13 +216,13 @@ export default async function PedidoDetallePage({ params }: Props) {
         stub={
           <dl className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-6">
             <div>
-              <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Folio</dt>
+              <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">Folio</dt>
               <dd className="mt-1.5 font-code text-base sm:text-lg">
                 {order.id.slice(0, 8).toUpperCase()}
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Ingresó</dt>
+              <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">Ingresó</dt>
               <dd className="mt-1.5 text-base font-medium sm:text-lg">
                 {new Date(order.created_at).toLocaleDateString("es-MX", {
                   day: "numeric",
@@ -232,7 +232,7 @@ export default async function PedidoDetallePage({ params }: Props) {
             </div>
             {order.delivered_at ? (
               <div>
-                <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Entregado</dt>
+                <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">Entregado</dt>
                 <dd className="mt-1.5 text-base font-medium sm:text-lg">
                   {new Date(order.delivered_at).toLocaleDateString("es-MX", {
                     day: "numeric",
@@ -243,7 +243,7 @@ export default async function PedidoDetallePage({ params }: Props) {
             ) : null}
             {total ? (
               <div>
-                <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">
+                <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">
                   {order.status === "entregado" ? "Total" : "Total estimado"}
                 </dt>
                 <dd className="mt-1 font-display text-[26px] font-bold leading-none">
@@ -363,7 +363,7 @@ export default async function PedidoDetallePage({ params }: Props) {
                   <div className="min-w-0">
                     <p className="text-base text-foreground">{item.title}</p>
                     {item.materialLabel ? (
-                      <p className="text-sm text-muted">{item.materialLabel}</p>
+                      <p className="text-[15px] text-muted">{item.materialLabel}</p>
                     ) : null}
                   </div>
                   {item.price !== null ? (
@@ -455,7 +455,7 @@ export default async function PedidoDetallePage({ params }: Props) {
           ) : null}
 
           <details className="group rounded-2xl px-1">
-            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm text-muted underline underline-offset-4 hover:text-foreground">
+            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[15px] text-muted underline underline-offset-4 hover:text-foreground">
               Más opciones del pedido
             </summary>
             <div className="mt-2 rounded-2xl border-2 border-dashed border-brand-red/30 p-4">

@@ -1,3 +1,4 @@
+import { buttonClass } from "@/components/taller";
 import { FileText } from "lucide-react";
 
 export function DownloadPdfButton({
@@ -12,9 +13,9 @@ export function DownloadPdfButton({
       href={`/api/pdf/pedido/${orderId}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex w-fit items-center gap-1.5 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+      className={buttonClass("outline")}
     >
-      <FileText size={14} /> {label}
+      <FileText size={17} /> {label}
     </a>
   );
 }

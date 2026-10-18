@@ -1,3 +1,4 @@
+import { Pill } from "@/components/taller";
 import { ActivateCouponButton } from "@/components/portal/ActivateCouponButton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
@@ -59,36 +60,28 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
   const currentItems = tabs.find((t) => t.value === activeTab)?.items ?? [];
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+    <div className="max-w-3xl">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Mis cupones
       </h1>
-      <p className="mb-6 text-sm text-muted">
+      <p className="mb-6 text-[15px] text-muted">
         {isFrequent
           ? "Gracias por ser cliente frecuente — estos son tus cupones."
           : "Descuentos disponibles para tu próximo pedido."}
       </p>
 
       {activeCouponId ? (
-        <div className="mb-6 rounded-md border border-brand-yellow/40 bg-brand-yellow/10 px-4 py-3 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+        <div className="mb-6 rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-5 py-4 text-[15px] text-foreground">
           Tienes un cupón activado — aparecerá automáticamente cuando cotices un
           servicio compatible.
         </div>
       ) : null}
 
-      <div className="mb-6 flex gap-2">
+      <div role="group" aria-label="Filtrar cupones" className="mb-6 flex flex-wrap gap-2">
         {tabs.map((t) => (
-          <a
-            key={t.value}
-            href={`/portal/cupones?tab=${t.value}`}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-              activeTab === t.value
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
-            }`}
-          >
-            {t.label} ({t.items.length})
-          </a>
+          <Pill key={t.value} href={`/portal/cupones?tab=${t.value}`} active={activeTab === t.value}>
+            {t.label} · {t.items.length}
+          </Pill>
         ))}
       </div>
 
@@ -111,39 +104,51 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
               }
             />
           ) : (
-        <div className="space-y-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           {currentItems.map((c) => {
             const service = (c.services as unknown as { title: string } | null)?.title;
             const discountLabel =
               c.discount_type === "percentage"
-                ? `${c.discount_value}% de descuento`
-                : `$${c.discount_value.toLocaleString("es-MX")} de descuento`;
+                ? `${c.discount_value}% menos`
+                : `$${c.discount_value.toLocaleString("es-MX")} menos`;
 
             return (
               <div
                 key={c.id}
-                className={`rounded-lg border p-4 ${
+                className={`relative overflow-hidden rounded-[18px] p-5 sm:p-6 ${
                   activeTab === "activos"
-                    ? "border-brand-yellow/40 bg-brand-yellow/10"
-                    : "border-black/10 bg-surface opacity-75 dark:border-white/10"
+                    ? "bg-brand-yellow text-ink"
+                    : "border-2 border-dashed border-field-border bg-surface text-foreground opacity-75"
                 }`}
               >
-                <p className="font-semibold text-foreground">{c.title}</p>
-                <p className="mt-0.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
-                  {discountLabel}
-                </p>
-                {c.description ? (
-                  <p className="mt-1 text-xs text-muted">{c.description}</p>
+                {activeTab === "activos" ? (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-2 rounded-xl border-2 border-dashed border-ink/35"
+                  />
                 ) : null}
-                <p className="mt-2 text-xs text-muted">
-                  Válido en: {service ?? "cualquier servicio"}
-                  {c.expires_at
-                    ? ` · Vence ${new Date(`${c.expires_at}T00:00:00`).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`
-                    : ""}
-                </p>
+                <div className="relative">
+                  <p className="font-display text-4xl font-extrabold uppercase leading-none">
+                    {discountLabel}
+                  </p>
+                  <p className="mt-2 text-base font-semibold">{c.title}</p>
+                  {c.description ? (
+                    <p className={`mt-1 text-[15px] ${activeTab === "activos" ? "text-[#2b2400]" : "text-muted"}`}>
+                      {c.description}
+                    </p>
+                  ) : null}
+                  <p className={`mt-2 text-[15px] ${activeTab === "activos" ? "text-[#3d3200]" : "text-muted"}`}>
+                    Válido en: {service ?? "cualquier servicio"}
+                    {c.expires_at
+                      ? ` · Vence ${new Date(`${c.expires_at}T00:00:00`).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`
+                      : ""}
+                  </p>
+                </div>
 
                 {activeTab === "activos" ? (
-                  <ActivateCouponButton couponId={c.id} isActive={activeCouponId === c.id} />
+                  <div className="relative">
+                    <ActivateCouponButton couponId={c.id} isActive={activeCouponId === c.id} />
+                  </div>
                 ) : null}
               </div>
             );

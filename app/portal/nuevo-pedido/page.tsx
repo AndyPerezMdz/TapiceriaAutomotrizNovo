@@ -10,15 +10,18 @@ export default async function NuevoPedidoPage() {
     .order("order", { ascending: true });
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Solicitar cotización
-        </h1>
-        <p className="mt-1 text-sm text-muted">
-          Cuéntanos qué necesitas y, si quieres, adjunta fotos del estado actual.
+    <div className="mx-auto max-w-5xl">
+      <header className="mb-7">
+        <p className="font-display text-[15px] font-semibold uppercase tracking-[0.18em] text-yellow-text">
+          Solicitud de servicio
         </p>
-      </div>
+        <h1 className="mt-1.5 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-6xl">
+          Nuevo pedido
+        </h1>
+        <p className="mt-2.5 text-base text-muted">
+          Cuéntanos qué necesita tu coche. Te mandamos la cotización sin compromiso.
+        </p>
+      </header>
 
       <NewOrderForm services={services ?? []} />
     </div>

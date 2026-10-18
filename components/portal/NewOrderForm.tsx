@@ -8,25 +8,41 @@ import { CouponSelector } from "@/components/portal/CouponSelector";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
 import { newOrderSchema, type NewOrderFormData } from "@/lib/validations/order";
-import {
-  Car,
-  Check,
-  ImagePlus,
-  MessageCircle,
-  Palette,
-  Plus,
-  Trash2,
-  Wrench,
-  X,
-} from "lucide-react";
+import { Check, ImagePlus, Plus, Trash2, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { WhatsAppLink } from "../shared/WhatsAppLink";
+import {
+  buttonClass,
+  fieldClass,
+  fieldErrorClass,
+  labelClass,
+  textareaClass,
+} from "@/components/taller";
 
-const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15 dark:focus:border-white dark:focus:ring-white";
-
-const labelClassName = "mb-1.5 block text-sm font-medium text-foreground";
+function NumberedSection({
+  n,
+  title,
+  children,
+}: {
+  n: number;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <fieldset className="min-w-0 rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+      <legend className="float-left mb-5 flex w-full items-center gap-3 p-0">
+        <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-ink font-display text-lg font-extrabold text-brand-yellow dark:ring-1 dark:ring-white/10">
+          {n}
+        </span>
+        <span className="font-display text-[26px] font-bold uppercase leading-none text-foreground">
+          {title}
+        </span>
+      </legend>
+      <div className="clear-both">{children}</div>
+    </fieldset>
+  );
+}
 
 const MAX_PHOTOS = 5;
 const MAX_FILE_SIZE_MB = 5;
@@ -310,78 +326,92 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const vehicleSummary = [vehicleMake, vehicleModel, vehicleYear].filter(Boolean).join(" ");
 
   if (!initialLoaded) {
-    return <p className="text-sm text-muted">Cargando...</p>;
+    return <p className="text-[15px] text-muted">Cargando...</p>;
   }
 
+  const missing = [
+    stack.some((l) => !l.selection.serviceId) ? "el servicio" : null,
+    !vehicleMake || !vehicleModel ? "tu vehículo" : null,
+    !vehicleYear ? "el año" : null,
+  ].filter(Boolean) as string[];
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-      <form onSubmit={handleSubmit} className="min-w-0 space-y-6">
+    <div className="flex flex-wrap items-start gap-7">
+      <form
+        id="new-order-form"
+        onSubmit={handleSubmit}
+        className="min-w-0 flex-[999_1_480px] space-y-5"
+        noValidate
+      >
         {formError ? (
-          <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
+          <div
+            role="alert"
+            className="rounded-xl border-[1.5px] border-brand-red-dark/40 bg-brand-red/5 px-4 py-3 text-[15px] text-brand-red-dark dark:text-brand-red"
+          >
             {formError}
           </div>
         ) : null}
 
-        <div className="space-y-4">
-          {stack.map((line, index) => (
-            <div
-              key={line.key}
-              className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10"
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                  <Wrench size={16} /> Servicio {stack.length > 1 ? `#${index + 1}` : ""}
-                </h2>
+        <NumberedSection n={1} title="¿Qué le hacemos?">
+          <div className="space-y-6">
+            {stack.map((line, index) => (
+              <div
+                key={line.key}
+                className={index > 0 ? "border-t-2 border-dashed border-seam pt-6" : ""}
+              >
                 {stack.length > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => removeLine(line.key)}
-                    className="text-muted transition hover:text-brand-red"
-                  >
-                    <Trash2 size={15} />
-                  </button>
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <p className="font-display text-xl font-bold uppercase text-foreground">
+                      Servicio {index + 1}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => removeLine(line.key)}
+                      aria-label={`Quitar servicio ${index + 1}`}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl text-muted transition hover:bg-brand-red/5 hover:text-brand-red-dark"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 ) : null}
+                <ServiceMaterialSelector
+                  services={services}
+                  onSelectionChange={(sel) => updateLine(line.key, sel)}
+                  initialServiceId={line.selection.serviceId ?? undefined}
+                  initialMaterialTypeId={line.selection.materialTypeId ?? undefined}
+                  initialMaterialColorId={line.selection.materialColorId ?? undefined}
+                />
               </div>
-              <ServiceMaterialSelector
-                services={services}
-                onSelectionChange={(sel) => updateLine(line.key, sel)}
-                initialServiceId={line.selection.serviceId ?? undefined}
-                initialMaterialTypeId={line.selection.materialTypeId ?? undefined}
-                initialMaterialColorId={line.selection.materialColorId ?? undefined}
-              />
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {fieldErrors.serviceId ? <p className={fieldErrorClass}>{fieldErrors.serviceId}</p> : null}
 
           {!anyRequiresVisit ? (
-            <button
-              type="button"
-              onClick={addLine}
-              className="flex w-fit items-center gap-1.5 rounded-md border border-dashed border-black/20 px-4 py-2 text-sm font-medium text-foreground transition hover:border-black/40 dark:border-white/20"
-            >
-              <Plus size={15} /> Agregar otro servicio a este pedido
-            </button>
+            <>
+              <div className="mt-6 border-t-2 border-dashed border-seam" />
+              <button
+                type="button"
+                onClick={addLine}
+                className="mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-foreground"
+              >
+                <Plus size={18} strokeWidth={2.4} /> Agregar otro servicio a este pedido
+              </button>
+            </>
           ) : null}
-
-          {fieldErrors.serviceId ? (
-            <p className="text-sm text-brand-red">{fieldErrors.serviceId}</p>
-          ) : null}
-        </div>
+        </NumberedSection>
 
         {anyRequiresVisit ? (
-          <div className="rounded-lg border border-brand-yellow/30 bg-brand-yellow/10 p-5">
-            <p className="font-medium text-foreground">
-              Uno de tus servicios necesita una visita al taller
+          <div className="rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-5 sm:p-6 dark:border-brand-yellow/40">
+            <p className="text-base font-semibold text-foreground">
+              Este color necesita una visita al taller
             </p>
-            <p className="mt-1 text-sm text-muted">
-              Para colores de piel distintos al negro de fábrica, necesitamos tomar una muestra de
-              tu asiento para igualar el tono exacto. Agenda tu visita en línea, o contáctanos por
-              WhatsApp.
+            <p className="mt-1.5 text-[15px] leading-relaxed text-foreground/80">
+              Para pieles distintas al negro de fábrica tomamos una muestra de tu asiento y así
+              igualamos el tono exacto. Agenda tu visita en línea o escríbenos.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href="/portal/agendar-cita"
-                className="flex w-fit items-center gap-2 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
-              >
+              <a href="/portal/agendar-cita" className={buttonClass("ink")}>
                 Agendar visita en línea
               </a>
               <WhatsAppLink
@@ -399,14 +429,10 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           </div>
         ) : (
           <>
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <h2 className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                <Car size={16} /> Tu vehículo
-              </h2>
-
+            <NumberedSection n={2} title="Tu vehículo">
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <label htmlFor="vehicleMake" className={labelClassName}>
+                  <label htmlFor="vehicleMake" className={labelClass}>
                     Marca
                   </label>
                   <input
@@ -414,16 +440,18 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                     value={vehicleMake}
                     onChange={(e) => setVehicleMake(e.target.value)}
                     placeholder="Nissan"
-                    className={fieldClassName}
+                    autoComplete="off"
+                    aria-invalid={Boolean(fieldErrors.vehicleMake)}
+                    className={fieldClass}
                     disabled={isLoading}
                   />
                   {fieldErrors.vehicleMake ? (
-                    <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleMake}</p>
+                    <p className={fieldErrorClass}>{fieldErrors.vehicleMake}</p>
                   ) : null}
                 </div>
 
                 <div>
-                  <label htmlFor="vehicleModel" className={labelClassName}>
+                  <label htmlFor="vehicleModel" className={labelClass}>
                     Modelo
                   </label>
                   <input
@@ -431,16 +459,18 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                     value={vehicleModel}
                     onChange={(e) => setVehicleModel(e.target.value)}
                     placeholder="Versa"
-                    className={fieldClassName}
+                    autoComplete="off"
+                    aria-invalid={Boolean(fieldErrors.vehicleModel)}
+                    className={fieldClass}
                     disabled={isLoading}
                   />
                   {fieldErrors.vehicleModel ? (
-                    <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleModel}</p>
+                    <p className={fieldErrorClass}>{fieldErrors.vehicleModel}</p>
                   ) : null}
                 </div>
 
                 <div>
-                  <label htmlFor="vehicleYear" className={labelClassName}>
+                  <label htmlFor="vehicleYear" className={labelClass}>
                     Año
                   </label>
                   <input
@@ -449,47 +479,44 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                     onChange={(e) => setVehicleYear(e.target.value)}
                     inputMode="numeric"
                     placeholder="2020"
-                    className={fieldClassName}
+                    aria-invalid={Boolean(fieldErrors.vehicleYear)}
+                    className={fieldClass}
                     disabled={isLoading}
                   />
                   {fieldErrors.vehicleYear ? (
-                    <p className="mt-1 text-sm text-brand-red">{fieldErrors.vehicleYear}</p>
+                    <p className={fieldErrorClass}>{fieldErrors.vehicleYear}</p>
                   ) : null}
                 </div>
               </div>
+            </NumberedSection>
 
-              <div className="mt-4">
-                <label htmlFor="serviceDescription" className={labelClassName}>
-                  Detalles adicionales
-                </label>
-                <textarea
-                  id="serviceDescription"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  placeholder="Cuéntanos cualquier detalle extra que debamos saber..."
-                  className={fieldClassName}
-                  disabled={isLoading}
-                />
-                {fieldErrors.serviceDescription ? (
-                  <p className="mt-1 text-sm text-brand-red">
-                    {fieldErrors.serviceDescription}
-                  </p>
-                ) : null}
-              </div>
-            </div>
+            <NumberedSection n={3} title="Cuéntanos más">
+              <label htmlFor="serviceDescription" className={labelClass}>
+                ¿Qué le pasa o qué quieres?
+              </label>
+              <textarea
+                id="serviceDescription"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={4}
+                placeholder="Ej. El asiento del conductor está roto del costado y quiero costura doble en rojo."
+                aria-invalid={Boolean(fieldErrors.serviceDescription)}
+                className={textareaClass}
+                disabled={isLoading}
+              />
+              {fieldErrors.serviceDescription ? (
+                <p className={fieldErrorClass}>{fieldErrors.serviceDescription}</p>
+              ) : null}
 
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                <ImagePlus size={16} /> Fotos (opcional, máx. {MAX_PHOTOS})
-              </h2>
-
-              <div className="flex flex-wrap gap-3">
+              <p className="mb-2.5 mt-6 text-[15px] font-semibold text-foreground">
+                Fotos{" "}
+                <span className="font-normal text-muted">
+                  (opcional, máx. {MAX_PHOTOS} · ayudan a cotizar más rápido)
+                </span>
+              </p>
+              <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
                 {photos.map((photo, index) => (
-                  <div
-                    key={index}
-                    className="relative h-20 w-20 overflow-hidden rounded-md border border-black/10 dark:border-white/10"
-                  >
+                  <div key={index} className="relative aspect-square overflow-hidden rounded-xl bg-seam">
                     <img
                       src={URL.createObjectURL(photo)}
                       alt=""
@@ -498,121 +525,123 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                     <button
                       type="button"
                       onClick={() => removePhoto(index)}
-                      className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"
+                      aria-label="Quitar foto"
+                      className="absolute right-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-black/75 text-white"
                     >
-                      <X size={12} />
+                      <X size={15} />
                     </button>
                   </div>
                 ))}
 
                 {photos.length < MAX_PHOTOS ? (
-                  <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-black/20 text-muted transition hover:border-black/40 dark:border-white/20">
-                    <ImagePlus size={20} />
-                    <span className="text-[10px]">Agregar</span>
+                  <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-field-border text-[15px] font-semibold text-foreground/80 transition hover:border-foreground">
+                    <ImagePlus size={22} />
+                    Agregar
                     <input
                       type="file"
                       accept="image/*"
                       multiple
-                      className="hidden"
+                      className="sr-only"
                       onChange={handlePhotoChange}
                       disabled={isLoading}
                     />
                   </label>
                 ) : null}
               </div>
+              {photoError ? <p className={fieldErrorClass}>{photoError}</p> : null}
+            </NumberedSection>
 
-              {photoError ? (
-                <p className="mt-2 text-sm text-brand-red">{photoError}</p>
-              ) : null}
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-brand-black dark:hover:bg-white/85 sm:w-auto"
-            >
-              {isLoading ? "Enviando pedido..." : "Solicitar cotización"}
-            </button>
+            <CouponSelector
+              serviceIds={serviceIds}
+              selectedCouponId={selectedCouponId}
+              onSelect={setSelectedCouponId}
+            />
           </>
         )}
       </form>
 
-      {/* Resumen en vivo + cupón */}
-      <div className="min-w-0 space-y-6">
-        <div className="sticky top-6 rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-          <h2 className="mb-4 text-sm font-semibold text-foreground">
-            Resumen de tu solicitud
-          </h2>
+      {/* Resumen tipo ticket */}
+      <aside
+        aria-label="Resumen de tu solicitud"
+        className="relative min-w-0 flex-[1_1_300px] overflow-hidden rounded-[18px] bg-ink px-6 py-7 text-on-ink lg:sticky lg:top-6 dark:ring-1 dark:ring-white/10"
+      >
+        <p className="font-display text-[13px] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
+          Tu orden
+        </p>
+        <p className="mt-1.5 font-display text-[34px] font-extrabold uppercase leading-none">
+          {vehicleSummary || "Tu vehículo"}
+        </p>
+        {!anyRequiresVisit && missing.length > 0 ? (
+          <p className="mt-1.5 text-[15px] text-on-ink-muted">Falta {missing.join(", ")}</p>
+        ) : null}
 
-          <div className="space-y-4 text-sm">
-            {stack.map((line, index) => (
-              <div key={line.key} className="flex items-start gap-2">
-                <Wrench size={15} className="mt-0.5 shrink-0 text-muted" />
-                <div>
-                  <p className="text-xs text-muted">
-                    Servicio {stack.length > 1 ? `#${index + 1}` : ""}
-                  </p>
-                  <p className="text-foreground">
-                    {line.selection.serviceName ?? "Sin elegir todavía"}
-                  </p>
-                  {line.selection.materialName ? (
-                    <p className="text-xs text-muted">
-                      {line.selection.materialName}
-                      {line.selection.colorName ? ` · ${line.selection.colorName}` : ""}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            ))}
-
-            <div className="flex items-start gap-2">
-              <Car size={15} className="mt-0.5 shrink-0 text-muted" />
-              <div>
-                <p className="text-xs text-muted">Vehículo</p>
-                <p className="text-foreground">
-                  {vehicleSummary || "Sin capturar todavía"}
+        <ul className="mt-5 space-y-3">
+          {stack.map((line, index) => (
+            <li key={line.key} className="flex items-start gap-2.5">
+              <Check
+                size={18}
+                strokeWidth={2.6}
+                className={`mt-0.5 shrink-0 ${line.selection.serviceId ? "text-brand-yellow" : "text-[#4a4844]"}`}
+                aria-hidden="true"
+              />
+              <div className="min-w-0">
+                <p className="text-[15px] font-semibold">
+                  {line.selection.serviceName ??
+                    `Servicio ${stack.length > 1 ? index + 1 : ""} sin elegir`}
                 </p>
+                {line.selection.materialName ? (
+                  <p className="text-[13px] text-[#bdbab3]">
+                    {line.selection.materialName}
+                    {line.selection.colorName ? ` · ${line.selection.colorName}` : ""}
+                  </p>
+                ) : null}
               </div>
-            </div>
+            </li>
+          ))}
+          {photos.length > 0 ? (
+            <li className="flex items-start gap-2.5">
+              <Check size={18} strokeWidth={2.6} className="mt-0.5 shrink-0 text-brand-yellow" aria-hidden="true" />
+              <p className="text-[15px]">
+                {photos.length} {photos.length === 1 ? "foto adjunta" : "fotos adjuntas"}
+              </p>
+            </li>
+          ) : null}
+          {selectedCouponId ? (
+            <li className="flex items-start gap-2.5">
+              <Check size={18} strokeWidth={2.6} className="mt-0.5 shrink-0 text-brand-yellow" aria-hidden="true" />
+              <p className="text-[15px]">Cupón aplicado</p>
+            </li>
+          ) : null}
+        </ul>
 
-            {selectedCouponId ? (
-              <div className="flex items-start gap-2">
-                <Check size={15} className="mt-0.5 shrink-0 text-brand-yellow-dark dark:text-brand-yellow" />
-                <div>
-                  <p className="text-xs text-muted">Cupón</p>
-                  <p className="text-foreground">Aplicado ✓</p>
-                </div>
-              </div>
-            ) : null}
-
-            {photos.length > 0 ? (
-              <div className="flex items-start gap-2">
-                <ImagePlus size={15} className="mt-0.5 shrink-0 text-muted" />
-                <div>
-                  <p className="text-xs text-muted">Fotos adjuntas</p>
-                  <p className="text-foreground">{photos.length} foto(s)</p>
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="mt-5 border-t border-black/10 pt-4 dark:border-white/10">
-            <p className="flex items-center gap-1.5 text-xs text-muted">
-              <Check size={13} className="text-brand-yellow-dark dark:text-brand-yellow" />
-              Un miembro de nuestro equipo revisará tu solicitud y te enviará un precio por cada
-              servicio, más el total.
-            </p>
-          </div>
+        <div className="relative my-6" aria-hidden="true">
+          <span className="absolute -left-[35px] top-1/2 h-[22px] w-[22px] -translate-y-1/2 rounded-full bg-background" />
+          <span className="absolute -right-[35px] top-1/2 h-[22px] w-[22px] -translate-y-1/2 rounded-full bg-background" />
+          <div className="border-t-2 border-dashed border-brand-yellow/50" />
         </div>
 
-        {!anyRequiresVisit ? (
-          <CouponSelector
-            serviceIds={serviceIds}
-            selectedCouponId={selectedCouponId}
-            onSelect={setSelectedCouponId}
-          />
-        ) : null}
-      </div>
+        {anyRequiresVisit ? (
+          <p className="text-[15px] leading-relaxed text-[#d9d5cc]">
+            Primero agenda tu visita para tomar la muestra del color. Ahí mismo armamos tu
+            cotización.
+          </p>
+        ) : (
+          <>
+            <p className="text-[15px] leading-relaxed text-[#d9d5cc]">
+              Revisamos tu solicitud y te mandamos el precio de cada servicio. Tú decides si la
+              aceptas.
+            </p>
+            <button
+              type="submit"
+              form="new-order-form"
+              disabled={isLoading}
+              className={`${buttonClass("primary", "lg")} mt-4 w-full !text-[17px] !font-bold`}
+            >
+              {isLoading ? "Enviando…" : "Enviar solicitud"}
+            </button>
+          </>
+        )}
+      </aside>
     </div>
   );
 }

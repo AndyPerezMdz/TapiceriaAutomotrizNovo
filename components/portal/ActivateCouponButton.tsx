@@ -42,10 +42,10 @@ export function ActivateCouponButton({
     <button
       onClick={handleClick}
       disabled={isSaving}
-      className={`mt-3 rounded-md px-4 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${
+      className={`mt-4 inline-flex min-h-11 items-center rounded-xl px-5 text-[15px] font-semibold transition disabled:opacity-60 ${
         isActive
-          ? "border border-brand-yellow-dark bg-brand-yellow/20 text-brand-yellow-dark dark:text-brand-yellow"
-          : "bg-brand-black text-white hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+          ? "border-[1.5px] border-ink bg-transparent text-ink"
+          : "bg-ink text-brand-yellow hover:bg-ink-soft"
       }`}
     >
       {isSaving ? "..." : isActive ? "Activado ✓ (clic para quitar)" : "Activar cupón"}

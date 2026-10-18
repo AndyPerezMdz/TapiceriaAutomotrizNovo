@@ -29,11 +29,11 @@ export default async function PortalReferidosPage() {
       : `$${settings?.reward_value.toLocaleString("es-MX")} de descuento`;
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+    <div className="max-w-3xl">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Refiere y gana
       </h1>
-      <p className="mb-6 text-sm text-muted">
+      <p className="mb-6 text-[15px] text-muted">
         Por cada amigo que refieras y complete su primer pedido, ambos reciben{" "}
         {rewardLabel}.
       </p>
@@ -44,7 +44,7 @@ export default async function PortalReferidosPage() {
 
       {myReferrals && myReferrals.length > 0 ? (
         <div>
-          <h2 className="mb-3 text-sm font-semibold text-foreground">
+          <h2 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">
             Personas que has referido
           </h2>
           <div className="space-y-2">
@@ -53,12 +53,12 @@ export default async function PortalReferidosPage() {
               return (
                 <div
                   key={i}
-                  className="flex items-center gap-3 rounded-md border border-black/10 bg-surface px-3 py-2.5 dark:border-white/10"
+                  className="flex items-center gap-3 rounded-xl bg-surface px-3 py-2.5 dark:ring-1 dark:ring-white/5"
                 >
-                  <Gift size={16} className="shrink-0 text-brand-yellow-dark dark:text-brand-yellow" />
+                  <Gift size={16} className="shrink-0 text-yellow-text" />
                   <div>
-                    <p className="text-sm text-foreground">{referred?.full_name ?? "Cliente"}</p>
-                    <p className="text-xs text-muted">
+                    <p className="text-[15px] text-foreground">{referred?.full_name ?? "Cliente"}</p>
+                    <p className="text-[13px] text-muted">
                       Completó su primer pedido — cupón entregado a ambos
                     </p>
                   </div>

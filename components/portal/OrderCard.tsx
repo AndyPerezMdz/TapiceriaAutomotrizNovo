@@ -1,31 +1,37 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { deletedBadgeClass, statusColors } from "@/lib/constants/order-status";
+import { StatusTag } from "@/components/taller";
 
 interface Order {
   id: string;
   vehicle_make: string | null;
   vehicle_model: string | null;
+  vehicle_year?: number | null;
   status: string;
   created_at: string;
   deleted_at: string | null;
   updated_at?: string;
   client_last_viewed_at?: string | null;
+  estimated_price?: number | null;
+  final_price?: number | null;
 }
 
 export function OrderCard({
   order,
-  statusLabel,
 }: {
   order: Order;
-  statusLabel: string;
+  /** Se conserva por compatibilidad; la etiqueta la pone StatusTag. */
+  statusLabel?: string;
 }) {
-  const vehicle = [order.vehicle_make, order.vehicle_model].filter(Boolean).join(" ");
+  const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
+    .filter(Boolean)
+    .join(" ");
   const date = new Date(order.created_at).toLocaleDateString("es-MX", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
+  const total = order.final_price ?? order.estimated_price ?? null;
 
   const hasUpdate =
     !order.deleted_at &&
@@ -36,30 +42,26 @@ export function OrderCard({
   return (
     <Link
       href={`/portal/pedidos/${order.id}`}
-      className="relative flex items-center justify-between rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+      className="group flex min-h-[76px] items-center justify-between gap-4 rounded-2xl bg-surface px-5 py-4 transition hover:ring-2 hover:ring-foreground/80 sm:px-6 dark:ring-1 dark:ring-white/5"
     >
-      {hasUpdate ? (
-        <span className="absolute -left-1.5 -top-1.5 h-3 w-3 rounded-full bg-brand-red" />
-      ) : null}
-
-      <div>
-        <p className="font-medium text-foreground">
+      <div className="min-w-0">
+        <p className="flex flex-wrap items-center gap-2 text-[17px] font-semibold text-foreground">
           {vehicle || "Pedido sin detalle de vehículo"}
+          {hasUpdate ? (
+            <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-semibold text-white">
+              Novedades
+            </span>
+          ) : null}
         </p>
-        <p className="mt-0.5 text-xs text-muted">{date}</p>
+        <p className="mt-0.5 text-[15px] text-muted">
+          <span className="font-code text-[13px]">{order.id.slice(0, 8).toUpperCase()}</span> · {date}
+          {total ? ` · $${Number(total).toLocaleString("es-MX")}` : ""}
+        </p>
       </div>
 
-      <div className="flex items-center gap-3">
-        <span
-          className={`rounded-full px-3 py-1 text-xs font-medium ${
-            order.deleted_at
-              ? deletedBadgeClass
-              : statusColors[order.status] ?? "bg-gray-100 text-gray-600"
-          }`}
-        >
-          {order.deleted_at ? "Eliminado" : statusLabel}
-        </span>
-        <ChevronRight size={18} className="text-muted" />
+      <div className="flex shrink-0 items-center gap-3">
+        <StatusTag status={order.status} deleted={Boolean(order.deleted_at)} />
+        <ChevronRight size={18} className="text-muted transition group-hover:translate-x-0.5" />
       </div>
     </Link>
   );

@@ -25,12 +25,12 @@ export function MarketingOptInToggle({ initialValue }: { initialValue: boolean }
     }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+    <div className="flex items-center justify-between gap-3 rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
       <div className="flex items-start gap-2.5">
         <Mail size={16} className="mt-0.5 shrink-0 text-muted" />
         <div>
-          <p className="text-sm font-medium text-foreground">Correos promocionales</p>
-          <p className="text-xs text-muted">
+          <p className="text-[15px] font-medium text-foreground">Correos promocionales</p>
+          <p className="text-[13px] text-muted">
             Recibe avisos de cupones nuevos y novedades del taller.
           </p>
         </div>

@@ -39,12 +39,12 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
       </button>
 
       {open ? (
-          <div className="fixed inset-x-4 top-16 z-50 origin-top animate-panel-in rounded-lg border border-black/10 bg-surface shadow-xl dark:border-white/10 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80">          <div className="border-b border-black/10 px-4 py-3 dark:border-white/10">
-            <p className="text-sm font-semibold text-foreground">Notificaciones</p>
+          <div className="fixed inset-x-4 top-16 z-50 origin-top animate-panel-in rounded-2xl bg-surface shadow-xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 dark:ring-1 dark:ring-white/5">          <div className="border-b border-black/10 px-4 py-3">
+            <p className="text-[15px] font-semibold text-foreground">Notificaciones</p>
           </div>
 
           {notifications.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-muted">
+            <p className="px-4 py-8 text-center text-[15px] text-muted">
               Estás al día, no tienes nada pendiente.
             </p>
           ) : (
@@ -60,11 +60,11 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
                   >
                     <Icon
                       size={16}
-                      className="mt-0.5 shrink-0 text-brand-yellow-dark dark:text-brand-yellow"
+                      className="mt-0.5 shrink-0 text-yellow-text"
                     />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">{n.title}</p>
-                      <p className="truncate text-xs text-muted">{n.description}</p>
+                      <p className="text-[15px] font-medium text-foreground">{n.title}</p>
+                      <p className="truncate text-[13px] text-muted">{n.description}</p>
                     </div>
                   </Link>
                 );

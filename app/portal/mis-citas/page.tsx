@@ -18,11 +18,11 @@ export default async function MisCitasPage() {
     : { data: [] };
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+    <div className="max-w-3xl">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Mis citas
       </h1>
-      <p className="mb-8 text-sm text-muted">
+      <p className="mb-8 text-[15px] text-muted">
         Consulta el estado de tus visitas agendadas al taller.
       </p>
 

@@ -47,7 +47,7 @@ export function QuoteResponse({
       </p>
 
       {error ? (
-        <p className="mt-3 text-sm text-brand-red-dark dark:text-brand-red">{error}</p>
+        <p className="mt-3 text-[15px] text-brand-red-dark dark:text-brand-red">{error}</p>
       ) : null}
 
       <div className="mt-5 flex flex-wrap gap-3">

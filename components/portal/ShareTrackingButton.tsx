@@ -1,4 +1,5 @@
 "use client";
+import { buttonClass } from "@/components/taller";
 
 import { createClient } from "@/lib/supabase/client";
 import { Check, Share2 } from "lucide-react";
@@ -44,15 +45,15 @@ export function ShareTrackingButton({
     <button
       onClick={handleShare}
       disabled={isLoading}
-      className="flex w-fit items-center gap-1.5 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-black/5 disabled:opacity-60 dark:border-white/15 dark:hover:bg-white/5"
+      className={buttonClass("primary")}
     >
       {copied ? (
         <>
-          <Check size={13} /> Link copiado
+          <Check size={17} /> Link copiado
         </>
       ) : (
         <>
-          <Share2 size={13} /> Compartir seguimiento
+          <Share2 size={17} /> Compartir seguimiento
         </>
       )}
     </button>

@@ -14,17 +14,17 @@ export function ReferralLink({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="rounded-lg border border-black/10 bg-surface p-6 text-center dark:border-white/10">
-      <Users size={28} className="mx-auto mb-2 text-brand-yellow-dark dark:text-brand-yellow" />
-      <p className="mb-1 text-sm font-semibold text-foreground">Tu link para referir</p>
-      <p className="mb-4 text-xs text-muted">
+    <div className="rounded-2xl bg-surface p-6 text-center dark:ring-1 dark:ring-white/5">
+      <Users size={28} className="mx-auto mb-2 text-yellow-text" />
+      <p className="mb-1 text-[15px] font-semibold text-foreground">Tu link para referir</p>
+      <p className="mb-4 text-[13px] text-muted">
         Compártelo con tus amigos. Cuando alguien se registre con tu link y
         complete su primer pedido, ambos reciben un cupón de descuento.
       </p>
 
       <button
         onClick={handleCopy}
-        className="mx-auto flex items-center gap-2 rounded-md bg-brand-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+        className="mx-auto flex items-center gap-2 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-5 py-2.5 text-[15px] font-semibold text-ink transition min-h-11"
       >
         {copied ? (
           <>

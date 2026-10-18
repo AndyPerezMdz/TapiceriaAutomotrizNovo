@@ -48,7 +48,7 @@ export function OrderTimeline({ history, profiles, currentUserId }: Props) {
             <p className="text-base font-semibold text-foreground">
               {statusLabels[entry.status] ?? entry.status}
             </p>
-            <p className="mt-0.5 text-sm text-muted">
+            <p className="mt-0.5 text-[15px] text-muted">
               {new Date(entry.created_at).toLocaleDateString("es-MX", {
                 day: "numeric",
                 month: "short",
@@ -59,7 +59,7 @@ export function OrderTimeline({ history, profiles, currentUserId }: Props) {
               · {getActorLabel(entry.changed_by)}
             </p>
             {entry.note ? (
-              <p className="mt-1 break-words text-sm text-foreground/80">{entry.note}</p>
+              <p className="mt-1 break-words text-[15px] text-foreground/80">{entry.note}</p>
             ) : null}
           </div>
         </li>

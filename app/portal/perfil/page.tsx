@@ -58,7 +58,7 @@ export default async function PerfilPage() {
   return (
     <div className="mx-auto max-w-3xl">
       {/* Hero */}
-      <div className="mb-8 rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
+      <div className="mb-8 rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           <AvatarUploader
             currentAvatarUrl={profile?.avatar_url ?? null}
@@ -66,25 +66,25 @@ export default async function PerfilPage() {
           />
         </div>
 
-        <div className="mt-6 grid grid-cols-3 gap-3 border-t border-black/10 pt-6 dark:border-white/10">
+        <div className="mt-6 grid grid-cols-3 gap-3 border-t-2 border-dashed border-seam pt-6">
           <div className="text-center">
             <div className="flex items-center justify-center gap-1.5 text-muted">
               <ClipboardList size={14} />
-              <span className="text-xs">Pedidos totales</span>
+              <span className="text-[13px]">Pedidos totales</span>
             </div>
             <p className="mt-1 text-xl font-bold text-foreground">{totalOrders ?? 0}</p>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1.5 text-muted">
               <ClipboardList size={14} />
-              <span className="text-xs">Activos</span>
+              <span className="text-[13px]">Activos</span>
             </div>
             <p className="mt-1 text-xl font-bold text-foreground">{activeOrders ?? 0}</p>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1.5 text-muted">
               <Star size={14} />
-              <span className="text-xs">Tu calificación prom.</span>
+              <span className="text-[13px]">Tu calificación prom.</span>
             </div>
             <p className="mt-1 text-xl font-bold text-foreground">
               {avgRating ?? "—"}
@@ -93,15 +93,15 @@ export default async function PerfilPage() {
         </div>
 
         {memberSince ? (
-          <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted">
+          <p className="mt-4 flex items-center justify-center gap-1.5 text-[13px] text-muted">
             <Calendar size={12} /> Cliente desde {memberSince}
           </p>
         ) : null}
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
-          <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <div className="rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
+          <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
             Información personal
           </h2>
           <ProfileForm
@@ -111,13 +111,13 @@ export default async function PerfilPage() {
           />
         </div>
 
-        <div className="mt-6 border-t border-black/10 pt-6 dark:border-white/10">
-          <h3 className="mb-3 text-sm font-semibold text-foreground">Correo electrónico</h3>
+        <div className="mt-6 border-t-2 border-dashed border-seam pt-6">
+          <h3 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">Correo electrónico</h3>
           <ChangeEmailForm currentEmail={profile?.email ?? user?.email ?? ""} />
         </div>
 
-        <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
-          <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <div className="rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
+          <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
             Contraseña
           </h2>
           <ChangePasswordForm />
