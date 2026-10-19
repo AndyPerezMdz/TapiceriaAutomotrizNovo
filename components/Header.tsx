@@ -64,9 +64,9 @@ export function Header() {
           <ThemeToggle />
           <Link
             href="/login"
-            className="rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black dark:hover:bg-white/85"
+            className="inline-flex min-h-11 items-center rounded-xl bg-ink px-5 text-[15px] font-semibold text-brand-yellow transition hover:bg-ink-soft dark:ring-1 dark:ring-white/15"
           >
-            Iniciar sesión
+            Mi portal
           </Link>
         </div>
 
@@ -100,9 +100,9 @@ export function Header() {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white dark:bg-white dark:text-brand-black"
+                className="inline-flex min-h-11 items-center rounded-xl bg-ink px-5 text-[15px] font-semibold text-brand-yellow dark:ring-1 dark:ring-white/15"
               >
-                Iniciar sesión
+                Mi portal
               </Link>
             </div>
           </nav>
