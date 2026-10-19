@@ -71,7 +71,7 @@ export function AppointmentActions({
       <button
         onClick={() => setIsEditing(true)}
         disabled={isBusy}
-        className="rounded-md p-1.5 text-muted transition hover:bg-black/5 hover:text-foreground disabled:opacity-50 dark:hover:bg-white/5"
+        className="rounded-xl p-1.5 text-muted transition hover:bg-black/5 hover:text-foreground disabled:opacity-50 dark:hover:bg-white/5"
         title="Editar fecha/hora"
       >
         <Pencil size={14} />
@@ -80,7 +80,7 @@ export function AppointmentActions({
       <button
         onClick={handleCancel}
         disabled={isBusy}
-        className="rounded-md p-1.5 text-muted transition hover:bg-brand-yellow/10 hover:text-brand-yellow-dark disabled:opacity-50 dark:hover:text-brand-yellow"
+        className="rounded-xl p-1.5 text-muted transition hover:bg-brand-yellow/10 hover:text-brand-yellow-dark disabled:opacity-50 dark:hover:text-brand-yellow"
         title="Cancelar cita"
       >
         <XCircle size={14} />
@@ -89,7 +89,7 @@ export function AppointmentActions({
       <button
         onClick={handleDelete}
         disabled={isBusy}
-        className="rounded-md p-1.5 text-muted transition hover:bg-brand-red/10 hover:text-brand-red disabled:opacity-50"
+        className="rounded-xl p-1.5 text-muted transition hover:bg-brand-red/10 hover:text-brand-red disabled:opacity-50"
         title="Eliminar cita"
       >
         <Trash2 size={14} />

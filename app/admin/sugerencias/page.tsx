@@ -8,8 +8,8 @@ const typeLabels: Record<string, string> = {
 };
 
 const typeColors: Record<string, string> = {
-  sugerencia: "bg-brand-yellow/15 text-brand-yellow-dark dark:text-brand-yellow",
-  queja: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+  sugerencia: "bg-highlight text-yellow-text",
+  queja: "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
 };
 
 export default async function AdminSugerenciasPage() {
@@ -28,15 +28,15 @@ export default async function AdminSugerenciasPage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Sugerencias de la página
       </h1>
-      <p className="mb-6 text-sm text-muted">
+      <p className="mb-6 text-[15px] text-muted">
         Comentarios de los clientes sobre la página web (no sobre pedidos).
       </p>
 
       {!feedback || feedback.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-16 text-center">
           <Lightbulb size={24} className="mx-auto mb-2 text-muted" />
           <p className="text-muted">Aún no hay sugerencias ni quejas sobre la página.</p>
         </div>
@@ -45,7 +45,7 @@ export default async function AdminSugerenciasPage() {
           {feedback.map((f) => (
             <div
               key={f.id}
-              className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
+              className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -54,12 +54,12 @@ export default async function AdminSugerenciasPage() {
                       {names.get(f.client_id) ?? "Cliente"}
                     </p>
                     <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[f.type]}`}
+                      className={`rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] ${typeColors[f.type]}`}
                     >
                       {typeLabels[f.type] ?? f.type}
                     </span>
                   </div>
-                  <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-muted">
                     <Calendar size={11} />
                     {new Date(f.created_at).toLocaleDateString("es-MX", {
                       day: "numeric",
@@ -67,7 +67,7 @@ export default async function AdminSugerenciasPage() {
                       year: "numeric",
                     })}
                   </p>
-                  <p className="mt-2 whitespace-pre-line text-sm text-foreground">{f.message}</p>
+                  <p className="mt-2 whitespace-pre-line text-[15px] text-foreground">{f.message}</p>
                 </div>
                 <SiteFeedbackStatusButton id={f.id} status={f.status} />
               </div>

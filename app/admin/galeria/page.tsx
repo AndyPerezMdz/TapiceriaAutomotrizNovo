@@ -61,13 +61,13 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl text-foreground">
           Galería
         </h1>
         {isAdmin ? (
           <Link
             href="/admin/galeria/nueva"
-            className="flex items-center gap-1.5 rounded-md bg-brand-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
+            className="flex items-center gap-1.5 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[15px] font-semibold text-ink transition min-h-11"
           >
             <Plus size={16} /> Agregar foto
           </Link>
@@ -83,10 +83,10 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
       <div className="mb-6 flex flex-wrap gap-2">
         <a
           href="/admin/galeria"
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+          className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
             !service
-              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-              : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+              ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+              : "border-[1.5px] border-field-border text-muted hover:border-foreground"
           }`}
         >
           Todos
@@ -95,10 +95,10 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
           <a
             key={s.id}
             href={`/admin/galeria?service=${s.id}`}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
               service === s.id
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+                : "border-[1.5px] border-field-border text-muted hover:border-foreground"
             }`}
           >
             {s.title}

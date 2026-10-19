@@ -59,7 +59,7 @@ export function StaffComplaintForm({ orderId }: { orderId: string }) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="text-xs font-medium text-brand-red underline-offset-2 hover:underline"
+        className="text-[13px] font-medium text-brand-red underline-offset-2 hover:underline"
       >
         Registrar queja por WhatsApp
       </button>
@@ -69,29 +69,29 @@ export function StaffComplaintForm({ orderId }: { orderId: string }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-2 rounded-md border border-black/10 bg-background p-3 dark:border-white/10"
+      className="mt-2 rounded-xl border-[1.5px] border-seam bg-background p-3"
     >
-      {error ? <p className="mb-2 text-xs text-brand-red">{error}</p> : null}
+      {error ? <p className="mb-2 text-[13px] text-brand-red">{error}</p> : null}
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         rows={2}
         placeholder="Describe lo que el cliente reportó por WhatsApp..."
-        className="w-full rounded-md border border-black/15 bg-surface px-2.5 py-2 text-xs text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
+        className="block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none"
         disabled={isSaving}
       />
       <div className="mt-2 flex gap-2">
         <button
           type="submit"
           disabled={isSaving || !description.trim()}
-          className="rounded-md bg-brand-black px-3 py-1 text-xs font-semibold text-white disabled:opacity-60 dark:bg-white dark:text-brand-black"
+          className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1 text-[13px] font-semibold text-ink disabled:opacity-60"
         >
           {isSaving ? "Guardando..." : "Registrar"}
         </button>
         <button
           type="button"
           onClick={() => setIsOpen(false)}
-          className="rounded-md border border-black/15 px-3 py-1 text-xs font-medium text-foreground dark:border-white/15"
+          className="rounded-xl border-[1.5px] border-field-border px-3 py-1 text-[13px] font-medium text-foreground"
         >
           Cancelar
         </button>

@@ -32,7 +32,7 @@ export default async function AdminReferidosPage() {
 
   return (
     <div>
-      <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-8 text-foreground">
         Programa de referidos
       </h1>
 
@@ -42,12 +42,12 @@ export default async function AdminReferidosPage() {
         />
       </div>
 
-      <h2 className="mb-3 text-sm font-semibold text-foreground">
+      <h2 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">
         Referidos completados ({rewards?.length ?? 0})
       </h2>
       {!rewards || rewards.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
-          <p className="text-sm text-muted">Nadie ha completado un referido todavía.</p>
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
+          <p className="text-[15px] text-muted">Nadie ha completado un referido todavía.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -57,7 +57,7 @@ export default async function AdminReferidosPage() {
             return (
               <div
                 key={i}
-                className="rounded-md border border-black/10 bg-surface px-3 py-2.5 text-sm dark:border-white/10"
+                className="rounded-xl bg-surface px-3 py-2.5 text-[15px] dark:ring-1 dark:ring-white/5"
               >
                 <span className="font-medium text-foreground">{referrer?.full_name}</span>{" "}
                 <span className="text-muted">refirió a</span>{" "}

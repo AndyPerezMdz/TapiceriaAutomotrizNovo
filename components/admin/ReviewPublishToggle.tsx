@@ -26,10 +26,10 @@ export function ReviewPublishToggle({
     <button
       onClick={handleToggle}
       disabled={isSaving}
-      className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition disabled:opacity-50 ${
+      className={`shrink-0 rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] transition disabled:opacity-50 ${
         isPublished
-          ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
-          : "border border-black/15 text-muted dark:border-white/15"
+          ? "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40"
+          : "border-[1.5px] border-field-border text-muted"
       }`}
     >
       {isPublished ? "Publicada" : "Publicar"}

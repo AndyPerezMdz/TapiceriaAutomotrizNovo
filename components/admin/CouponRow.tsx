@@ -65,29 +65,29 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
   return (
     <>
       {dialog}
-      <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+      <div className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="font-medium text-foreground">{coupon.title}</p>
-            <p className="mt-0.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+            <p className="mt-0.5 text-[15px] text-yellow-text">
               {discountLabel}
             </p>
             {coupon.description ? (
-              <p className="mt-1 text-xs text-muted">{coupon.description}</p>
+              <p className="mt-1 text-[13px] text-muted">{coupon.description}</p>
             ) : null}
             <div className="mt-2 flex flex-wrap gap-1.5">
-              <span className="inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-xs text-muted dark:bg-white/5">
+              <span className="inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-[13px] text-muted dark:bg-white/5">
                 {audienceLabels[coupon.audience]}
               </span>
-              <span className="inline-block rounded-full bg-blue-100 px-2.5 py-0.5 text-xs text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+              <span className="inline-block rounded-full bg-brand-yellow text-ink px-2.5 py-0.5 text-[13px]">
                 {coupon.service_title ?? "General"}
               </span>
               {coupon.expires_at ? (
                 <span
-                  className={`inline-block rounded-full px-2.5 py-0.5 text-xs ${
+                  className={`inline-block rounded-full px-2.5 py-0.5 text-[13px] ${
                     isExpired
-                      ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
-                      : "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+                      ? "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red"
+                      : "border-[1.5px] border-dashed border-foreground text-foreground"
                   }`}
                 >
                   {isExpired ? "Caducado" : "Vence"}{" "}
@@ -104,10 +104,10 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
             <button
               onClick={toggleActive}
               disabled={isUpdating}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition disabled:opacity-50 ${
+              className={`rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] transition disabled:opacity-50 ${
                 coupon.is_active
-                  ? "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
-                  : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                  ? "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40"
+                  : "border-[1.5px] border-muted text-muted"
               }`}
             >
               {coupon.is_active ? "Activo" : "Inactivo"}

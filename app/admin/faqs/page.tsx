@@ -17,10 +17,10 @@ export default async function AdminFaqsPage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Preguntas frecuentes
       </h1>
-      <p className="mb-8 text-sm text-muted">
+      <p className="mb-8 text-[15px] text-muted">
         Estas preguntas aparecen en la página principal del sitio.
       </p>
       <FaqManager />

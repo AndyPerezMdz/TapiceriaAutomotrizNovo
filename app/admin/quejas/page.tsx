@@ -10,9 +10,9 @@ const statusFilters = [
 ];
 
 const statusColors: Record<string, string> = {
-  abierta: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  atendida: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  cerrada: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  abierta: "border-[1.5px] border-dashed border-foreground text-foreground",
+  atendida: "bg-brand-yellow text-ink",
+  cerrada: "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
 };
 
 interface Props {
@@ -38,17 +38,17 @@ export default async function AdminQuejasPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">Quejas</h1>
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-6 text-foreground">Quejas</h1>
 
       <div className="mb-6 flex flex-wrap gap-2">
         {statusFilters.map((filter) => (
           <a
             key={filter.value}
             href={filter.value === "all" ? "/admin/quejas" : `/admin/quejas?status=${filter.value}`}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
               activeFilter === filter.value
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+                : "border-[1.5px] border-field-border text-muted hover:border-foreground"
             }`}
           >
             {filter.label}
@@ -57,7 +57,7 @@ export default async function AdminQuejasPage({ searchParams }: Props) {
       </div>
 
       {!complaints || complaints.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-16 text-center">
           <AlertTriangle size={24} className="mx-auto mb-2 text-muted" />
           <p className="text-muted">No hay quejas con este filtro.</p>
         </div>
@@ -69,26 +69,26 @@ export default async function AdminQuejasPage({ searchParams }: Props) {
               <Link
                 key={c.id}
                 href={`/admin/quejas/${c.id}`}
-                className="block rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+                className="block rounded-2xl bg-surface p-5 sm:p-6 transition hover:border-brand-yellow-dark dark:hover:border-brand-yellow dark:ring-1 dark:ring-white/5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-medium text-foreground">{client?.full_name}</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
+                    <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-muted">
                       <Calendar size={11} />
                       {new Date(c.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
                       {" · "}Folio {c.order_id.slice(0, 8).toUpperCase()}
                       {" · "}
                       {c.source === "web" ? "En línea" : "WhatsApp"}
                     </p>
-                    <p className="mt-1.5 truncate text-sm text-muted">{c.description}</p>
+                    <p className="mt-1.5 truncate text-[15px] text-muted">{c.description}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1.5">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[c.status]}`}>
+                    <span className={`rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] ${statusColors[c.status]}`}>
                       {c.status}
                     </span>
                     {c.satisfaction_rating ? (
-                      <span className="text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                      <span className="text-[13px] text-yellow-text">
                         {"★".repeat(c.satisfaction_rating)}
                       </span>
                     ) : null}

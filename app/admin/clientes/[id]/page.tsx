@@ -45,7 +45,7 @@ export default async function AdminClienteDetallePage({ params }: Props) {
     <div>
       <Link
         href="/admin/clientes"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-foreground"
+        className="mb-6 inline-flex items-center gap-1.5 text-[15px] font-medium text-muted transition hover:text-foreground"
       >
         <ArrowLeft size={16} /> Volver a clientes
       </Link>
@@ -58,15 +58,15 @@ export default async function AdminClienteDetallePage({ params }: Props) {
             className="h-16 w-16 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-yellow/20 text-xl font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-highlight text-xl font-semibold text-yellow-text">
             {client.full_name?.charAt(0).toUpperCase() ?? <User size={22} />}
           </div>
         )}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl text-foreground">
             {client.full_name}
           </h1>
-          <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted">
+          <div className="mt-1 flex flex-wrap items-center gap-3 text-[15px] text-muted">
             <span className="flex items-center gap-1">
               <Mail size={13} /> {client.email}
             </span>
@@ -85,13 +85,13 @@ export default async function AdminClienteDetallePage({ params }: Props) {
         </div>
       ) : null}
 
-      <h2 className="mb-4 text-sm font-semibold text-foreground">
+      <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
         Historial de pedidos ({formattedOrders.length})
       </h2>
 
       {formattedOrders.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
-          <p className="text-sm text-muted">Este cliente aún no tiene pedidos.</p>
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
+          <p className="text-[15px] text-muted">Este cliente aún no tiene pedidos.</p>
         </div>
       ) : (
         <div className="space-y-3">

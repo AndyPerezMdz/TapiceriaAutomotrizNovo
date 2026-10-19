@@ -60,7 +60,7 @@ export function MaterialImageUploader({ table, recordId, currentImageUrl, onUplo
   return (
     <div className="flex items-center gap-2">
       {currentImageUrl ? (
-        <div className="relative h-12 w-12 overflow-hidden rounded-md border border-black/10 dark:border-white/10">
+        <div className="relative h-12 w-12 overflow-hidden rounded-xl border-[1.5px] border-seam">
           <img src={currentImageUrl} alt="" className="h-full w-full object-cover" />
           <button
             onClick={handleRemove}
@@ -70,7 +70,7 @@ export function MaterialImageUploader({ table, recordId, currentImageUrl, onUplo
           </button>
         </div>
       ) : (
-        <label className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-md border border-dashed border-black/20 text-muted transition hover:border-black/40 dark:border-white/20">
+        <label className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-field-border text-muted transition hover:border-foreground">
           <ImagePlus size={16} />
           <input
             type="file"
@@ -81,9 +81,9 @@ export function MaterialImageUploader({ table, recordId, currentImageUrl, onUplo
           />
         </label>
       )}
-      {isUploading ? <span className="text-xs text-muted">Subiendo...</span> : null}
+      {isUploading ? <span className="text-[13px] text-muted">Subiendo...</span> : null}
       {error ? (
-        <span className="flex items-center gap-1 text-xs text-brand-red">
+        <span className="flex items-center gap-1 text-[13px] text-brand-red">
           <AlertTriangle size={11} /> {error}
         </span>
       ) : null}

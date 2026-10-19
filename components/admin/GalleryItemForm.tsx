@@ -10,9 +10,9 @@ interface Service {
   title: string;
 }
 
-const labelClassName = "mb-1.5 block text-sm font-medium text-foreground";
+const labelClassName = "mb-1.5 block text-[15px] font-medium text-foreground";
 const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
+  "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 
 export function GalleryItemForm({ services }: { services: Service[] }) {
   const router = useRouter();
@@ -85,7 +85,7 @@ export function GalleryItemForm({ services }: { services: Service[] }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-5">
       {error ? (
-        <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
+        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
           {error}
         </div>
       ) : null}
@@ -132,7 +132,7 @@ export function GalleryItemForm({ services }: { services: Service[] }) {
       <button
         type="submit"
         disabled={isSaving}
-        className="rounded-md bg-brand-black px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:opacity-60 dark:bg-white dark:text-brand-black"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Guardando..." : "Agregar a galería"}
       </button>
@@ -150,17 +150,17 @@ function PhotoPicker({
   disabled: boolean;
 }) {
   return (
-    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-black/20 text-muted transition hover:border-black/40 dark:border-white/20">
+    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-field-border text-muted transition hover:border-foreground">
       {file ? (
         <img
           src={URL.createObjectURL(file)}
           alt=""
-          className="h-full w-full rounded-md object-cover"
+          className="h-full w-full rounded-xl object-cover"
         />
       ) : (
         <>
           <ImagePlus size={24} />
-          <span className="text-xs">Subir foto</span>
+          <span className="text-[13px]">Subir foto</span>
         </>
       )}
       <input

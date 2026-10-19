@@ -103,11 +103,11 @@ export function QuickSearch({ isAdmin }: { isAdmin: boolean }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex w-full items-center gap-2 rounded-md border border-black/15 px-3 py-2 text-sm text-muted transition hover:border-black/30 dark:border-white/15 dark:hover:border-white/30"
+        className="flex w-full items-center gap-2 rounded-xl border-[1.5px] border-field-border px-3 py-2 text-[15px] text-muted transition hover:border-foreground dark:hover:border-white/30"
       >
         <Search size={14} />
         <span className="flex-1 text-left">Buscar...</span>
-        <span className="hidden rounded border border-black/15 px-1.5 py-0.5 text-[10px] sm:inline dark:border-white/15">
+        <span className="hidden rounded border-[1.5px] border-field-border px-1.5 py-0.5 text-[10px] sm:inline">
           Ctrl K
         </span>
       </button>
@@ -119,9 +119,9 @@ export function QuickSearch({ isAdmin }: { isAdmin: boolean }) {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md overflow-hidden rounded-lg border border-black/10 bg-surface shadow-2xl dark:border-white/10"
+            className="w-full max-w-md overflow-hidden rounded-2xl bg-surface shadow-2xl dark:ring-1 dark:ring-white/5"
           >
-            <div className="flex items-center gap-2 border-b border-black/10 px-4 py-3 dark:border-white/10">
+            <div className="flex items-center gap-2 border-b-2 border-dashed border-seam px-4 py-3">
               <Search size={16} className="text-muted" />
               <input
                 autoFocus
@@ -129,25 +129,25 @@ export function QuickSearch({ isAdmin }: { isAdmin: boolean }) {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Buscar una sección..."
-                className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted"
+                className="flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted"
               />
-              <span className="rounded border border-black/15 px-1.5 py-0.5 text-[10px] text-muted dark:border-white/15">
+              <span className="rounded border-[1.5px] border-field-border px-1.5 py-0.5 text-[10px] text-muted">
                 Esc
               </span>
             </div>
 
             <div className="max-h-80 overflow-y-auto p-2">
               {filtered.length === 0 ? (
-                <p className="px-3 py-6 text-center text-sm text-muted">Sin resultados.</p>
+                <p className="px-3 py-6 text-center text-[15px] text-muted">Sin resultados.</p>
               ) : (
                 filtered.map((item, index) => (
                   <button
                     key={item.href}
                     onClick={() => go(item.href)}
                     onMouseEnter={() => setActiveIndex(index)}
-                    className={`flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition ${
+                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-[15px] transition ${
                       index === activeIndex
-                        ? "bg-brand-yellow/15 text-brand-yellow-dark dark:text-brand-yellow"
+                        ? "bg-highlight text-yellow-text"
                         : "text-foreground hover:bg-black/5 dark:hover:bg-white/5"
                     }`}
                   >

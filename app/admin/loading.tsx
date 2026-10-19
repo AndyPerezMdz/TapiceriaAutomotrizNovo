@@ -17,7 +17,7 @@ export default function AdminLoading() {
         <StatCardSkeleton />
       </div>
 
-      <Skeleton className="mb-8 h-16 w-full rounded-lg" />
+      <Skeleton className="mb-8 h-16 w-full rounded-2xl" />
 
       <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
@@ -27,9 +27,9 @@ export default function AdminLoading() {
         <div>
           <Skeleton className="mb-4 h-4 w-32" />
           <div className="space-y-2">
-            <Skeleton className="h-14 w-full rounded-lg" />
-            <Skeleton className="h-14 w-full rounded-lg" />
-            <Skeleton className="h-14 w-full rounded-lg" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-2xl" />
           </div>
         </div>
       </div>

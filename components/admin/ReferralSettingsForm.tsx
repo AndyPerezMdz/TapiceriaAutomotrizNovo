@@ -10,8 +10,8 @@ interface Settings {
 }
 
 const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
-const labelClassName = "mb-1.5 block text-sm font-medium text-foreground";
+  "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
+const labelClassName = "mb-1.5 block text-[15px] font-medium text-foreground";
 
 export function ReferralSettingsForm({ settings }: { settings: Settings }) {
   const router = useRouter();
@@ -37,9 +37,9 @@ export function ReferralSettingsForm({ settings }: { settings: Settings }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md space-y-4 rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
+    <form onSubmit={handleSubmit} className="max-w-md space-y-4 rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
       {success ? (
-        <div className="rounded-md border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-sm text-green-700 dark:text-green-400">
+        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[15px] text-green-700 dark:text-green-400">
           Configuración guardada.
         </div>
       ) : null}
@@ -69,14 +69,14 @@ export function ReferralSettingsForm({ settings }: { settings: Settings }) {
         </div>
       </div>
 
-      <p className="text-xs text-muted">
+      <p className="text-[13px] text-muted">
         Se otorga cuando el referido entrega su primer pedido con precio.
       </p>
 
       <button
         type="submit"
         disabled={isSaving}
-        className="rounded-md bg-brand-black px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:opacity-60 dark:bg-white dark:text-brand-black"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Guardando..." : "Guardar cambios"}
       </button>

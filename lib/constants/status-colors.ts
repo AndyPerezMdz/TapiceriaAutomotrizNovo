@@ -2,10 +2,10 @@
 // Gris = neutro/espera · Azul = en progreso · Verde = completado/bueno · Rojo = cancelado/problema
 
 export const statusTone = {
-  neutral: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  progress: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  success: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
-  danger: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+  neutral: "border-[1.5px] border-muted text-muted",
+  progress: "bg-brand-yellow text-ink",
+  success: "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
+  danger: "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
 } as const;
 
 export type StatusTone = keyof typeof statusTone;

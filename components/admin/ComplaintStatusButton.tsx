@@ -17,9 +17,9 @@ const labels: Record<string, string> = {
 };
 
 const colors: Record<string, string> = {
-  abierta: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  atendida: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  cerrada: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  abierta: "border-[1.5px] border-dashed border-foreground text-foreground",
+  atendida: "bg-brand-yellow text-ink",
+  cerrada: "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
 };
 
 export function ComplaintStatusButton({ id, status }: { id: string; status: string }) {
@@ -47,7 +47,7 @@ export function ComplaintStatusButton({ id, status }: { id: string; status: stri
     <button
       onClick={handleClick}
       disabled={isUpdating}
-      className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition hover:opacity-80 disabled:opacity-50 ${colors[current]}`}
+      className={`shrink-0 rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] transition hover:opacity-80 disabled:opacity-50 ${colors[current]}`}
     >
       {labels[current]}
     </button>

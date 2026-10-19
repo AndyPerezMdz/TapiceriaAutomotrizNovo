@@ -60,27 +60,27 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
   const hasActivated = Boolean(member.last_sign_in_at);
 
   return (
-    <div className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+    <div className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
       {dialog}
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium text-foreground">{member.full_name}</p>
-          <p className="text-xs text-muted">{member.email}</p>
+          <p className="text-[13px] text-muted">{member.email}</p>
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-brand-yellow/20 px-2.5 py-0.5 text-xs font-medium capitalize text-brand-yellow-dark dark:text-brand-yellow">
+            <span className="rounded-full bg-highlight px-2.5 py-0.5 text-[13px] font-medium capitalize text-yellow-text">
               {member.role}
             </span>
             <span
-              className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+              className={`rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] ${
                 member.is_active
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
-                  : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                  ? "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40"
+                  : "border-[1.5px] border-muted text-muted"
               }`}
             >
               {member.is_active ? "Activo" : "Desactivado"}
             </span>
             {!hasActivated ? (
-              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+              <span className="rounded-full border-[1.5px] border-dashed border-foreground text-foreground px-2.5 py-0.5 text-[13px] font-medium">
                 Invitación pendiente
               </span>
             ) : null}
@@ -88,7 +88,7 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
         </div>
       </div>
 
-      {feedback ? <p className="mt-2 text-xs text-brand-red">{feedback}</p> : null}
+      {feedback ? <p className="mt-2 text-[13px] text-brand-red">{feedback}</p> : null}
 
       <div className="mt-3 flex flex-wrap gap-2">
         <button
@@ -98,7 +98,7 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
             })
           }
           disabled={isLoading !== null}
-          className="flex items-center gap-1.5 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+          className="flex items-center gap-1.5 rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[13px] font-medium text-foreground transition hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5 min-h-11"
         >
           <ShieldCheck size={13} />
           Hacer {member.role === "admin" ? "empleado" : "admin"}
@@ -108,7 +108,7 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
           <button
             onClick={() => callAction("resend_invite")}
             disabled={isLoading !== null}
-            className="flex items-center gap-1.5 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-black/5 disabled:opacity-50 dark:border-white/15 dark:hover:bg-white/5"
+            className="flex items-center gap-1.5 rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[13px] font-medium text-foreground transition hover:bg-black/5 disabled:opacity-50 dark:hover:bg-white/5 min-h-11"
           >
             <RefreshCw size={13} />
             {isLoading === "resend_invite" ? "Enviando..." : "Reenviar invitación"}
@@ -118,7 +118,7 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
         <button
           onClick={() => callAction("toggle_active")}
           disabled={isLoading !== null}
-          className={`flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition disabled:opacity-50 ${
+          className={`flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[13px] font-medium transition disabled:opacity-50 ${
             member.is_active
               ? "border-brand-red/30 text-brand-red hover:bg-brand-red/5"
               : "border-green-500/30 text-green-700 hover:bg-green-500/5 dark:text-green-400"
@@ -131,7 +131,7 @@ export function StaffMemberRow({ member }: { member: StaffMember }) {
         <button
           onClick={handleDelete}
           disabled={isLoading !== null}
-          className="flex items-center gap-1.5 rounded-md border border-brand-red/30 px-3 py-1.5 text-xs font-medium text-brand-red transition hover:bg-brand-red/5 disabled:opacity-50"
+          className="flex items-center gap-1.5 rounded-xl border border-brand-red/30 px-3 py-1.5 text-[13px] font-medium text-brand-red transition hover:bg-brand-red/5 disabled:opacity-50"
         >
           <Trash2 size={13} />
           {isLoading === "delete" ? "Eliminando..." : "Eliminar"}

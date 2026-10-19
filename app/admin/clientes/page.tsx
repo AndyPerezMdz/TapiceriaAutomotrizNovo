@@ -42,7 +42,7 @@ export default async function AdminClientesPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-6 text-foreground">
         Clientes
       </h1>
 
@@ -51,7 +51,7 @@ export default async function AdminClientesPage({ searchParams }: Props) {
       </div>
 
       {!clients || clients.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-16 text-center">
           <p className="text-muted">No se encontraron clientes.</p>
         </div>
       ) : (
@@ -61,7 +61,7 @@ export default async function AdminClientesPage({ searchParams }: Props) {
               <Link
                 key={client.id}
                 href={`/admin/clientes/${client.id}`}
-                className="flex items-center gap-3 rounded-lg border border-black/10 bg-surface p-4 transition hover:border-brand-yellow-dark dark:border-white/10 dark:hover:border-brand-yellow"
+                className="flex items-center gap-3 rounded-2xl bg-surface p-5 sm:p-6 transition hover:border-brand-yellow-dark dark:hover:border-brand-yellow dark:ring-1 dark:ring-white/5"
               >
                 {client.avatar_url ? (
                   <img
@@ -70,13 +70,13 @@ export default async function AdminClientesPage({ searchParams }: Props) {
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-yellow/20 text-sm font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-highlight text-[15px] font-semibold text-yellow-text">
                     {client.full_name?.charAt(0).toUpperCase() ?? <User size={16} />}
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">{client.full_name}</p>
-                  <p className="truncate text-xs text-muted">
+                  <p className="truncate text-[13px] text-muted">
                     {client.email} {client.phone ? `· ${client.phone}` : ""}
                   </p>
                 </div>

@@ -41,7 +41,7 @@ export default async function AdminCuponesPage() {
 
   return (
     <div>
-      <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-8 text-foreground">
         Cupones de descuento
       </h1>
 
@@ -49,10 +49,10 @@ export default async function AdminCuponesPage() {
         <CouponForm services={services ?? []} />
       </div>
 
-      <h2 className="mb-3 text-sm font-semibold text-foreground">Cupones existentes</h2>
+      <h2 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">Cupones existentes</h2>
       {formattedCoupons.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
-          <p className="text-sm text-muted">Aún no has creado ningún cupón.</p>
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
+          <p className="text-[15px] text-muted">Aún no has creado ningún cupón.</p>
         </div>
       ) : (
         <div className="space-y-2">
