@@ -1,5 +1,7 @@
 "use client";
 
+import { StorageImage } from "@/components/shared/StorageImage";
+
 import {
   ServiceMaterialSelector,
   type MaterialSelection,
@@ -517,11 +519,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
                 {photos.map((photo, index) => (
                   <div key={index} className="relative aspect-square overflow-hidden rounded-xl bg-seam">
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
+                    <StorageImage src={URL.createObjectURL(photo)} alt="" fill sizes="200px" className="object-cover" />
                     <button
                       type="button"
                       onClick={() => removePhoto(index)}

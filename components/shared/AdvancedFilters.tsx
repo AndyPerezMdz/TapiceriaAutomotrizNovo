@@ -19,10 +19,14 @@ export function AdvancedFilters({ showPrice = false }: { showPrice?: boolean }) 
 
   function apply() {
     const params = new URLSearchParams(searchParams.toString());
-    from ? params.set("from", from) : params.delete("from");
-    to ? params.set("to", to) : params.delete("to");
-    minPrice ? params.set("min_price", minPrice) : params.delete("min_price");
-    maxPrice ? params.set("max_price", maxPrice) : params.delete("max_price");
+    const setOrDelete = (key: string, value: string) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    };
+    setOrDelete("from", from);
+    setOrDelete("to", to);
+    setOrDelete("min_price", minPrice);
+    setOrDelete("max_price", maxPrice);
     params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
     setOpen(false);

@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { AdminOrderRow } from "@/components/admin/AdminOrderRow";
 import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppLink } from "@/lib/constants/business";
@@ -52,11 +53,7 @@ export default async function AdminClienteDetallePage({ params }: Props) {
 
       <div className="mb-8 flex items-center gap-4">
         {client.avatar_url ? (
-          <img
-            src={client.avatar_url}
-            alt=""
-            className="h-16 w-16 rounded-full object-cover"
-          />
+          <StorageImage src={client.avatar_url} alt="" width={64} height={64} className="h-16 w-16 rounded-full object-cover" />
         ) : (
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-highlight text-xl font-semibold text-yellow-text">
             {client.full_name?.charAt(0).toUpperCase() ?? <User size={22} />}

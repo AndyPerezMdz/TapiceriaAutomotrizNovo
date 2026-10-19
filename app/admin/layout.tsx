@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { SignOutButton } from "@/components/auth/SignOutButton";
@@ -55,11 +56,7 @@ export default async function AdminLayout({
               className="flex h-8 w-8 items-center justify-center rounded-full"
             >
               {profile?.avatar_url ? (
-                <img
-                  src={profile.avatar_url}
-                  alt=""
-                  className="h-9 w-9 rounded-full object-cover"
-                />
+                <StorageImage src={profile.avatar_url} alt="" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
               ) : (
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
                   {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
@@ -74,11 +71,7 @@ export default async function AdminLayout({
             <ChatWidget variant="header" />
             <Link href="/admin/perfil" className="flex items-center gap-2">
               {profile?.avatar_url ? (
-                <img
-                  src={profile.avatar_url}
-                  alt=""
-                  className="h-9 w-9 rounded-full object-cover"
-                />
+                <StorageImage src={profile.avatar_url} alt="" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
               ) : (
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
                   {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}

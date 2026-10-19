@@ -1,5 +1,7 @@
 "use client";
 
+import { StorageImage } from "@/components/shared/StorageImage";
+
 import { createClient } from "@/lib/supabase/client";
 import { ImagePlus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -54,7 +56,7 @@ export function ServiceImageUploader({
       <div className="flex items-center gap-3">
         {currentImageUrl ? (
           <div className="relative h-20 w-20 overflow-hidden rounded-xl border-[1.5px] border-seam">
-            <img src={currentImageUrl} alt="" className="h-full w-full object-cover" />
+            <StorageImage src={currentImageUrl} alt="" fill sizes="80px" className="object-cover" />
             <button
               onClick={handleRemove}
               className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white"

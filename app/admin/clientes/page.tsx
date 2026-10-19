@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
 import { createClient } from "@/lib/supabase/server";
@@ -64,11 +65,7 @@ export default async function AdminClientesPage({ searchParams }: Props) {
                 className="flex items-center gap-3 rounded-2xl bg-surface p-5 sm:p-6 transition hover:border-brand-yellow-dark dark:hover:border-brand-yellow dark:ring-1 dark:ring-white/5"
               >
                 {client.avatar_url ? (
-                  <img
-                    src={client.avatar_url}
-                    alt=""
-                    className="h-10 w-10 rounded-full object-cover"
-                  />
+                  <StorageImage src={client.avatar_url} alt="" width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
                 ) : (
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-highlight text-[15px] font-semibold text-yellow-text">
                     {client.full_name?.charAt(0).toUpperCase() ?? <User size={16} />}

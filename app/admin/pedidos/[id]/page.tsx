@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { OrderStagesPanel } from "@/components/admin/OrderStagesPanel";
 import { OrderStaffPanel } from "@/components/admin/OrderStaffPanel";
 import { OrderTimeline } from "@/components/portal/OrderTimeline";
@@ -238,9 +239,9 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
                     href={photo.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="aspect-square overflow-hidden rounded-xl bg-seam"
+                    className="relative aspect-square overflow-hidden rounded-xl bg-seam"
                   >
-                    <img src={photo.url} alt="" className="h-full w-full object-cover" />
+                    <StorageImage src={photo.url} alt="" fill sizes="(min-width: 640px) 25vw, 33vw" className="object-cover" />
                   </a>
                 ))}
               </div>

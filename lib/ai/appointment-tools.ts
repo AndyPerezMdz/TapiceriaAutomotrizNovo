@@ -1,4 +1,4 @@
-import { getSlotsForDate, formatDateKey } from "@/lib/constants/appointments";
+import { getSlotsForDate } from "@/lib/constants/appointments";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { FunctionDeclaration } from "@/lib/ai/gemini";
 

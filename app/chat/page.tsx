@@ -1,6 +1,5 @@
 "use client";
 
-import { BrandLogo } from "@/components/auth/BrandLogo";
 import { ChatCore } from "@/components/chat/ChatCore";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";

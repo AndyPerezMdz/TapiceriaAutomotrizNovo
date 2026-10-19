@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
@@ -45,7 +46,7 @@ function Swatches({ colors }: { colors: SwatchColor[] }) {
             title={c.requires_visit ? `${c.name}: requiere visita para igualar el tono` : c.name}
           >
             {c.image_url ? (
-              <img src={c.image_url} alt="" className="h-full w-full rounded-full object-cover" />
+              <StorageImage src={c.image_url} alt="" fill sizes="44px" className="rounded-full object-cover" />
             ) : null}
             {c.requires_visit ? (
               <span

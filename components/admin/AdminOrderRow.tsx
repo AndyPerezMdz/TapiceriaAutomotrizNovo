@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { deletedBadgeClass, statusColors, statusLabels } from "@/lib/constants/order-status";
@@ -27,11 +28,7 @@ export function AdminOrderRow({ order }: { order: Order }) {
     >
       <div className="flex items-center gap-3">
         {order.client_avatar_url ? (
-          <img
-            src={order.client_avatar_url}
-            alt=""
-            className="h-9 w-9 shrink-0 rounded-full object-cover"
-          />
+          <StorageImage src={order.client_avatar_url} alt="" width={36} height={36} className="h-9 w-9 shrink-0 rounded-full object-cover" />
         ) : (
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-highlight text-[13px] font-semibold text-yellow-text">
             {order.client_name?.charAt(0).toUpperCase() ?? "?"}

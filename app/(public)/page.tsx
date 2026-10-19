@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { createClient } from "@/lib/supabase/server";
@@ -5,7 +6,6 @@ import { ArrowRight, Award, Clock, MessageCircle, ShieldCheck, Sparkles } from "
 import Image from "next/image";
 import Link from "next/link";
 import { FAQSection } from "@/components/public/FAQSection";
-import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -292,11 +292,7 @@ export default async function HomePage() {
                 className="group relative aspect-square overflow-hidden rounded-2xl bg-[#e6e2d9] dark:bg-[#2a2927]"
               >
                 {item.image_after_url ? (
-                  <img
-                    src={item.image_after_url}
-                    alt={item.caption ?? ""}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                  />
+                  <StorageImage src={item.image_after_url} alt={item.caption ?? ""} fill sizes="(min-width: 640px) 33vw, 50vw" className="object-cover transition duration-300 group-hover:scale-105" />
                 ) : null}
               </div>
             ))}

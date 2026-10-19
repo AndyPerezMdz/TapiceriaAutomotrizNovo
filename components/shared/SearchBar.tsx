@@ -13,7 +13,8 @@ export function SearchBar({ placeholder }: { placeholder: string }) {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      value ? params.set("q", value) : params.delete("q");
+      if (value) params.set("q", value);
+      else params.delete("q");
       params.set("page", "1");
       router.replace(`${pathname}?${params.toString()}`);
     }, 400);

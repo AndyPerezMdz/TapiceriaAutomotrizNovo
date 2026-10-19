@@ -1,5 +1,7 @@
 "use client";
 
+import { StorageImage } from "@/components/shared/StorageImage";
+
 import { createClient } from "@/lib/supabase/client";
 import { ImagePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -152,11 +154,7 @@ function PhotoPicker({
   return (
     <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-field-border text-muted transition hover:border-foreground">
       {file ? (
-        <img
-          src={URL.createObjectURL(file)}
-          alt=""
-          className="h-full w-full rounded-xl object-cover"
-        />
+        <StorageImage src={URL.createObjectURL(file)} alt="" width={400} height={400} className="h-full w-full rounded-xl object-cover" />
       ) : (
         <>
           <ImagePlus size={24} />

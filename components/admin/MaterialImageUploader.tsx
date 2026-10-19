@@ -1,5 +1,7 @@
 "use client";
 
+import { StorageImage } from "@/components/shared/StorageImage";
+
 import { createClient } from "@/lib/supabase/client";
 import { AlertTriangle, ImagePlus, X } from "lucide-react";
 import { useState } from "react";
@@ -61,7 +63,7 @@ export function MaterialImageUploader({ table, recordId, currentImageUrl, onUplo
     <div className="flex items-center gap-2">
       {currentImageUrl ? (
         <div className="relative h-12 w-12 overflow-hidden rounded-xl border-[1.5px] border-seam">
-          <img src={currentImageUrl} alt="" className="h-full w-full object-cover" />
+          <StorageImage src={currentImageUrl} alt="" fill sizes="48px" className="object-cover" />
           <button
             onClick={handleRemove}
             className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-bl bg-black/70 text-white"

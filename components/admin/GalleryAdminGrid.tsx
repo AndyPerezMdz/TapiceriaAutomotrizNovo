@@ -1,5 +1,7 @@
 "use client";
 
+import { StorageImage } from "@/components/shared/StorageImage";
+
 import { useConfirm } from "@/lib/hooks/useConfirm";
 import { createClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react";
@@ -64,18 +66,26 @@ export function GalleryAdminGrid({
           >
             <div className="grid grid-cols-2 gap-0.5 bg-black/10 dark:bg-white/10">
               {item.image_before_url ? (
-                <img
-                  src={item.image_before_url}
-                  alt="Antes"
-                  className="aspect-square object-cover"
-                />
+                <div className="relative aspect-square">
+                  <StorageImage
+                    src={item.image_before_url}
+                    alt="Antes"
+                    fill
+                    sizes="(min-width: 640px) 16vw, 50vw"
+                    className="object-cover"
+                  />
+                </div>
               ) : null}
               {item.image_after_url ? (
-                <img
-                  src={item.image_after_url}
-                  alt="Después"
-                  className="aspect-square object-cover"
-                />
+                <div className="relative aspect-square">
+                  <StorageImage
+                    src={item.image_after_url}
+                    alt="Después"
+                    fill
+                    sizes="(min-width: 640px) 16vw, 50vw"
+                    className="object-cover"
+                  />
+                </div>
               ) : null}
             </div>
             <div className="flex items-center justify-between p-3">

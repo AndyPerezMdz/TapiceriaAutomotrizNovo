@@ -1,3 +1,4 @@
+import { StorageImage } from "@/components/shared/StorageImage";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChatWidget } from "@/components/chat/ChatWidget";
@@ -48,11 +49,7 @@ export default async function PortalLayout({
             <div className="hidden items-center gap-3 sm:flex">
               <Link href="/portal/perfil" className="flex items-center gap-2">
                 {profile?.avatar_url ? (
-                  <img
-                    src={profile.avatar_url}
-                    alt=""
-                    className="h-9 w-9 rounded-full object-cover"
-                  />
+                  <StorageImage src={profile.avatar_url} alt="" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
                 ) : (
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
                     {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}

@@ -14,7 +14,7 @@ export default async function ContactoPage() {
   const settings = await getBusinessSettings();
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(
     `${businessInfo.name}, ${businessInfo.address}`,
-  )}&output=embed`;
+  )}&z=16&output=embed`;
 
   const whatsappHref = buildWhatsAppLink(
     "Hola, me gustaría más información sobre sus servicios",
@@ -57,17 +57,6 @@ export default async function ContactoPage() {
           <div className="mt-6 border-t-2 border-dashed border-brand-yellow/50 pt-5">
             <p className={label}>Dirección</p>
             <p className="mt-2 text-base leading-relaxed text-[#d9d5cc]">{businessInfo.address}</p>
-            <div className="mt-4 overflow-hidden rounded-[14px] bg-ink-soft">
-              <iframe
-                src={mapSrc}
-                width="100%"
-                height="200"
-                style={{ border: 0 }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Ubicación del taller"
-              />
-            </div>
             <div className="mt-3 flex flex-wrap gap-x-5">
               <a
                 href={mapsHref}
@@ -105,6 +94,23 @@ export default async function ContactoPage() {
           </div>
         </section>
       </div>
+
+      {/* Mapa a todo lo ancho */}
+      <section aria-label="Mapa" className="mt-6">
+        <div className="relative h-[340px] overflow-hidden rounded-[20px] bg-seam sm:h-[420px] dark:ring-1 dark:ring-white/5">
+          <p className="absolute inset-0 flex items-center justify-center text-[15px] text-muted">
+            Cargando mapa…
+          </p>
+          <iframe
+            src={mapSrc}
+            className="relative h-full w-full"
+            style={{ border: 0 }}
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Ubicación del taller en Google Maps"
+          />
+        </div>
+      </section>
     </div>
   );
 }

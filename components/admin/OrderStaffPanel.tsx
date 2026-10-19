@@ -3,7 +3,7 @@
 import { statusLabels } from "@/lib/validations/admin-order";
 import { buildWhatsAppLink } from "@/lib/constants/business";
 import { createClient } from "@/lib/supabase/client";
-import { MessageCircle, AlertTriangle, Tag } from "lucide-react";
+import { AlertTriangle, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { WhatsAppLink } from "../shared/WhatsAppLink";

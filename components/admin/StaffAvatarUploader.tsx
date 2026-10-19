@@ -1,5 +1,7 @@
 "use client";
 
+import { StorageImage } from "@/components/shared/StorageImage";
+
 import { createClient } from "@/lib/supabase/client";
 import { Camera, User } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -73,11 +75,7 @@ export function StaffAvatarUploader({
     <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center">
       <div className="relative">
         {currentAvatarUrl ? (
-          <img
-            src={currentAvatarUrl}
-            alt=""
-            className="h-24 w-24 rounded-full border-[1.5px] border-seam object-cover"
-          />
+          <StorageImage src={currentAvatarUrl} alt="" width={96} height={96} className="h-24 w-24 rounded-full border-[1.5px] border-seam object-cover" />
         ) : (
           <div className="flex h-24 w-24 items-center justify-center rounded-full border-[1.5px] border-seam bg-highlight text-2xl font-semibold text-yellow-text">
             {initial !== "?" ? initial : <User size={32} />}

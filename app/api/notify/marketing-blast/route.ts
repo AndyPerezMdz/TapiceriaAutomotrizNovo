@@ -1,6 +1,5 @@
 import { emailWrapper, sendEmail } from "@/lib/email/resend";
 import { escapeHtml } from "@/lib/email/sanitize";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { sendPushToAllSubscribed } from "@/lib/push/sendPush";

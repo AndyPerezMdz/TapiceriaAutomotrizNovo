@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Barlow, Barlow_Condensed, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -31,12 +31,15 @@ export const metadata: Metadata = {
   title: "Tapicería Automotriz by NOVO",
   description: "Taller de tapicería automotriz en Mérida, Yucatán.",
   manifest: "/manifest.json",
-  themeColor: "#f5c518",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "NOVO",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f5c518",
 };
 
 export default function RootLayout({
