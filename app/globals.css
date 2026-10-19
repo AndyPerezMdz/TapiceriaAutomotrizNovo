@@ -56,17 +56,21 @@
   font-family: var(--font-taller);
 }
 
-.dark .theme-taller {
-  --color-background: #121211;
-  --color-surface: #1f1e1c;
-  --color-muted: #a8a49c;
-  --color-ink: #0b0b0a;
+/* Tokens del taller en modo oscuro (también aplican al sitio público). */
+.dark {
   --color-ink-soft: #262522;
   --color-seam: #37352f;
   --color-field: #282724;
   --color-field-border: #3d3b36;
   --color-highlight: #2b2615;
   --color-yellow-text: #f5c518;
+}
+
+.dark .theme-taller {
+  --color-background: #121211;
+  --color-surface: #1f1e1c;
+  --color-muted: #a8a49c;
+  --color-ink: #0b0b0a;
 }
 
 @keyframes fadeInUp {

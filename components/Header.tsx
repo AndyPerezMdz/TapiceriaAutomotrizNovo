@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -23,6 +24,9 @@ export function Header() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const pathname = usePathname();
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   const isDark = resolvedTheme === "dark";
   const logoSrc = isDark
@@ -53,7 +57,12 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-foreground/80 transition hover:text-foreground"
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={`border-b-2 pb-0.5 text-[15px] transition ${
+                isActive(link.href)
+                  ? "border-dashed border-brand-yellow-dark font-bold text-foreground dark:border-brand-yellow"
+                  : "border-transparent font-medium text-foreground/80 hover:text-foreground"
+              }`}
             >
               {link.label}
             </Link>

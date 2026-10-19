@@ -22,15 +22,18 @@ export default async function GaleriaPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
-      <div className="mb-12 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          Galería de trabajos
-        </h1>
-        <p className="mt-3 text-muted">
-          Antes y después de algunos de nuestros trabajos realizados.
+    <div className="mx-auto max-w-6xl px-6 pb-20 pt-14 sm:pb-24 sm:pt-16">
+      <header className="mb-8 animate-fade-up">
+        <p className="font-display text-[15px] font-semibold uppercase tracking-[0.2em] text-yellow-text">
+          Antes y después
         </p>
-      </div>
+        <h1 className="mt-2.5 font-display text-6xl font-extrabold uppercase leading-[0.9] text-foreground sm:text-[88px]">
+          Galería
+        </h1>
+        <p className="mt-3.5 max-w-xl text-[17px] leading-relaxed text-muted sm:text-lg">
+          Desliza la línea de cada foto para ver cómo llegó el coche y cómo se fue.
+        </p>
+      </header>
 
       <GalleryGrid services={services ?? []} items={items ?? []} />
     </div>
