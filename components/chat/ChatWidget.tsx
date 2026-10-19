@@ -14,9 +14,11 @@ export function ChatWidget({ variant = "floating" }: Props) {
       <Link
         href="/chat"
         aria-label="Hablar con Novi, asistente de IA"
-        className="relative flex h-8 w-8 items-center justify-center rounded-full text-muted transition hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+        className="flex min-h-11 items-center gap-2 rounded-xl border-[1.5px] border-field-border bg-surface py-1 pl-1 pr-3 text-[15px] font-semibold text-foreground transition hover:border-foreground"
       >
-        <NoviAvatar size={26} />
+        <NoviAvatar size={32} />
+        <span className="hidden sm:inline">Novi</span>
+        <Sparkles size={14} className="hidden text-yellow-text sm:inline" aria-hidden="true" />
       </Link>
     );
   }

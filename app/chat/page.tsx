@@ -17,7 +17,7 @@ export default function ChatPage() {
 
   if (isEntering) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-brand-black">
+      <div className="flex min-h-screen items-center justify-center bg-ink">
         <div className="relative flex h-24 w-24 items-center justify-center">
           <div className="absolute inset-0 animate-spin rounded-full border-4 border-white/10 border-t-brand-yellow" />
           <div className="animate-novi-sway">
@@ -36,21 +36,14 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-      <div className="relative mx-auto max-w-5xl px-4 py-6">
+    <div className="theme-taller min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-6xl px-3 pb-4 pt-3 sm:px-6 sm:pt-5">
         <button
+          type="button"
           onClick={() => router.back()}
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-foreground"
+          className="mb-2 inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
         >
-          <ArrowLeft size={16} /> Volver
+          <ArrowLeft size={18} /> Volver
         </button>
         <ChatCore />
       </div>

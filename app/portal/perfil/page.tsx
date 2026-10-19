@@ -2,13 +2,29 @@ import { AvatarUploader } from "@/components/portal/AvatarUploader";
 import { ChangePasswordForm } from "@/components/portal/ChangePasswordForm";
 import { ProfileForm } from "@/components/portal/ProfileForm";
 import { createClient } from "@/lib/supabase/server";
-import { Calendar, ClipboardList, Star } from "lucide-react";
+import { Bell, BookOpen, KeyRound, UserRound } from "lucide-react";
+import Link from "next/link";
 import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
 import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
 import { MarketingOptInToggle } from "@/components/portal/MarketingOptInToggle";
 import { PushNotificationToggle } from "@/components/portal/PushNotificationToggle";
 
-export default async function PerfilPage() {
+const tabs = [
+  { value: "datos", label: "Mis datos", icon: UserRound },
+  { value: "seguridad", label: "Correo y contraseña", icon: KeyRound },
+  { value: "avisos", label: "Notificaciones", icon: Bell },
+  { value: "ayuda", label: "Ayuda", icon: BookOpen },
+] as const;
+
+type Tab = (typeof tabs)[number]["value"];
+
+interface Props {
+  searchParams: Promise<{ tab?: string }>;
+}
+
+export default async function PerfilPage({ searchParams }: Props) {
+  const { tab: tabParam } = await searchParams;
+  const tab: Tab = (tabs.find((t) => t.value === tabParam)?.value ?? "datos") as Tab;
   const supabase = await createClient();
   const {
     data: { user },
@@ -55,87 +71,115 @@ export default async function PerfilPage() {
       })
     : null;
 
+  const card = "rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5";
+  const h2 = "mb-5 font-display text-[28px] font-bold uppercase leading-none text-foreground";
+
   return (
-    <div className="mx-auto max-w-3xl">
-      {/* Hero */}
-      <div className="mb-8 rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <AvatarUploader
-            currentAvatarUrl={profile?.avatar_url ?? null}
-            fullName={profile?.full_name ?? ""}
-          />
-        </div>
+    <div className="max-w-5xl space-y-6">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-6xl">
+        Mi perfil
+      </h1>
 
-        <div className="mt-6 grid grid-cols-3 gap-3 border-t-2 border-dashed border-seam pt-6">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1.5 text-muted">
-              <ClipboardList size={14} />
-              <span className="text-[13px]">Pedidos totales</span>
-            </div>
-            <p className="mt-1 text-xl font-bold text-foreground">{totalOrders ?? 0}</p>
+      {/* Tarjeta de cliente */}
+      <section className="flex flex-wrap items-center justify-between gap-6 rounded-[20px] bg-ink px-5 py-6 text-on-ink sm:px-8 dark:ring-1 dark:ring-white/10">
+        <div className="flex items-center gap-5 [&_p]:text-on-ink">
+          <AvatarUploader currentAvatarUrl={profile?.avatar_url ?? null} fullName={profile?.full_name ?? ""} />
+        </div>
+        <dl className="flex flex-wrap gap-x-8 gap-y-3">
+          <div>
+            <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Pedidos</dt>
+            <dd className="mt-1 font-display text-3xl font-extrabold leading-none">{totalOrders ?? 0}</dd>
           </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1.5 text-muted">
-              <ClipboardList size={14} />
-              <span className="text-[13px]">Activos</span>
-            </div>
-            <p className="mt-1 text-xl font-bold text-foreground">{activeOrders ?? 0}</p>
+          <div>
+            <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Activos</dt>
+            <dd className="mt-1 font-display text-3xl font-extrabold leading-none text-brand-yellow">{activeOrders ?? 0}</dd>
           </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1.5 text-muted">
-              <Star size={14} />
-              <span className="text-[13px]">Tu calificación prom.</span>
-            </div>
-            <p className="mt-1 text-xl font-bold text-foreground">
-              {avgRating ?? "—"}
-            </p>
+          <div>
+            <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Tus reseñas</dt>
+            <dd className="mt-1 font-display text-3xl font-extrabold leading-none">{avgRating ? `${avgRating} ★` : "—"}</dd>
           </div>
-        </div>
+          {memberSince ? (
+            <div>
+              <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Cliente desde</dt>
+              <dd className="mt-1.5 text-base font-semibold capitalize">{memberSince}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </section>
 
-        {memberSince ? (
-          <p className="mt-4 flex items-center justify-center gap-1.5 text-[13px] text-muted">
-            <Calendar size={12} /> Cliente desde {memberSince}
-          </p>
-        ) : null}
-      </div>
+      <div className="flex flex-wrap items-start gap-6">
+        {/* Secciones */}
+        <nav aria-label="Secciones del perfil" className="w-full min-w-0 lg:sticky lg:top-6 lg:w-60 lg:shrink-0">
+          <ul className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
+            {tabs.map((t) => {
+              const active = t.value === tab;
+              return (
+                <li key={t.value} className="shrink-0">
+                  <Link
+                    href={`/portal/perfil?tab=${t.value}`}
+                    scroll={false}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-xl px-4 text-[15px] transition ${
+                      active
+                        ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
+                        : "bg-surface text-foreground hover:ring-1 hover:ring-foreground/30 dark:ring-1 dark:ring-white/5"
+                    }`}
+                  >
+                    <t.icon size={18} className="shrink-0" />
+                    {t.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
-          <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
-            Información personal
-          </h2>
-          <ProfileForm
-            email={profile?.email ?? user?.email ?? ""}
-            fullName={profile?.full_name ?? ""}
-            phone={profile?.phone ?? null}
-          />
-        </div>
+        {/* Contenido */}
+        <div className="min-w-0 flex-1 space-y-6">
+          {tab === "datos" ? (
+            <section className={card}>
+              <h2 className={h2}>Mis datos</h2>
+              <ProfileForm
+                email={profile?.email ?? user?.email ?? ""}
+                fullName={profile?.full_name ?? ""}
+                phone={profile?.phone ?? null}
+              />
+            </section>
+          ) : null}
 
-        <div className="mt-6 border-t-2 border-dashed border-seam pt-6">
-          <h3 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">Correo electrónico</h3>
-          <ChangeEmailForm currentEmail={profile?.email ?? user?.email ?? ""} />
-        </div>
+          {tab === "seguridad" ? (
+            <>
+              <section className={card}>
+                <h2 className={h2}>Correo electrónico</h2>
+                <ChangeEmailForm currentEmail={profile?.email ?? user?.email ?? ""} />
+              </section>
+              <section className={card}>
+                <h2 className={h2}>Contraseña</h2>
+                <ChangePasswordForm />
+              </section>
+            </>
+          ) : null}
 
-        <div className="rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
-          <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
-            Contraseña
-          </h2>
-          <ChangePasswordForm />
-        </div>
-        <div className="mt-6">
-          <DownloadManualCard
-            title="Manual del cliente"
-            description="Guía de uso del portal en PDF"
-            fileUrl="https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Cliente.pdf"
-          />
-        </div>
-      </div>
+          {tab === "avisos" ? (
+            <section className={`${card} space-y-6`}>
+              <h2 className={`${h2} !mb-0`}>Notificaciones</h2>
+              <PushNotificationToggle />
+              <div className="border-t-2 border-dashed border-seam" />
+              <MarketingOptInToggle initialValue={profile?.marketing_opt_in ?? false} />
+            </section>
+          ) : null}
 
-      <div className="mt-6">
-        <MarketingOptInToggle initialValue={profile?.marketing_opt_in ?? false} />
-      </div>
-      <div className="mt-6">
-        <PushNotificationToggle />
+          {tab === "ayuda" ? (
+            <section className={card}>
+              <h2 className={h2}>Ayuda</h2>
+              <DownloadManualCard
+                title="Manual del cliente"
+                description="Guía de uso del portal en PDF"
+                fileUrl="https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales/Manual_Cliente.pdf"
+              />
+            </section>
+          ) : null}
+        </div>
       </div>
     </div>
   );

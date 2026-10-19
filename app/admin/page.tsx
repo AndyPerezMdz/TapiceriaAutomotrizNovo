@@ -1,3 +1,4 @@
+import { QuoteReminderButton } from "@/components/admin/QuoteReminderButton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import {
   SectionTitle,
@@ -240,12 +241,18 @@ export default async function AdminDashboardPage() {
                         ) : null}
                       </p>
                     </div>
-                    <Link
-                      href={`/admin/pedidos/${o.id}`}
-                      className={buttonClass(o.status === "pendiente_revision" ? "primary" : "outline")}
-                    >
-                      {o.status === "pendiente_revision" ? "Cotizar" : "Ver"}
-                    </Link>
+                    {o.status === "pendiente_revision" ? (
+                      <Link href={`/admin/pedidos/${o.id}`} className={buttonClass("primary")}>
+                        Cotizar
+                      </Link>
+                    ) : (
+                      <div className="flex flex-wrap items-start gap-2">
+                        <QuoteReminderButton orderId={o.id} size="sm" />
+                        <Link href={`/admin/pedidos/${o.id}`} className={buttonClass("ghost")}>
+                          Ver
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 );
               })}

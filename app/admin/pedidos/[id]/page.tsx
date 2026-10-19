@@ -1,6 +1,7 @@
 import { StorageImage } from "@/components/shared/StorageImage";
 import { OrderStagesPanel } from "@/components/admin/OrderStagesPanel";
 import { OrderStaffPanel } from "@/components/admin/OrderStaffPanel";
+import { QuoteReminderButton } from "@/components/admin/QuoteReminderButton";
 import { OrderTimeline } from "@/components/portal/OrderTimeline";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
 import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
@@ -116,6 +117,21 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
   });
 
   const total = order.final_price ?? order.estimated_price;
+
+  const { data: lastReminder } =
+    order.status === "cotizado"
+      ? await supabase
+          .from("quote_reminders")
+          .select("created_at")
+          .eq("order_id", order.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle()
+      : { data: null };
+  const waitingDays =
+    order.status === "cotizado"
+      ? Math.floor((Date.now() - new Date(order.updated_at ?? order.created_at).getTime()) / 86400000)
+      : 0;
   const daysInShop = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 86400000);
   const showDays = !["entregado", "cancelado", "rechazado"].includes(order.status);
 
@@ -187,6 +203,21 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       <div className="flex flex-wrap items-start gap-7">
         {/* Columna de trabajo */}
         <div className="min-w-0 flex-[999_1_480px] space-y-6">
+          {order.status === "cotizado" ? (
+            <section className="flex flex-wrap items-start justify-between gap-4 rounded-[18px] border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-5 sm:p-6 dark:border-brand-yellow/40">
+              <div className="min-w-0">
+                <p className="text-base font-semibold text-foreground">Esperando respuesta del cliente</p>
+                <p className="mt-1 text-[15px] text-foreground/80">
+                  {waitingDays <= 0
+                    ? "La cotización se mandó hoy."
+                    : `Lleva ${waitingDays} ${waitingDays === 1 ? "día" : "días"} sin aceptar ni rechazar.`}{" "}
+                  Mándale un recordatorio por notificación y correo.
+                </p>
+              </div>
+              <QuoteReminderButton orderId={order.id} lastReminderAt={lastReminder?.created_at ?? null} />
+            </section>
+          ) : null}
+
           {order.status === "en_proceso" ? <OrderStagesPanel items={formattedItems} /> : null}
 
           <OrderStaffPanel

@@ -79,21 +79,21 @@ export function AvatarUploader({
             {initial !== "?" ? initial : <User size={32} />}
           </div>
         )}
-        <label className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-brand-yellow hover:bg-[#e8b90f] text-ink shadow">
-          <Camera size={15} />
+        <label aria-label="Cambiar foto de perfil" className="absolute -bottom-1 -right-1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-brand-yellow hover:bg-[#e8b90f] text-ink shadow">
+          <Camera size={17} />
           <input
             type="file"
             accept="image/*"
-            className="hidden"
+            className="sr-only"
             disabled={isUploading}
             onChange={handleUpload}
           />
         </label>
       </div>
       <div className="text-center sm:text-left">
-        <p className="text-lg font-semibold text-foreground">{fullName || "Sin nombre"}</p>
-        <p className="text-[13px] text-muted">
-          {isUploading ? "Subiendo..." : "Click en la cámara para cambiar tu foto"}
+        <p className="font-display text-3xl font-extrabold uppercase leading-none text-foreground">{fullName || "Sin nombre"}</p>
+        <p className="mt-1.5 text-[13px] text-muted opacity-80">
+          {isUploading ? "Subiendo…" : "Toca la cámara para cambiar tu foto"}
         </p>
         {error ? <p className="text-[13px] text-brand-red">{error}</p> : null}
       </div>

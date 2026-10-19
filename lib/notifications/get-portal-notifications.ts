@@ -2,12 +2,17 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface NotificationItem {
   id: string;
-  type: "cotizacion" | "actualizacion" | "resena";
+  /** Llave única por aviso + fecha: si el pedido vuelve a cambiar, se vuelve a marcar como nueva. */
+  key: string;
+  type: "cotizacion" | "recordatorio" | "actualizacion" | "resena";
   title: string;
   description: string;
   href: string;
   date: string;
+  read: boolean;
 }
+
+type Draft = Omit<NotificationItem, "key" | "read">;
 
 interface OrderRow {
   id: string;
@@ -28,7 +33,7 @@ export async function getPortalNotifications(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<NotificationItem[]> {
-  const notifications: NotificationItem[] = [];
+  const notifications: Draft[] = [];
 
   const { data: orders } = await supabase
     .from("orders")
@@ -40,12 +45,35 @@ export async function getPortalNotifications(
 
   const typedOrders = (orders ?? []) as OrderRow[];
 
+  // Último recordatorio del taller por pedido cotizado (si la tabla existe).
+  const quotedIds = typedOrders.filter((o) => o.status === "cotizado").map((o) => o.id);
+  const lastReminder = new Map<string, string>();
+  if (quotedIds.length > 0) {
+    const { data: reminders } = await supabase
+      .from("quote_reminders")
+      .select("order_id, created_at")
+      .in("order_id", quotedIds)
+      .order("created_at", { ascending: false });
+    (reminders ?? []).forEach((r) => {
+      if (!lastReminder.has(r.order_id)) lastReminder.set(r.order_id, r.created_at);
+    });
+  }
+
   typedOrders.forEach((o) => {
-    if (o.status === "cotizado") {
+    if (o.status === "cotizado" && lastReminder.has(o.id)) {
+      notifications.push({
+        id: `quote-${o.id}`,
+        type: "recordatorio",
+        title: "El taller te recuerda tu cotización",
+        description: `${vehicleLabel(o)}${o.estimated_price ? ` · $${o.estimated_price.toLocaleString("es-MX")}` : ""}`,
+        href: `/portal/pedidos/${o.id}`,
+        date: lastReminder.get(o.id)!,
+      });
+    } else if (o.status === "cotizado") {
       notifications.push({
         id: `quote-${o.id}`,
         type: "cotizacion",
-        title: "Cotización esperando tu respuesta",
+        title: "Tu cotización está lista",
         description: `${vehicleLabel(o)}${o.estimated_price ? ` · $${o.estimated_price.toLocaleString("es-MX")}` : ""}`,
         href: `/portal/pedidos/${o.id}`,
         date: o.updated_at ?? o.created_at,
@@ -92,5 +120,21 @@ export async function getPortalNotifications(
 
   notifications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  return notifications;
+  const withKeys = notifications.map((n) => ({ ...n, key: `${n.id}@${n.date}` }));
+
+  // Cuáles ya leyó (si la tabla existe; si no, todas cuentan como nuevas).
+  let readKeys = new Set<string>();
+  if (withKeys.length > 0) {
+    const { data: reads } = await supabase
+      .from("notification_reads")
+      .select("notification_key")
+      .eq("user_id", userId)
+      .in(
+        "notification_key",
+        withKeys.map((n) => n.key),
+      );
+    readKeys = new Set((reads ?? []).map((r) => r.notification_key));
+  }
+
+  return withKeys.map((n) => ({ ...n, read: readKeys.has(n.key) }));
 }

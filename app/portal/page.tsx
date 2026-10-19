@@ -270,11 +270,15 @@ export default async function PortalDashboardPage() {
               </p>
             </>
           ) : (
-            <p className="mt-2.5 text-[15px] text-muted">No tienes citas próximas.</p>
+            <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+              No tienes citas. Solo se agenda una si eliges una piel que necesita muestra de color.
+            </p>
           )}
-          <Link href="/portal/mis-citas" className="mt-2 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
-            {nextAppointment ? "Ver mis citas" : "Agendar una cita"}
-          </Link>
+          {nextAppointment ? (
+            <Link href="/portal/mis-citas" className="mt-2 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+              Ver mis citas
+            </Link>
+          ) : null}
         </article>
 
         <article className={cardClass}>

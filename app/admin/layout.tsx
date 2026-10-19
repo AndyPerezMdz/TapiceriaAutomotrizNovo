@@ -1,10 +1,7 @@
-import { StorageImage } from "@/components/shared/StorageImage";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { ChatWidget } from "@/components/chat/ChatWidget";
-import { SignOutButton } from "@/components/auth/SignOutButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserMenu } from "@/components/shared/UserMenu";
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
 
 export default async function AdminLayout({
   children,
@@ -44,47 +41,15 @@ export default async function AdminLayout({
         complaintsCount={complaintsCount ?? 0}
       />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-2 px-4 pb-1 pt-3 pl-16 sm:gap-3 lg:justify-end lg:px-10 lg:pl-10 lg:pt-4">
-          <div className="w-64 lg:hidden" />
-
-          {/* Celular: solo lo esencial */}
-          <div className="flex items-center gap-1.5 sm:hidden">
-            <ChatWidget variant="header" />
-            <Link
-              href="/admin/perfil"
-              aria-label="Mi perfil"
-              className="flex h-8 w-8 items-center justify-center rounded-full"
-            >
-              {profile?.avatar_url ? (
-                <StorageImage src={profile.avatar_url} alt="" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
-              ) : (
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
-                  {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
-                </div>
-              )}
-            </Link>
-            <SignOutButton variant="icon" />
-          </div>
-
-          {/* Escritorio: todo visible */}
-          <div className="hidden items-center gap-3 sm:flex">
-            <ChatWidget variant="header" />
-            <Link href="/admin/perfil" className="flex items-center gap-2">
-              {profile?.avatar_url ? (
-                <StorageImage src={profile.avatar_url} alt="" width={36} height={36} className="h-9 w-9 rounded-full object-cover" />
-              ) : (
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
-                  {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
-                </div>
-              )}
-              <div className="hidden text-right sm:block">
-                <p className="text-[15px] font-semibold text-foreground">{profile?.full_name}</p>
-                <p className="text-[13px] capitalize text-muted">{profile?.role}</p>
-              </div>
-            </Link>
-            <ThemeToggle />
-            <SignOutButton />
-          </div>
+        <header className="flex items-center justify-end gap-1.5 px-4 pb-1 pl-16 pt-3 sm:gap-2 lg:px-10 lg:pl-10 lg:pt-4">
+          <ChatWidget variant="header" />
+          <span className="mx-1 hidden h-7 border-l-2 border-dashed border-seam sm:block" aria-hidden="true" />
+          <UserMenu
+            name={profile?.full_name ?? null}
+            subtitle={profile?.role === "admin" ? "Administrador" : profile?.role ?? "Staff"}
+            avatarUrl={profile?.avatar_url ?? null}
+            profileHref="/admin/perfil"
+          />
         </header>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-4 sm:px-8 lg:px-10">{children}</main>
