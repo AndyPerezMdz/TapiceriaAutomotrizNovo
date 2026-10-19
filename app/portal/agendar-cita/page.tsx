@@ -42,11 +42,11 @@ export default async function AgendarCitaPage({ searchParams }: Props) {
   });
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+    <div className="max-w-3xl">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Agendar visita
       </h1>
-      <p className="mb-8 text-sm text-muted">
+      <p className="mb-8 text-[15px] text-muted">
         Para colores de piel personalizados, necesitamos ver tu vehículo en
         persona y tomar una muestra del asiento.
       </p>

@@ -28,22 +28,22 @@ function StyledCheckbox({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-2.5 text-sm text-foreground">
-      <span className="relative mt-0.5 flex h-4.5 w-4.5 shrink-0 items-center justify-center">
+    <label className="flex min-h-11 cursor-pointer items-start gap-3 text-[15px] text-foreground">
+      <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
         <input
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
-          className="peer absolute h-[18px] w-[18px] cursor-pointer appearance-none rounded border border-black/25 transition checked:border-brand-yellow checked:bg-brand-yellow disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/25"
+          className="peer absolute h-5 w-5 cursor-pointer appearance-none rounded-[5px] border-[1.5px] border-field-border bg-surface transition checked:border-ink checked:bg-ink disabled:cursor-not-allowed disabled:opacity-60 dark:checked:border-brand-yellow dark:checked:bg-brand-yellow"
         />
         <Check
           size={12}
           strokeWidth={3}
-          className="pointer-events-none absolute text-brand-black opacity-0 transition peer-checked:opacity-100"
+          className="pointer-events-none absolute text-brand-yellow opacity-0 transition peer-checked:opacity-100 dark:text-ink"
         />
       </span>
-      <span className="leading-snug">{children}</span>
+      <span className="leading-relaxed">{children}</span>
     </label>
   );
 }
@@ -65,16 +65,16 @@ function PasswordInput({
         name={name}
         type={visible ? "text" : "password"}
         autoComplete="new-password"
-        className={`${inputClassName} pr-10`}
+        className={`${inputClassName} pr-12`}
         disabled={disabled}
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        tabIndex={-1}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition hover:text-foreground"
+        aria-label={visible ? "Ocultar contraseña" : "Mostrar contraseña"}
+        className="absolute right-1.5 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg text-muted transition hover:text-foreground"
       >
-        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+        {visible ? <EyeOff size={18} /> : <Eye size={18} />}
       </button>
     </div>
   );
@@ -191,17 +191,53 @@ export function RegisterForm() {
 
   return (
     <AuthLayout
-      title="Crear cuenta"
-      subtitle="Regístrate como cliente de Tapicería Automotriz by NOVO"
+      title="Crea tu cuenta"
+      subtitle="Te toma un minuto."
+      panelTitle={
+        <>
+          Tu coche,
+          <br />
+          en buenas manos.
+        </>
+      }
+      panelBody=""
+      panelExtra={
+        <ol className="space-y-4 border-t-2 border-dashed border-brand-yellow/50 pt-6">
+          {[
+            "Pides tu cotización en línea, con fotos si quieres.",
+            "Te mandamos el precio por servicio y tú decides.",
+            "Ves en qué etapa va tu coche, sin tener que llamar.",
+          ].map((text, i) => (
+            <li key={text} className="flex items-start gap-3.5">
+              <span
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-[17px] font-extrabold ${
+                  i === 0 ? "bg-brand-yellow text-ink" : "border-2 border-dashed border-brand-yellow text-brand-yellow"
+                }`}
+              >
+                {i + 1}
+              </span>
+              <p className="pt-1 text-base leading-snug text-[#e6e3dc]">{text}</p>
+            </li>
+          ))}
+        </ol>
+      }
       footer={
         <>
           ¿Ya tienes cuenta? <AuthLink href="/login">Inicia sesión</AuthLink>
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      {refId ? (
+        <div className="mb-5 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-4 py-3 text-[15px] text-foreground dark:border-brand-yellow/40">
+          Vienes invitado: los dos ganan puntos cuando tu primer pedido se entregue.
+        </div>
+      ) : null}
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {formError ? (
-          <div className={formErrorClassName}>{formError}</div>
+          <div role="alert" className={formErrorClassName}>
+            {formError}
+          </div>
         ) : null}
 
         <div className="absolute left-[-9999px]" aria-hidden="true">
@@ -270,18 +306,18 @@ export function RegisterForm() {
           </AuthField>
         </div>
 
-        <div className="space-y-3 rounded-lg border border-black/10 bg-surface/50 p-4 dark:border-white/10">
+        <div className="space-y-1 pt-1">
           <StyledCheckbox
             checked={acceptedTerms}
             onChange={setAcceptedTerms}
             disabled={isLoading}
           >
             Acepto los{" "}
-            <Link href="/terminos" target="_blank" className="underline hover:no-underline">
+            <Link href="/terminos" target="_blank" className="font-semibold underline underline-offset-2 hover:no-underline">
               Términos y Condiciones
             </Link>{" "}
             y el{" "}
-            <Link href="/privacidad" target="_blank" className="underline hover:no-underline">
+            <Link href="/privacidad" target="_blank" className="font-semibold underline underline-offset-2 hover:no-underline">
               Aviso de Privacidad
             </Link>
             .
@@ -302,7 +338,7 @@ export function RegisterForm() {
           disabled={isLoading || !acceptedTerms}
           className={submitButtonClassName}
         >
-          {isLoading ? "Creando cuenta..." : "Registrarse"}
+          {isLoading ? "Creando tu cuenta…" : "Crear mi cuenta"}
         </button>
       </form>
     </AuthLayout>

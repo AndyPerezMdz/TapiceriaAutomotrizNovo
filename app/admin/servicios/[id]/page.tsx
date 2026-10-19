@@ -47,14 +47,14 @@ export default async function EditarServicioPage({ params }: Props) {
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl text-foreground">
           Editar servicio
         </h1>
         <div className="flex gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+          <div className="flex items-center gap-1.5 rounded-full bg-brand-yellow text-ink px-3 py-1 text-[13px] font-medium">
             <ClipboardList size={13} /> {ordersCount ?? 0} pedidos
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800 dark:bg-purple-900/40 dark:text-purple-300">
+          <div className="flex items-center gap-1.5 rounded-full bg-brand-yellow text-ink px-3 py-1 text-[13px] font-medium">
             <ImageIcon size={13} /> {galleryCount ?? 0} fotos
           </div>
         </div>
@@ -67,10 +67,10 @@ export default async function EditarServicioPage({ params }: Props) {
       <ServiceForm service={service} />
 
       <div className="mt-10 max-w-xl">
-        <h2 className="mb-1 text-sm font-semibold text-foreground">
+        <h2 className="font-display text-2xl font-bold uppercase mb-1 text-foreground">
           Etapas del proceso
         </h2>
-        <p className="mb-4 text-xs text-muted">
+        <p className="mb-4 text-[13px] text-muted">
           El cliente ve estas etapas mientras su pedido está &quot;En proceso&quot;. Puedes
           agregar, reordenar o desactivar etapas cuando cambie la forma de trabajar.
         </p>
@@ -78,14 +78,14 @@ export default async function EditarServicioPage({ params }: Props) {
       </div>
 
       <div className="mt-10 max-w-xl">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
           Materiales y colores
         </h2>
         <ServiceMaterialsManager serviceId={service.id} />
       </div>
 
       <div className="mt-10 max-w-xl">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
           Costura y colores
         </h2>
         <ServiceStitchingManager serviceId={service.id} />

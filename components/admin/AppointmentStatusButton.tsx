@@ -41,7 +41,7 @@ export function AppointmentStatusButton({ id, status }: { id: string; status: st
     <button
       onClick={handleClick}
       disabled={isUpdating}
-      className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition hover:opacity-80 disabled:opacity-50 ${statusTone[tone]}`}
+      className={`shrink-0 rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] transition hover:opacity-80 disabled:opacity-50 ${statusTone[tone]}`}
     >
       {labels[current] ?? current}
     </button>

@@ -1,8 +1,6 @@
 import { businessInfo } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { buildWhatsAppLink, formatWhatsApp } from "@/lib/constants/business";
-import { FooterLogo } from "@/components/FooterLogo";
-import { MapPin, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 function FacebookIcon({ size = 16 }: { size?: number }) {
@@ -27,104 +25,87 @@ export async function Footer() {
     settings.whatsapp,
   );
 
+  const heading = "font-display text-lg font-bold uppercase tracking-[0.08em] text-brand-yellow";
+  const link = "inline-flex min-h-9 items-center text-[15px] text-[#e6e3dc] transition hover:text-brand-yellow";
+
   return (
-    <footer className="border-t border-black/10 bg-surface dark:border-white/10">
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-10 sm:grid-cols-4">
-          <div>
-            <FooterLogo />
-            <p className="mt-4 text-sm text-muted">
-              Pasión por el detalle, en cada vehículo que pasa por nuestras manos.
+    <footer className="bg-ink text-on-ink">
+      <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-10 px-6 pt-14">
+        <div className="min-w-0 flex-[1_1_260px]">
+          <Link href="/" className="block w-fit">
+            <p className="font-display text-[40px] font-extrabold uppercase leading-none">Novo</p>
+            <p className="mt-1.5 text-[13px] uppercase tracking-[0.16em] text-on-ink-muted">
+              Tapicería automotriz · Mérida
             </p>
-          </div>
+          </Link>
+          <p className="mt-5 max-w-xs text-[15px] leading-relaxed text-[#d9d5cc]">
+            Tapizado, restauración y personalización de interiores, hecho a mano.
+          </p>
+        </div>
 
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-yellow-dark dark:text-brand-yellow">
-              Horario
-            </h3>
-            <ul className="mt-3 space-y-1.5 text-sm text-muted">
-              <li>
-                <span className="text-foreground">Lunes a Viernes:</span>{" "}
-                {settings.hoursWeekday}
-              </li>
-              <li>
-                <span className="text-foreground">Sábado:</span> {settings.hoursSaturday}
-              </li>
-            </ul>
-          </div>
+        <div className="min-w-0 flex-[0_1_220px]">
+          <p className={heading}>Horario</p>
+          <p className="mt-3 text-[15px] leading-[1.8] text-[#d9d5cc]">
+            Lun a vie · {settings.hoursWeekday}
+            <br />
+            Sábado · {settings.hoursSaturday}
+            <br />
+            Domingo · cerrado
+          </p>
+        </div>
 
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-yellow-dark dark:text-brand-yellow">
-              Contacto
-            </h3>
-            <ul className="mt-3 space-y-3 text-sm text-muted">
-              <li>
-                <a
-                  href={mapsHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2 transition hover:text-foreground"
-                >
-                  <MapPin
-                    size={16}
-                    className="mt-0.5 shrink-0 text-brand-yellow-dark dark:text-brand-yellow"
-                  />
-                  <span>{businessInfo.address}</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 transition hover:text-foreground"
-                >
-                  <MessageCircle
-                    size={16}
-                    className="shrink-0 text-brand-yellow-dark dark:text-brand-yellow"
-                  />
-                  <span>{formatWhatsApp(settings.whatsapp)}</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={businessInfo.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 transition hover:text-foreground"
-                >
-                  <span className="shrink-0 text-brand-yellow-dark dark:text-brand-yellow">
-                    <FacebookIcon size={16} />
-                  </span>
-                  <span>Facebook</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-brand-yellow-dark dark:text-brand-yellow">
-              Legal
-            </h3>
-            <ul className="mt-3 space-y-1.5 text-sm text-muted">
-              <li>
-                <Link href="/terminos" className="transition hover:text-foreground">
-                  Términos y Condiciones
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacidad" className="transition hover:text-foreground">
-                  Aviso de Privacidad
-                </Link>
-              </li>
-            </ul>
+        <div className="min-w-0 flex-[0_1_240px]">
+          <p className={heading}>Visítanos</p>
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 block text-[15px] leading-relaxed text-[#d9d5cc] transition hover:text-brand-yellow"
+          >
+            {businessInfo.address}
+          </a>
+          <div className="mt-2 flex flex-wrap gap-x-5">
+            <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className={`${link} font-semibold`}>
+              WhatsApp · {formatWhatsApp(settings.whatsapp)}
+            </a>
+            <a href={businessInfo.facebook} target="_blank" rel="noopener noreferrer" className={`${link} gap-1.5 font-semibold`}>
+              <FacebookIcon size={15} /> Facebook
+            </a>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-black/10 pt-6 text-center text-xs text-muted dark:border-white/10">
-          <p>
-            © {new Date().getFullYear()} Tapicería Automotriz by NOVO. Todos los derechos reservados.
-          </p>
+        <nav aria-label="Pie de página" className="min-w-0 flex-[0_1_160px]">
+          <p className={heading}>Sitio</p>
+          <ul className="mt-2">
+            {[
+              { href: "/servicios", label: "Servicios" },
+              { href: "/galeria", label: "Galería" },
+              { href: "/nosotros", label: "Nosotros" },
+              { href: "/contacto", label: "Contacto" },
+              { href: "/login", label: "Mi portal" },
+            ].map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className={link}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      <div className="mx-auto mt-10 max-w-6xl px-6">
+        <div className="border-t-2 border-dashed border-brand-yellow/45" />
+        <div className="flex flex-wrap justify-between gap-3 py-5 text-sm text-on-ink-muted">
+          <span>© {new Date().getFullYear()} {businessInfo.name}</span>
+          <span className="flex gap-5">
+            <Link href="/privacidad" className="inline-flex min-h-9 items-center hover:text-brand-yellow">
+              Aviso de privacidad
+            </Link>
+            <Link href="/terminos" className="inline-flex min-h-9 items-center hover:text-brand-yellow">
+              Términos
+            </Link>
+          </span>
         </div>
       </div>
     </footer>

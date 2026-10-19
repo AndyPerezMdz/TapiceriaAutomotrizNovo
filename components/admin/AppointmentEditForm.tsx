@@ -6,7 +6,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 
 const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
+  "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 
 export function AppointmentEditForm({
   id,
@@ -40,7 +40,7 @@ export function AppointmentEditForm({
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-lg border border-black/10 bg-surface p-5 shadow-2xl dark:border-white/10"
+        className="w-full max-w-sm rounded-2xl bg-surface p-5 sm:p-7 shadow-2xl dark:ring-1 dark:ring-white/5"
       >
         <div className="mb-4 flex items-center justify-between">
           <p className="font-semibold text-foreground">Editar cita</p>
@@ -51,7 +51,7 @@ export function AppointmentEditForm({
 
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-xs text-muted">Fecha</label>
+            <label className="mb-1 block text-[13px] text-muted">Fecha</label>
             <input
               type="date"
               value={date}
@@ -60,7 +60,7 @@ export function AppointmentEditForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-muted">Hora</label>
+            <label className="mb-1 block text-[13px] text-muted">Hora</label>
             <input
               type="time"
               value={time}
@@ -73,7 +73,7 @@ export function AppointmentEditForm({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="mt-4 w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:opacity-60 dark:bg-white dark:text-brand-black"
+          className="mt-4 w-full rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
         >
           {isSaving ? "Guardando..." : "Guardar cambios"}
         </button>

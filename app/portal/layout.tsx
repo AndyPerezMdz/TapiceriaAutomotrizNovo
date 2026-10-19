@@ -29,11 +29,11 @@ export default async function PortalLayout({
   const notifications = user ? await getPortalNotifications(supabase, user.id) : [];
 
   return (
-    <div className="flex min-h-screen overflow-x-hidden bg-background">
+    <div className="theme-taller flex min-h-screen overflow-x-hidden bg-background text-foreground">
       <PortalSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-black/10 bg-surface dark:border-white/10">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:justify-end">
+        <header>
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 pt-4 sm:px-8 lg:justify-end">
             <Link href="/portal" className="lg:hidden">
               <FooterLogo />
             </Link>
@@ -51,14 +51,14 @@ export default async function PortalLayout({
                   <img
                     src={profile.avatar_url}
                     alt=""
-                    className="h-8 w-8 rounded-full object-cover"
+                    className="h-9 w-9 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-ink font-display text-base font-bold text-brand-yellow">
                     {profile?.full_name?.charAt(0).toUpperCase() ?? "?"}
                   </div>
                 )}
-                <span className="text-sm text-muted">{profile?.full_name}</span>
+                <span className="text-[15px] font-medium text-foreground">{profile?.full_name}</span>
               </Link>
               <ChatWidget variant="header" />
               <NotificationBell notifications={notifications} />
@@ -67,7 +67,7 @@ export default async function PortalLayout({
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10 pb-24 lg:pb-10">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-32 pt-4 sm:px-8 sm:pt-6 lg:pb-16">
           {children}
         </main>
       </div>

@@ -21,7 +21,7 @@ interface StitchingType {
 }
 
 const inputClassName =
-  "rounded-md border border-black/15 bg-surface px-2.5 py-1.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
+  "rounded-xl border-[1.5px] border-field-border bg-surface px-2.5 py-1.5 text-[15px] text-foreground outline-none";
 
 export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
   const [items, setItems] = useState<StitchingType[]>([]);
@@ -117,22 +117,22 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
     load();
   }
 
-  if (loading) return <p className="text-sm text-muted">Cargando costuras...</p>;
+  if (loading) return <p className="text-[15px] text-muted">Cargando costuras...</p>;
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border border-brand-yellow/30 bg-brand-yellow/10 p-3 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+      <div className="rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-3 text-[13px] text-yellow-text">
         <strong>Regla para las fotos:</strong> la imagen debe mostrar únicamente el tipo de
         costura, de cerca y de punta a punta, sin ningún otro objeto en la foto.
       </div>
 
       {items.map((item) => (
-        <div key={item.id} className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10">
+        <div key={item.id} className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
           {editingId === item.id ? (
             <div className="flex flex-wrap items-center gap-2">
               <input value={editName} onChange={(e) => setEditName(e.target.value)} className={inputClassName} placeholder="Nombre" />
               <input value={editHint} onChange={(e) => setEditHint(e.target.value)} className={inputClassName} placeholder="Precio de referencia" />
-              <button onClick={() => saveEdit(item.id)} className="rounded-md bg-brand-black px-3 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-brand-black">
+              <button onClick={() => saveEdit(item.id)} className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11 inline-flex items-center justify-center">
                 Guardar
               </button>
               <button onClick={() => setEditingId(null)} className="text-muted hover:text-foreground">
@@ -150,7 +150,7 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
                 />
                 <div>
                   <p className="font-medium text-foreground">{item.name}</p>
-                  {item.price_hint ? <p className="text-xs text-muted">{item.price_hint}</p> : null}
+                  {item.price_hint ? <p className="text-[13px] text-muted">{item.price_hint}</p> : null}
                 </div>
               </div>
               <div className="flex gap-1">
@@ -160,20 +160,20 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
                     setEditName(item.name);
                     setEditHint(item.price_hint ?? "");
                   }}
-                  className="rounded-md p-1.5 text-muted transition hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+                  className="rounded-xl p-1.5 text-muted transition hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
                 >
                   <Pencil size={14} />
                 </button>
-                <button onClick={() => deleteType(item.id)} className="rounded-md p-1.5 text-muted transition hover:bg-brand-red/10 hover:text-brand-red">
+                <button onClick={() => deleteType(item.id)} className="rounded-xl p-1.5 text-muted transition hover:bg-brand-red/10 hover:text-brand-red">
                   <Trash2 size={14} />
                 </button>
               </div>
             </div>
           )}
 
-          <div className="mt-3 space-y-2 border-t border-black/10 pt-3 dark:border-white/10">
+          <div className="mt-3 space-y-2 border-t-2 border-dashed border-seam pt-3">
             {item.colors.map((color) => (
-              <div key={color.id} className="flex items-center justify-between gap-2 rounded-md border border-black/10 px-2.5 py-1.5 dark:border-white/10">
+              <div key={color.id} className="flex items-center justify-between gap-2 rounded-xl border-[1.5px] border-seam px-2.5 py-1.5">
                 <div className="flex items-center gap-2">
                   <MaterialImageUploader
                     table="stitching_colors"
@@ -182,9 +182,9 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
                     onUploaded={load}
                   />
                   {!color.image_url && color.hex_color ? (
-                    <span className="h-4 w-4 rounded-full border border-black/10" style={{ backgroundColor: color.hex_color }} />
+                    <span className="h-4 w-4 rounded-full border-[1.5px] border-seam" style={{ backgroundColor: color.hex_color }} />
                   ) : null}
-                  <span className="text-sm text-foreground">{color.name}</span>
+                  <span className="text-[15px] text-foreground">{color.name}</span>
                 </div>
                 <button onClick={() => deleteColor(color.id)} className="text-muted hover:text-brand-red">
                   <X size={13} />
@@ -213,9 +213,9 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
                     [item.id]: { name: prev[item.id]?.name ?? "", hex: e.target.value },
                   }))
                 }
-                className="h-8 w-8 rounded border border-black/15 dark:border-white/15"
+                className="h-8 w-8 rounded border-[1.5px] border-field-border"
               />
-              <button onClick={() => addColor(item.id)} className="rounded-md border border-black/15 p-1.5 text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5">
+              <button onClick={() => addColor(item.id)} className="rounded-xl border-[1.5px] border-field-border p-1.5 text-foreground transition hover:bg-black/5 dark:hover:bg-white/5">
                 <Plus size={14} />
               </button>
             </div>
@@ -223,12 +223,12 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
         </div>
       ))}
 
-      <div className="rounded-lg border border-dashed border-black/20 p-4 dark:border-white/20">
-        <p className="mb-2 text-sm font-medium text-foreground">Agregar tipo de costura</p>
+      <div className="rounded-2xl border-2 border-dashed border-field-border p-4">
+        <p className="mb-2 text-[15px] font-medium text-foreground">Agregar tipo de costura</p>
         <div className="flex flex-wrap gap-2">
           <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nombre (ej. Costura doble)" className={inputClassName} />
           <input value={newHint} onChange={(e) => setNewHint(e.target.value)} placeholder="Precio de referencia (opcional)" className={inputClassName} />
-          <button onClick={addType} className="flex items-center gap-1 rounded-md bg-brand-black px-3 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-brand-black">
+          <button onClick={addType} className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11">
             <Plus size={14} /> Agregar
           </button>
         </div>

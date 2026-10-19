@@ -8,8 +8,8 @@ const typeLabels: Record<string, string> = {
 };
 
 const typeColors: Record<string, string> = {
-  sugerencia: "bg-brand-yellow/15 text-brand-yellow-dark dark:text-brand-yellow",
-  queja: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+  sugerencia: "bg-highlight text-yellow-text",
+  queja: "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
 };
 
 const statusLabels: Record<string, string> = {
@@ -18,8 +18,8 @@ const statusLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  nuevo: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  revisado: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  nuevo: "border-[1.5px] border-dashed border-foreground text-foreground",
+  revisado: "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
 };
 
 export default async function SugerenciasPage() {
@@ -37,40 +37,40 @@ export default async function SugerenciasPage() {
     : { data: [] };
 
   return (
-    <div className="mx-auto max-w-lg">
-      <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">
+    <div className="max-w-3xl">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Sugerencias y quejas
       </h1>
-      <p className="mb-6 text-sm text-muted">
+      <p className="mb-6 text-[15px] text-muted">
         ¿Algo de la página web te pareció confuso o se te ocurre cómo mejorarla? Cuéntanos. Si tu
         comentario es sobre un pedido específico, repórtalo desde el detalle de ese pedido.
       </p>
 
       <SiteFeedbackForm />
 
-      <h2 className="mb-3 mt-8 text-sm font-semibold text-foreground">Lo que nos has enviado</h2>
+      <h2 className="font-display text-2xl font-bold uppercase mb-3 mt-8 text-foreground">Lo que nos has enviado</h2>
 
       {!feedback || feedback.length === 0 ? (
-        <div className="flex flex-col items-center rounded-lg border border-dashed border-black/15 bg-surface p-10 text-center dark:border-white/15">
+        <div className="flex flex-col items-center rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
           <Lightbulb size={24} className="mb-2 text-muted" />
-          <p className="text-sm text-muted">Aún no nos has enviado comentarios sobre la página.</p>
+          <p className="text-[15px] text-muted">Aún no nos has enviado comentarios sobre la página.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {feedback.map((f) => (
             <div
               key={f.id}
-              className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
+              className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColors[f.type]}`}
+                      className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[15px] font-bold uppercase leading-none tracking-[0.08em] ${typeColors[f.type]}`}
                     >
                       {typeLabels[f.type] ?? f.type}
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs text-muted">
+                    <span className="flex items-center gap-1.5 text-[13px] text-muted">
                       <Calendar size={11} />
                       {new Date(f.created_at).toLocaleDateString("es-MX", {
                         day: "numeric",
@@ -79,10 +79,10 @@ export default async function SugerenciasPage() {
                       })}
                     </span>
                   </div>
-                  <p className="mt-2 whitespace-pre-line text-sm text-foreground">{f.message}</p>
+                  <p className="mt-2 whitespace-pre-line text-[15px] text-foreground">{f.message}</p>
                 </div>
                 <span
-                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[f.status]}`}
+                  className={`shrink-0 inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[15px] font-bold uppercase leading-none tracking-[0.08em] ${statusColors[f.status]}`}
                 >
                   {statusLabels[f.status] ?? f.status}
                 </span>

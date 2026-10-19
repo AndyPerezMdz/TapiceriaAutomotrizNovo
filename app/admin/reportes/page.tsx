@@ -146,27 +146,27 @@ export default async function AdminReportesPage({ searchParams }: Props) {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl text-foreground">
           Reportes
         </h1>
 
         <div className="flex gap-2">
           <Link
             href="/admin/reportes"
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
               activeView === "mes"
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+                : "border-[1.5px] border-field-border text-muted hover:border-foreground"
             }`}
           >
             Por mes
           </Link>
           <Link
             href="/admin/reportes?view=dia"
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
               activeView === "dia"
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+                : "border-[1.5px] border-field-border text-muted hover:border-foreground"
             }`}
           >
             Por día
@@ -181,10 +181,10 @@ export default async function AdminReportesPage({ searchParams }: Props) {
               <a
                 key={opt.value}
                 href={`/admin/reportes?range=${opt.value}`}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
                   months === Number(opt.value)
-                    ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                    : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                    ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+                    : "border-[1.5px] border-field-border text-muted hover:border-foreground"
                 }`}
               >
                 {opt.label}
@@ -193,8 +193,8 @@ export default async function AdminReportesPage({ searchParams }: Props) {
           </div>
 
           <div className="mb-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <p className="text-xs font-medium text-muted">
+            <div className="rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+              <p className="text-[13px] font-medium text-muted">
                 Ingresos totales ({months} meses)
               </p>
               <p className="mt-2 text-2xl font-bold text-foreground">
@@ -202,15 +202,15 @@ export default async function AdminReportesPage({ searchParams }: Props) {
               </p>
             </div>
 
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <p className="text-xs font-medium text-muted">Este mes vs. mes anterior</p>
+            <div className="rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+              <p className="text-[13px] font-medium text-muted">Este mes vs. mes anterior</p>
               <div className="mt-2 flex items-center gap-2">
                 <p className="text-2xl font-bold text-foreground">
                   ${currentMonthTotal.toLocaleString("es-MX")}
                 </p>
                 {previousMonthTotal > 0 ? (
                   <span
-                    className={`flex items-center gap-0.5 text-sm font-medium ${
+                    className={`flex items-center gap-0.5 text-[15px] font-medium ${
                       monthChange >= 0
                         ? "text-green-600 dark:text-green-400"
                         : "text-brand-red"
@@ -228,8 +228,8 @@ export default async function AdminReportesPage({ searchParams }: Props) {
             </div>
           </div>
 
-          <div className="mb-8 rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-            <h2 className="mb-4 text-sm font-semibold text-foreground">
+          <div className="mb-8 rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+            <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
               Ingresos por mes (según fecha de entrega)
             </h2>
 
@@ -262,19 +262,19 @@ export default async function AdminReportesPage({ searchParams }: Props) {
             </div>
           </div>
 
-          <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-            <h2 className="mb-4 text-sm font-semibold text-foreground">
+          <div className="rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+            <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
               Servicios más solicitados
             </h2>
             {topServices.length === 0 ? (
-              <p className="text-sm text-muted">Sin datos en este rango.</p>
+              <p className="text-[15px] text-muted">Sin datos en este rango.</p>
             ) : (
               <div className="space-y-2">
                 {topServices.map(([title, count]) => {
                   const maxCount = topServices[0][1];
                   return (
                     <div key={title}>
-                      <div className="mb-1 flex items-center justify-between text-sm">
+                      <div className="mb-1 flex items-center justify-between text-[15px]">
                         <span className="text-foreground">{title}</span>
                         <span className="text-muted">{count}</span>
                       </div>
@@ -292,25 +292,25 @@ export default async function AdminReportesPage({ searchParams }: Props) {
           </div>
         </>
       ) : (
-        <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
+        <div className="rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
           <div className="mb-4 flex items-center justify-between">
             <Link
               href={buildMonthHref(-1)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-black/15 text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+              className="flex h-8 w-8 items-center justify-center rounded-xl border-[1.5px] border-field-border text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
             >
               <ChevronLeft size={16} />
             </Link>
             <div className="text-center">
-              <p className="text-sm font-semibold capitalize text-foreground">
+              <p className="text-[15px] font-semibold capitalize text-foreground">
                 {monthLabel}
               </p>
-              <p className="text-xs text-muted">
+              <p className="text-[13px] text-muted">
                 Total: ${monthTotal.toLocaleString("es-MX")}
               </p>
             </div>
             <Link
               href={buildMonthHref(1)}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-black/15 text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+              className="flex h-8 w-8 items-center justify-center rounded-xl border-[1.5px] border-field-border text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
             >
               <ChevronRight size={16} />
             </Link>
@@ -335,15 +335,15 @@ export default async function AdminReportesPage({ searchParams }: Props) {
               return (
                 <div
                   key={day}
-                  className={`group relative flex aspect-square flex-col items-center justify-center rounded-md border text-xs ${
+                  className={`group relative flex aspect-square flex-col items-center justify-center rounded-xl border text-[13px] ${
                     hasRevenue
-                      ? "border-brand-yellow-dark bg-brand-yellow/20 font-semibold text-brand-yellow-dark dark:border-brand-yellow dark:text-brand-yellow"
-                      : "border-black/10 text-muted dark:border-white/10"
+                      ? "border-brand-yellow-dark bg-highlight font-semibold text-yellow-text dark:border-brand-yellow"
+                      : "border-seam text-muted"
                   }`}
                 >
                   <span>{day}</span>
                   {hasRevenue ? (
-                    <span className="absolute -top-8 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-brand-black px-2 py-1 text-[10px] text-white group-hover:block dark:bg-white dark:text-brand-black">
+                    <span className="absolute -top-8 left-1/2 z-10 hidden -translate-x-1/2 whitespace-nowrap rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-2 py-1 text-[10px] text-ink group-hover:block">
                       ${amount.toLocaleString("es-MX")}
                     </span>
                   ) : null}

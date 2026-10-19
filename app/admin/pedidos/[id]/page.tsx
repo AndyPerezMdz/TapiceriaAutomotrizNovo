@@ -6,7 +6,8 @@ import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
 import { StaffComplaintForm } from "@/components/admin/ComplaintForm";
 import { statusLabels } from "@/lib/validations/admin-order";
 import { createClient } from "@/lib/supabase/server";
-import { ArrowLeft, Calendar, Car } from "lucide-react";
+import { ArrowLeft, Phone } from "lucide-react";
+import { SectionTitle, Stamp, Ticket, cardClass, displayClass, seamClass } from "@/components/taller";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -66,13 +67,13 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       <div className="mx-auto max-w-md text-center">
         <Link
           href="/admin/pedidos"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-foreground"
+          className="mb-6 inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
         >
-          <ArrowLeft size={16} /> Volver a pedidos
+          <ArrowLeft size={18} /> Volver a pedidos
         </Link>
-        <div className="rounded-lg border border-black/10 bg-surface p-10 text-center dark:border-white/10">
-          <p className="font-medium text-foreground">Este pedido fue eliminado</p>
-          <p className="mt-2 text-sm text-muted">
+        <div className={`${cardClass} !py-12 text-center`}>
+          <p className="font-display text-2xl font-bold uppercase text-foreground">Este pedido fue eliminado</p>
+          <p className="mt-2 text-[15px] text-muted">
             Ya no se puede consultar la información de este pedido.
           </p>
         </div>
@@ -109,133 +110,83 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
         material?.name && color?.name
           ? `${material.name} · ${color.name}`
           : material?.name ?? null,
+      price: (item.price as number | null) ?? null,
     };
   });
 
+  const total = order.final_price ?? order.estimated_price;
+  const daysInShop = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 86400000);
+  const showDays = !["entregado", "cancelado", "rechazado"].includes(order.status);
+
+  const eyebrow = "text-[13px] uppercase tracking-[0.14em] text-on-ink-muted";
+
   return (
-    <div className="mx-auto max-w-4xl overflow-x-hidden">
+    <div className="mx-auto max-w-6xl space-y-7 overflow-x-hidden">
       <Link
         href="/admin/pedidos"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-foreground"
+        className="inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
       >
-        <ArrowLeft size={16} /> Volver a pedidos
+        <ArrowLeft size={18} /> Pedidos
       </Link>
 
-      <div className="mb-8 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            {client?.full_name ?? "Cliente"}
-          </h1>
-          <p className="mt-1 flex items-center gap-1.5 text-sm text-muted">
-            <Calendar size={14} />
-            {new Date(order.created_at).toLocaleDateString("es-MX", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-          <p className="mt-1 text-xs text-muted">
-            Folio:{" "}
-            <span className="font-mono font-medium text-foreground">
-              {order.id.slice(0, 8).toUpperCase()}
-            </span>
-          </p>
-        </div>
-        <span className="rounded-full bg-brand-yellow/20 px-3 py-1 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
-          {statusLabels[order.status] ?? order.status}
-        </span>
-      </div>
-
-      <div className="grid gap-8 sm:grid-cols-[1fr_1.1fr]">
-        <div className="min-w-0 space-y-6">
-          <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-            <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-              <Car size={16} /> {vehicle || "Vehículo sin detalle"}
-            </h2>
-
-            <div className="space-y-2">
-              {formattedItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="rounded-md border border-black/10 px-3 py-2 dark:border-white/10"
-                >
-                  <p className="text-sm font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                    {formattedItems.length > 1 ? `${index + 1}. ` : ""}
-                    {item.serviceTitle ?? "Servicio"}
-                  </p>
-                  {item.materialLabel ? (
-                    <p className="text-xs text-muted">{item.materialLabel}</p>
-                  ) : null}
+      <Ticket
+        className="!mt-2"
+        stub={
+          <div className="flex flex-wrap items-end justify-between gap-5">
+            <dl className="flex flex-wrap gap-x-8 gap-y-4">
+              <div>
+                <dt className={eyebrow}>Cliente</dt>
+                <dd className="mt-1 text-[17px] font-semibold">{client?.full_name ?? "Cliente"}</dd>
+              </div>
+              {client?.phone ? (
+                <div>
+                  <dt className={eyebrow}>Teléfono</dt>
+                  <dd className="mt-1">
+                    <a href={`tel:${client.phone}`} className="inline-flex items-center gap-1.5 text-[17px] font-medium text-on-ink hover:text-brand-yellow">
+                      <Phone size={15} /> {client.phone}
+                    </a>
+                  </dd>
                 </div>
-              ))}
-            </div>
-
-            <p className="mt-3 break-words text-sm text-muted">
-              {order.service_description}
-            </p>
-
+              ) : null}
+              {total ? (
+                <div>
+                  <dt className={eyebrow}>Total</dt>
+                  <dd className="mt-0.5 font-display text-[26px] font-bold leading-none">
+                    ${Number(total).toLocaleString("es-MX")}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
             {order.estimated_price !== null ? (
-              <div className="mt-3">
+              <div className="[&_a]:!border-on-ink/40 [&_a]:!text-on-ink [&_button]:!border-on-ink/40 [&_button]:!text-on-ink">
                 <DownloadPdfButton
                   orderId={order.id}
-                  label={order.status === "entregado" ? "Descargar recibo" : "Descargar cotización"}
+                  label={order.status === "entregado" ? "Recibo PDF" : "Cotización PDF"}
                 />
               </div>
             ) : null}
           </div>
-
-          {photos && photos.length > 0 ? (
-            <div>
-              <h2 className="mb-3 text-sm font-semibold text-foreground">Fotos</h2>
-              <div className="grid grid-cols-3 gap-2">
-                {photos.map((photo) => (
-                  <a
-                    key={photo.id}
-                    href={photo.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="aspect-square overflow-hidden rounded-md border border-black/10 dark:border-white/10"
-                  >
-                    <img src={photo.url} alt="" className="h-full w-full object-cover" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-            <h2 className="mb-4 text-sm font-semibold text-foreground">
-              Seguimiento
-            </h2>
-            {history && history.length > 0 ? (
-              <OrderTimeline
-                history={history}
-                profiles={historyProfiles ?? []}
-                currentUserId={user?.id ?? null}
-              />
-            ) : (
-              <p className="text-sm text-muted">Sin actualizaciones todavía.</p>
-            )}
+        }
+      >
+        <div className="flex flex-wrap items-start justify-between gap-5">
+          <div className="min-w-0">
+            <p className="font-code text-[13px] text-on-ink-muted sm:text-sm">
+              Folio {order.id.slice(0, 8).toUpperCase()} · ingresó{" "}
+              {new Date(order.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}
+              {showDays ? ` · ${daysInShop} ${daysInShop === 1 ? "día" : "días"} en el taller` : ""}
+            </p>
+            <h1 className={`${displayClass} mt-2 text-[44px] sm:text-6xl`}>
+              {vehicle || "Vehículo sin detalle"}
+            </h1>
           </div>
-
-          {order.status === "entregado" ? (
-            <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-              <h2 className="mb-2 text-sm font-semibold text-foreground">Quejas</h2>
-              <p className="mb-2 text-xs text-muted">
-                Si el cliente reportó un problema por WhatsApp (no desde la página), regístralo
-                aquí.
-              </p>
-              <StaffComplaintForm orderId={order.id} />
-            </div>
-          ) : null}
-
-          <DeleteOrderButton orderId={order.id} redirectTo="/admin/pedidos" />
+          <Stamp label={statusLabels[order.status] ?? order.status} size="lg" className="mt-1" />
         </div>
+      </Ticket>
 
-        <div className="min-w-0 space-y-6">
-          {order.status === "en_proceso" ? (
-            <OrderStagesPanel items={formattedItems} />
-          ) : null}
+      <div className="flex flex-wrap items-start gap-7">
+        {/* Columna de trabajo */}
+        <div className="min-w-0 flex-[999_1_480px] space-y-6">
+          {order.status === "en_proceso" ? <OrderStagesPanel items={formattedItems} /> : null}
 
           <OrderStaffPanel
             orderId={order.id}
@@ -247,6 +198,87 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             vehicleLabel={vehicle}
             coupon={coupon}
           />
+        </div>
+
+        {/* Columna lateral */}
+        <div className="min-w-0 flex-[1_1_300px] space-y-6">
+          <section className={cardClass}>
+            <SectionTitle size="sm">Lo que pidió</SectionTitle>
+            <div className="mt-4 space-y-3">
+              {formattedItems.map((item, index) => (
+                <div key={item.id} className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-base font-semibold text-foreground">
+                      {formattedItems.length > 1 ? `${index + 1}. ` : ""}
+                      {item.serviceTitle ?? "Servicio"}
+                    </p>
+                    {item.materialLabel ? (
+                      <p className="text-sm text-muted">{item.materialLabel}</p>
+                    ) : null}
+                  </div>
+                  {item.price !== null ? (
+                    <p className="shrink-0 text-base text-foreground">${Number(item.price).toLocaleString("es-MX")}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            {order.service_description ? (
+              <>
+                <div className={`mt-4 ${seamClass}`} />
+                <p className="mt-4 break-words text-[15px] leading-relaxed text-foreground/85">
+                  {order.service_description}
+                </p>
+              </>
+            ) : null}
+            {photos && photos.length > 0 ? (
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                {photos.map((photo) => (
+                  <a
+                    key={photo.id}
+                    href={photo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="aspect-square overflow-hidden rounded-xl bg-seam"
+                  >
+                    <img src={photo.url} alt="" className="h-full w-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            ) : null}
+          </section>
+
+          <section className={cardClass}>
+            <SectionTitle size="sm">Bitácora</SectionTitle>
+            <div className="mt-5">
+              {history && history.length > 0 ? (
+                <OrderTimeline
+                  history={history}
+                  profiles={historyProfiles ?? []}
+                  currentUserId={user?.id ?? null}
+                />
+              ) : (
+                <p className="text-[15px] text-muted">Sin actualizaciones todavía.</p>
+              )}
+            </div>
+          </section>
+
+          {order.status === "entregado" ? (
+            <section className={cardClass}>
+              <SectionTitle size="sm">Quejas</SectionTitle>
+              <p className="mb-3 mt-2 text-[15px] text-muted">
+                Si el cliente reportó un problema por WhatsApp (no desde la página), regístralo aquí.
+              </p>
+              <StaffComplaintForm orderId={order.id} />
+            </section>
+          ) : null}
+
+          <section className="rounded-2xl border-2 border-dashed border-brand-red/35 p-5">
+            <p className="text-[15px] font-semibold text-brand-red-dark dark:text-brand-red">Zona de cuidado</p>
+            <p className="mb-3 mt-1 text-sm text-muted">
+              Eliminar oculta el pedido al cliente. El historial se conserva.
+            </p>
+            <DeleteOrderButton orderId={order.id} redirectTo="/admin/pedidos" />
+          </section>
         </div>
       </div>
     </div>

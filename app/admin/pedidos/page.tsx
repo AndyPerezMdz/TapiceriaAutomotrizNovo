@@ -1,13 +1,14 @@
-import { AdminOrderRow } from "@/components/admin/AdminOrderRow";
 import { AdvancedFilters } from "@/components/shared/AdvancedFilters";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
 import { createClient } from "@/lib/supabase/server";
+import { Pill, StageBar, StatusTag, buttonClass, displayClass } from "@/components/taller";
 import { Download } from "lucide-react";
+import Link from "next/link";
 
 const statusFilters = [
   { value: "all", label: "Todos" },
-  { value: "pendiente_revision", label: "Pendientes" },
+  { value: "pendiente_revision", label: "Por revisar" },
   { value: "cotizado", label: "Cotizados" },
   { value: "aprobado", label: "Aprobados" },
   { value: "en_proceso", label: "En proceso" },
@@ -48,7 +49,7 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
   let query = supabase
     .from("orders")
     .select(
-      "id, vehicle_make, vehicle_model, status, created_at, deleted_at, profiles!orders_client_id_fkey(full_name, avatar_url)",
+      "id, vehicle_make, vehicle_model, vehicle_year, status, created_at, deleted_at, estimated_price, final_price, profiles!orders_client_id_fkey(full_name, avatar_url), order_items(id, service_id, current_stage_id, order, services(title))",
       { count: "exact" },
     )
     .order("created_at", { ascending: false });
@@ -77,23 +78,69 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
   const start = (page - 1) * PAGE_SIZE;
   query = query.range(start, start + PAGE_SIZE - 1);
 
-  const { data: orders, count } = await query;
+  const countStatuses = statusFilters.filter((f) => f.value !== "all").map((f) => f.value);
+  const [{ data: orders, count }, ...statusCounts] = await Promise.all([
+    query,
+    ...countStatuses.map((st) =>
+      supabase
+        .from("orders")
+        .select("*", { count: "exact", head: true })
+        .eq("status", st)
+        .is("deleted_at", null),
+    ),
+  ]);
+  const countByStatus: Record<string, number> = Object.fromEntries(
+    countStatuses.map((st, i) => [st, statusCounts[i].count ?? 0]),
+  );
   const totalPages = Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE));
 
+  interface Item {
+    id: string;
+    service_id: string | null;
+    current_stage_id: string | null;
+    order: number;
+    services: { title: string } | null;
+  }
+
+  const allItems = (orders ?? []).flatMap((o) => (o.order_items ?? []) as unknown as Item[]);
+  const serviceIds = [...new Set(allItems.map((i) => i.service_id).filter((x): x is string => Boolean(x)))];
+  const { data: stagesData } = serviceIds.length
+    ? await supabase
+        .from("service_stages")
+        .select("id, service_id, name, order, is_active")
+        .in("service_id", serviceIds)
+        .order("order", { ascending: true })
+    : { data: [] };
+  const stages = stagesData ?? [];
+
+  function progressOf(items: Item[]) {
+    for (const item of [...items].sort((a, b) => a.order - b.order)) {
+      const list = stages.filter(
+        (st) => st.service_id === item.service_id && (st.is_active || st.id === item.current_stage_id),
+      );
+      if (list.length === 0) continue;
+      const idx = list.findIndex((st) => st.id === item.current_stage_id);
+      return { name: idx === -1 ? null : list[idx].name, idx, total: list.length };
+    }
+    return null;
+  }
+
   const formattedOrders =
-  orders?.map((o) => {
-    const client = o.profiles as unknown as { full_name: string; avatar_url: string | null } | null;
-    return {
-      id: o.id,
-      vehicle_make: o.vehicle_make,
-      vehicle_model: o.vehicle_model,
-      status: o.status,
-      created_at: o.created_at,
-      deleted_at: o.deleted_at,
-      client_name: client?.full_name ?? null,
-      client_avatar_url: client?.avatar_url ?? null,
-    };
-  }) ?? [];
+    orders?.map((o) => {
+      const client = o.profiles as unknown as { full_name: string; avatar_url: string | null } | null;
+      const items = (o.order_items ?? []) as unknown as Item[];
+      return {
+        id: o.id,
+        vehicle: [o.vehicle_make, o.vehicle_model, o.vehicle_year].filter(Boolean).join(" "),
+        status: o.status,
+        created_at: o.created_at,
+        deleted_at: o.deleted_at,
+        total: o.final_price ?? o.estimated_price,
+        client_name: client?.full_name ?? null,
+        services: items.map((i) => i.services?.title).filter(Boolean).join(", "),
+        progress: progressOf(items),
+      };
+    }) ?? [];
 
   function buildHref(targetPage: number) {
     const params = new URLSearchParams();
@@ -107,60 +154,123 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
     return `/admin/pedidos?${params.toString()}`;
   }
 
-  return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Todos los pedidos
-        </h1>
-        <a
-          href="/api/admin/export/pedidos"
-          className="flex items-center gap-1.5 rounded-md border border-black/15 px-3 py-2 text-sm font-medium text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
-        >
-          <Download size={15} /> Exportar CSV
-        </a>
-      </div>
+  const allCount = Object.values(countByStatus).reduce((a, b) => a + b, 0);
 
-      <div className="mb-6 flex gap-2">
-        <div className="flex-1">
-          <SearchBar placeholder="Buscar por vehículo, cliente o descripción..." />
+  function filterHref(value: string) {
+    const params = new URLSearchParams();
+    if (value !== "all") params.set("status", value);
+    if (q) params.set("q", q);
+    const qs = params.toString();
+    return qs ? `/admin/pedidos?${qs}` : "/admin/pedidos";
+  }
+
+  const th = "px-5 pb-3 pt-5 text-left text-xs font-semibold uppercase tracking-[0.12em] text-muted";
+
+  return (
+    <div className="space-y-6">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className={`${displayClass} text-5xl text-foreground sm:text-6xl`}>Pedidos</h1>
+        <a href="/api/admin/export/pedidos" className={buttonClass("outline")}>
+          <Download size={17} /> Exportar CSV
+        </a>
+      </header>
+
+      <div className="flex flex-wrap gap-2">
+        <div className="min-w-0 flex-[1_1_280px]">
+          <SearchBar placeholder="Buscar por vehículo, cliente o descripción" />
         </div>
         <AdvancedFilters showPrice />
       </div>
 
-      <div className="mb-6 flex flex-wrap gap-2">
+      <div role="group" aria-label="Filtrar por estado" className="flex flex-wrap gap-2">
         {statusFilters.map((filter) => (
-          <a
-            key={filter.value}
-            href={
-              filter.value === "all"
-                ? "/admin/pedidos"
-                : `/admin/pedidos?status=${filter.value}`
-            }
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-              activeFilter === filter.value
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
-            }`}
-          >
-            {filter.label}
-          </a>
+          <Pill key={filter.value} href={filterHref(filter.value)} active={activeFilter === filter.value}>
+            {filter.label} · {filter.value === "all" ? allCount : countByStatus[filter.value] ?? 0}
+          </Pill>
         ))}
       </div>
 
       {formattedOrders.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-          <p className="text-muted">No hay pedidos con estos filtros.</p>
+        <div className="rounded-[18px] border-2 border-dashed border-field-border bg-surface px-6 py-16 text-center">
+          <p className="text-base text-muted">No hay pedidos con estos filtros.</p>
         </div>
       ) : (
-        <>
-          <div className="space-y-3">
-            {formattedOrders.map((order) => (
-              <AdminOrderRow key={order.id} order={order} />
-            ))}
+        <div>
+          <div className="overflow-x-auto rounded-[18px] bg-surface dark:ring-1 dark:ring-white/5">
+            <table className="w-full min-w-[760px] border-collapse text-[15px]">
+              <thead>
+                <tr className="border-b-2 border-dashed border-seam">
+                  <th scope="col" className={`${th} pl-6`}>Vehículo</th>
+                  <th scope="col" className={th}>Cliente</th>
+                  <th scope="col" className={th}>Etapa</th>
+                  <th scope="col" className={th}>Estado</th>
+                  <th scope="col" className={`${th} pr-6 text-right`}>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formattedOrders.map((o, i) => {
+                  const done = o.status === "listo_para_entrega" || o.status === "entregado";
+                  return (
+                    <tr
+                      key={o.id}
+                      className={`transition hover:bg-black/[0.03] dark:hover:bg-white/[0.03] ${
+                        i < formattedOrders.length - 1 ? "border-b border-seam" : ""
+                      }`}
+                    >
+                      <td className="py-4 pl-6 pr-5 align-top">
+                        <Link href={`/admin/pedidos/${o.id}`} className="block">
+                          <span className="block text-base font-semibold text-foreground">
+                            {o.vehicle || "Sin vehículo"}
+                          </span>
+                          <span className="mt-0.5 block text-[13px] text-muted">
+                            <span className="font-code">{o.id.slice(0, 8).toUpperCase()}</span> ·{" "}
+                            {new Date(o.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}
+                          </span>
+                        </Link>
+                      </td>
+                      <td className="px-5 py-4 align-top">
+                        <span className="block text-foreground">{o.client_name ?? "Cliente"}</span>
+                        {o.services ? (
+                          <span className="mt-0.5 block max-w-[220px] truncate text-[13px] text-muted">{o.services}</span>
+                        ) : null}
+                      </td>
+                      <td className="px-5 py-4 align-top">
+                        {o.progress && !["pendiente_revision", "cotizado", "rechazado", "cancelado"].includes(o.status) ? (
+                          <>
+                            <span className="block font-semibold text-foreground">
+                              {done ? "Terminado" : o.progress.name ?? "Sin iniciar"}
+                            </span>
+                            <StageBar
+                              total={o.progress.total}
+                              currentIndex={o.progress.idx}
+                              completed={done}
+                              className="mt-1.5 w-[120px]"
+                            />
+                          </>
+                        ) : (
+                          <span className="text-muted">—</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-4 align-top">
+                        <StatusTag status={o.status} deleted={Boolean(o.deleted_at)} />
+                      </td>
+                      <td className="py-4 pl-5 pr-6 text-right align-top">
+                        {o.total ? (
+                          <span className="font-display text-xl font-bold text-foreground">
+                            ${Number(o.total).toLocaleString("es-MX")}
+                          </span>
+                        ) : (
+                          <span className="text-muted">Sin cotizar</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
           <Pagination currentPage={page} totalPages={totalPages} buildHref={buildHref} />
-        </>
+        </div>
       )}
     </div>
   );

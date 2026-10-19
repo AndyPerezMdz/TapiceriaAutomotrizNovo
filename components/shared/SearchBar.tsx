@@ -24,18 +24,21 @@ export function SearchBar({ placeholder }: { placeholder: string }) {
 
   return (
     <div className="relative">
-      <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
+      <Search size={18} aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-md border border-black/15 bg-surface py-2.5 pl-9 pr-9 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
+        aria-label={placeholder}
+        type="search"
+        className="block min-h-12 w-full rounded-xl border-[1.5px] border-field-border bg-surface pl-11 pr-11 text-base text-foreground outline-none transition placeholder:text-muted/80 focus:border-foreground [&::-webkit-search-cancel-button]:hidden"
       />
       {value ? (
         <button
           type="button"
           onClick={() => setValue("")}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
+          aria-label="Borrar búsqueda"
+          className="absolute right-1.5 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-2xl text-muted hover:text-foreground"
         >
           <X size={16} />
         </button>

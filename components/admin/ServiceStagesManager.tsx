@@ -15,7 +15,7 @@ interface Stage {
 }
 
 const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
+  "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 
 export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
   const { confirm, dialog } = useConfirm();
@@ -143,14 +143,14 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
     load();
   }
 
-  if (loading) return <p className="text-sm text-muted">Cargando etapas...</p>;
+  if (loading) return <p className="text-[15px] text-muted">Cargando etapas...</p>;
 
   return (
     <div className="space-y-3">
       {dialog}
 
       {stages.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-black/15 p-4 text-sm text-muted dark:border-white/15">
+        <p className="rounded-2xl border-2 border-dashed border-field-border p-4 text-[15px] text-muted">
           Este servicio todavía no tiene etapas. Agrega la primera abajo.
         </p>
       ) : null}
@@ -158,7 +158,7 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
       {stages.map((stage, index) => (
         <div
           key={stage.id}
-          className={`rounded-lg border border-black/10 bg-surface p-3 dark:border-white/10 ${
+          className={`rounded-2xl bg-surface p-3 dark:ring-1 dark:ring-white/5 ${
             stage.is_active ? "" : "opacity-60"
           }`}
         >
@@ -180,13 +180,13 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
               <div className="flex gap-2">
                 <button
                   onClick={() => saveEdit(stage.id)}
-                  className="rounded-md bg-brand-black px-3 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-brand-black"
+                  className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
                 >
                   Guardar
                 </button>
                 <button
                   onClick={() => setEditingId(null)}
-                  className="flex items-center gap-1 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-foreground dark:border-white/15"
+                  className="flex items-center gap-1 rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[13px] font-medium text-foreground min-h-11"
                 >
                   <X size={12} /> Cancelar
                 </button>
@@ -195,13 +195,13 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
           ) : (
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 gap-3">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-yellow/20 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-highlight text-[13px] font-semibold text-yellow-text">
                   {index + 1}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground">{stage.name}</p>
+                  <p className="text-[15px] font-medium text-foreground">{stage.name}</p>
                   {stage.client_description ? (
-                    <p className="mt-0.5 text-xs text-muted">{stage.client_description}</p>
+                    <p className="mt-0.5 text-[13px] text-muted">{stage.client_description}</p>
                   ) : null}
                 </div>
               </div>
@@ -248,8 +248,8 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
         </div>
       ))}
 
-      <div className="rounded-lg border border-dashed border-black/20 p-3 dark:border-white/20">
-        <p className="mb-2 text-sm font-medium text-foreground">Agregar etapa</p>
+      <div className="rounded-2xl border-2 border-dashed border-field-border p-3">
+        <p className="mb-2 text-[15px] font-medium text-foreground">Agregar etapa</p>
         <div className="space-y-2">
           <input
             value={newName}
@@ -266,7 +266,7 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
           />
           <button
             onClick={addStage}
-            className="flex items-center gap-1 rounded-md bg-brand-black px-3 py-1.5 text-xs font-semibold text-white dark:bg-white dark:text-brand-black"
+            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11"
           >
             <Plus size={14} /> Agregar
           </button>

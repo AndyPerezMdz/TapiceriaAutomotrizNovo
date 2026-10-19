@@ -1,6 +1,5 @@
 "use client";
 
-import { FooterLogo } from "@/components/FooterLogo";
 import {
   Award,
   AlertTriangle,
@@ -24,6 +23,7 @@ import {
   Wrench,
   X,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -107,36 +107,49 @@ export function AdminSidebar({
       <button
         onClick={() => setMobileOpen(true)}
         aria-label="Abrir menú"
-        className="fixed left-4 top-3 z-40 flex h-9 w-9 items-center justify-center rounded-md border border-black/15 bg-surface text-foreground shadow-sm lg:hidden dark:border-white/15"
+        className="fixed left-4 top-3 z-40 flex h-11 w-11 items-center justify-center rounded-xl bg-ink text-brand-yellow shadow-md lg:hidden dark:ring-1 dark:ring-white/10"
       >
         <Menu size={18} />
       </button>
 
       {mobileOpen ? (
         <div
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 transform border-r border-black/10 bg-surface transition-transform duration-200 lg:static lg:translate-x-0 dark:border-white/10 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 shrink-0 transform bg-ink text-on-ink transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-full flex-col overflow-y-auto p-4">
-          <div className="mb-6 flex items-center justify-between px-1">
-            <FooterLogo />
+        <div className="flex h-full flex-col overflow-y-auto px-4 py-7">
+          <div className="flex items-center justify-between px-2.5">
+            <Link href="/admin" className="flex items-center gap-2.5">
+              <Image
+                src="/images/logo-amarillo-wbg.png"
+                alt="Tapicería Automotriz by NOVO"
+                width={160}
+                height={64}
+                className="h-auto w-[112px]"
+              />
+              <span className="rounded-[5px] bg-brand-yellow px-1.5 py-0.5 font-display text-xs font-bold uppercase tracking-[0.12em] text-ink">
+                Taller
+              </span>
+            </Link>
             <button
               onClick={() => setMobileOpen(false)}
               aria-label="Cerrar menú"
-              className="text-muted lg:hidden"
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-on-ink-muted hover:bg-white/5 lg:hidden"
             >
               <X size={18} />
             </button>
           </div>
 
-          <nav className="flex-1">
+          <div className="mx-2.5 mb-5 mt-5 border-t-2 border-dashed border-brand-yellow/50" />
+
+          <nav aria-label="Administración" className="flex-1">
             {groups.map((group) => {
               const visibleItems = group.items.filter((i) => !i.adminOnly || isAdmin);
               if (visibleItems.length === 0) return null;
@@ -146,7 +159,7 @@ export function AdminSidebar({
                 <div key={group.title} className="mb-1">
                   <button
                     onClick={() => toggleGroup(group.title)}
-                    className="flex w-full items-center justify-between rounded-md px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted transition hover:text-foreground"
+                    className="flex min-h-9 w-full items-center justify-between rounded-md px-3 text-[11px] uppercase tracking-[0.16em] text-on-ink-muted transition hover:text-on-ink"
                   >
                     {group.title}
                     <ChevronDown
@@ -156,7 +169,7 @@ export function AdminSidebar({
                   </button>
 
                   {!isCollapsed ? (
-                    <div className="mb-3 mt-1 space-y-0.5">
+                    <div className="mb-4 mt-0.5 space-y-0.5">
                       {visibleItems.map((item) => {
                         const isActive = pathname === item.href;
                         const badgeValue = item.badgeKey ? badgeValues[item.badgeKey] : 0;
@@ -165,16 +178,17 @@ export function AdminSidebar({
                             key={item.href}
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
-                            className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition ${
+                            aria-current={isActive ? "page" : undefined}
+                            className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-[15px] transition ${
                               isActive
-                                ? "bg-brand-yellow/15 font-medium text-brand-yellow-dark dark:text-brand-yellow"
-                                : "text-foreground hover:bg-black/5 dark:hover:bg-white/5"
+                                ? "bg-brand-yellow font-semibold text-ink"
+                                : "text-[#e6e3dc] hover:bg-white/5"
                             }`}
                           >
-                            <item.icon size={16} className="shrink-0" />
+                            <item.icon size={18} className="shrink-0" />
                             <span className="min-w-0 flex-1 truncate">{item.label}</span>
                             {badgeValue > 0 ? (
-                              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-red px-1 text-[10px] font-semibold text-white">
+                              <span className={`flex h-[22px] min-w-[22px] items-center justify-center rounded-full px-1.5 text-xs font-bold ${isActive ? "bg-ink text-brand-yellow" : "bg-brand-red text-white"}`}>
                                 {badgeValue}
                               </span>
                             ) : null}

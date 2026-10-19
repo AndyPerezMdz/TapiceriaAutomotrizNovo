@@ -1,5 +1,4 @@
-import { statusColors, statusLabels } from "@/lib/constants/order-status";
-import { Check } from "lucide-react";
+import { statusLabels } from "@/lib/constants/order-status";
 
 interface HistoryEntry {
   id: string;
@@ -31,27 +30,25 @@ export function OrderTimeline({ history, profiles, currentUserId }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <ol>
       {history.map((entry, index) => (
-        <div key={entry.id} className="relative flex gap-3">
+        <li key={entry.id} className="flex gap-3.5">
           <div className="flex flex-col items-center">
             <div
-              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-                statusColors[entry.status]?.split(" ")[0] ?? "bg-gray-100"
+              className={`mt-[5px] h-3 w-3 shrink-0 rounded-full ${
+                index === history.length - 1 ? "bg-brand-yellow" : "bg-ink dark:bg-on-ink-muted"
               }`}
-            >
-              <Check size={12} className="text-brand-black" />
-            </div>
+            />
             {index < history.length - 1 ? (
-              <div className="mt-1 w-px flex-1 bg-black/10 dark:bg-white/10" />
+              <div className="mt-1 flex-1 border-l-2 border-dashed border-seam" />
             ) : null}
           </div>
 
-          <div className="min-w-0 flex-1 pb-4">
-            <p className="text-sm font-medium text-foreground">
+          <div className={`min-w-0 flex-1 ${index < history.length - 1 ? "pb-5" : ""}`}>
+            <p className="text-base font-semibold text-foreground">
               {statusLabels[entry.status] ?? entry.status}
             </p>
-            <p className="mt-0.5 text-xs text-muted">
+            <p className="mt-0.5 text-[15px] text-muted">
               {new Date(entry.created_at).toLocaleDateString("es-MX", {
                 day: "numeric",
                 month: "short",
@@ -62,11 +59,11 @@ export function OrderTimeline({ history, profiles, currentUserId }: Props) {
               · {getActorLabel(entry.changed_by)}
             </p>
             {entry.note ? (
-              <p className="mt-1 break-words text-xs text-muted">{entry.note}</p>
+              <p className="mt-1 break-words text-[15px] text-foreground/80">{entry.note}</p>
             ) : null}
           </div>
-        </div>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }

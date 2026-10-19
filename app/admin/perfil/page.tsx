@@ -26,11 +26,11 @@ export default async function StaffPerfilPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-8 text-foreground">
         Mi perfil
       </h1>
 
-      <div className="mb-8 rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
+      <div className="mb-8 rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
         <StaffAvatarUploader
           currentAvatarUrl={profile?.avatar_url ?? null}
           fullName={profile?.full_name ?? ""}
@@ -39,8 +39,8 @@ export default async function StaffPerfilPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
-          <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <div className="rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
+          <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
             Información personal
           </h2>
           <StaffProfileForm
@@ -50,8 +50,8 @@ export default async function StaffPerfilPage() {
           />
         </div>
 
-        <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
-          <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <div className="rounded-2xl bg-surface p-6 dark:ring-1 dark:ring-white/5">
+          <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
             Contraseña
           </h2>
           <ChangePasswordForm />

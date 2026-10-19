@@ -205,13 +205,13 @@ export function OrderStaffPanel({
       : null;
 
   return (
-    <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-      <h2 className="mb-4 text-sm font-semibold text-foreground">
-        Gestión del pedido
+    <div className="rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+      <h2 className="mb-5 font-display text-[28px] font-bold uppercase leading-none text-foreground">
+        Estado y precios
       </h2>
 
       {coupon ? (
-        <div className="mb-4 flex items-center gap-1.5 rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+        <div className="mb-4 flex items-center gap-1.5 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-3.5 py-2.5 text-[15px] text-yellow-text">
           <Tag size={14} />
           Cupón &quot;{coupon.title}&quot; aplicado
           {coupon.service_id === null ? " (descuento al total)" : " (descuento a un servicio)"}.
@@ -219,19 +219,19 @@ export function OrderStaffPanel({
       ) : null}
 
       {isLocked ? (
-        <div className="mb-4 rounded-md border border-black/10 bg-black/5 px-3.5 py-2.5 text-sm text-muted dark:border-white/10 dark:bg-white/5">
+        <div className="mb-4 rounded-xl bg-black/5 px-4 py-3 text-[15px] text-muted dark:bg-white/5">
           Este pedido ya está en un estado final y no se puede editar.
         </div>
       ) : null}
 
       {saveError ? (
-        <div className="mb-4 rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
+        <div className="mb-4 rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
           {saveError}
         </div>
       ) : null}
 
       {priceChanged ? (
-        <div className="mb-4 flex items-start gap-2 rounded-md border border-brand-yellow/30 bg-brand-yellow/10 px-3.5 py-2.5 text-sm text-brand-yellow-dark dark:text-brand-yellow">
+        <div className="mb-4 flex items-start gap-2 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-3.5 py-2.5 text-[15px] text-yellow-text">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           <span>
             Cambiaste un precio. Al guardar, el pedido regresará a &quot;Cotizado&quot; para que
@@ -242,14 +242,14 @@ export function OrderStaffPanel({
 
       <div className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
-            Estado
+          <label className="mb-1.5 block text-[15px] font-medium text-foreground">
+            Estado del pedido
           </label>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
             disabled={isLocked || priceChanged}
-            className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
+            className="block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           >
             {getAllowedStatuses(currentStatus).map((s) => (
               <option key={s} value={s}>
@@ -258,7 +258,7 @@ export function OrderStaffPanel({
             ))}
           </select>
           {priceChanged ? (
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-[13px] text-muted">
               Deshabilitado mientras haya un cambio de precio pendiente de guardar.
             </p>
           ) : null}
@@ -266,14 +266,14 @@ export function OrderStaffPanel({
 
         {isAdmin ? (
           <div className="space-y-3">
-            <p className="text-sm font-medium text-foreground">
+            <p className="text-[15px] font-medium text-foreground">
               Precio {status === "entregado" ? "final" : "estimado"} por servicio (MXN)
             </p>
             {items.map((item) => {
               const discount = itemDiscount(item);
               return (
                 <div key={item.id}>
-                  <label className="mb-1 block text-xs text-muted">
+                  <label className="mb-1 block text-[13px] text-muted">
                     {item.serviceTitle ?? "Servicio"}
                     {item.materialLabel ? ` — ${item.materialLabel}` : ""}
                   </label>
@@ -285,10 +285,10 @@ export function OrderStaffPanel({
                     }
                     placeholder="0.00"
                     disabled={isLocked}
-                    className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
+                    className="block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                   />
                   {discount > 0 ? (
-                    <p className="mt-1 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                    <p className="mt-1 text-[13px] text-yellow-text">
                       Con cupón: ${(Number(prices[item.id]) || 0).toLocaleString("es-MX")} −{" "}
                       {coupon?.discount_type === "percentage"
                         ? `${coupon.discount_value}%`
@@ -303,26 +303,28 @@ export function OrderStaffPanel({
               );
             })}
 
-            <div className="border-t border-black/10 pt-3 dark:border-white/10">
+            <div className="border-t-2 border-dashed border-seam pt-4">
               {generalDiscountAmount > 0 ? (
-                <p className="mb-1 text-xs text-brand-yellow-dark dark:text-brand-yellow">
+                <p className="mb-1 text-[13px] text-yellow-text">
                   Descuento general del cupón: -${generalDiscountAmount.toLocaleString("es-MX", { maximumFractionDigits: 2 })}
                 </p>
               ) : null}
-              <p className="text-sm font-semibold text-foreground">
-                Total: ${total.toLocaleString("es-MX", { maximumFractionDigits: 2 })}
-              </p>
-              <p className="text-xs text-muted">Este es el total que verá el cliente.</p>
+              <div className="flex items-baseline justify-between gap-4">
+                <span className="text-base font-semibold text-foreground">Total que verá el cliente</span>
+                <span className="font-display text-[34px] font-extrabold leading-none text-foreground">
+                  ${total.toLocaleString("es-MX", { maximumFractionDigits: 2 })}
+                </span>
+              </div>
             </div>
           </div>
         ) : (
-          <p className="text-xs text-muted">
+          <p className="text-[13px] text-muted">
             Solo un administrador puede fijar precios.
           </p>
         )}
 
         <div>
-          <label className="mb-1.5 block text-sm font-medium text-foreground">
+          <label className="mb-1.5 block text-[15px] font-medium text-foreground">
             Nota para este cambio (opcional)
           </label>
           <textarea
@@ -331,20 +333,22 @@ export function OrderStaffPanel({
             rows={2}
             placeholder="Ej. Se retrasó por falta de material..."
             disabled={isLocked}
-            className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/15"
+            className="block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           />
         </div>
 
         <button
           onClick={handleSave}
           disabled={isSaving || isLocked}
-          className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-brand-black"
+          className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-base font-bold text-ink transition hover:bg-[#e8b90f] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
           {isSaving ? "Guardando..." : "Guardar cambios"}
         </button>
 
         {whatsappHref ? (
-          <WhatsAppLink href={whatsappHref} label="Avisar por WhatsApp" />
+          <div>
+            <WhatsAppLink href={whatsappHref} label="Avisar por WhatsApp" />
+          </div>
         ) : null}
       </div>
     </div>

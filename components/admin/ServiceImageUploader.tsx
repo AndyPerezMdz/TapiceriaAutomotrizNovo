@@ -48,12 +48,12 @@ export function ServiceImageUploader({
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-foreground">
+      <label className="mb-1.5 block text-[15px] font-medium text-foreground">
         Foto representativa
       </label>
       <div className="flex items-center gap-3">
         {currentImageUrl ? (
-          <div className="relative h-20 w-20 overflow-hidden rounded-md border border-black/10 dark:border-white/10">
+          <div className="relative h-20 w-20 overflow-hidden rounded-xl border-[1.5px] border-seam">
             <img src={currentImageUrl} alt="" className="h-full w-full object-cover" />
             <button
               onClick={handleRemove}
@@ -64,7 +64,7 @@ export function ServiceImageUploader({
           </div>
         ) : null}
 
-        <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed border-black/20 text-muted transition hover:border-black/40 dark:border-white/20">
+        <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-field-border text-muted transition hover:border-foreground">
           <ImagePlus size={20} />
           <span className="text-[10px]">{isUploading ? "Subiendo..." : "Subir"}</span>
           <input

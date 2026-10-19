@@ -32,19 +32,19 @@ export default async function AdminUsuariosPage() {
 
   return (
     <div>
-      <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-8 text-foreground">
         Usuarios del staff
       </h1>
 
       <div className="mb-10">
-        <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
           Invitar nueva persona
         </h2>
         <InviteStaffForm />
       </div>
 
       <div>
-        <h2 className="mb-4 text-sm font-semibold text-foreground">
+        <h2 className="font-display text-2xl font-bold uppercase mb-4 text-foreground">
           Personal actual
         </h2>
         <div className="space-y-2">

@@ -29,7 +29,7 @@ export function RedeemPointsButton({ canRedeem }: { canRedeem: boolean }) {
 
   if (success) {
     return (
-      <p className="text-sm font-medium text-green-700 dark:text-green-400">
+      <p className="text-[15px] font-semibold text-brand-yellow">
         ¡Canjeado! Revisa tus cupones activos.
       </p>
     );
@@ -37,11 +37,11 @@ export function RedeemPointsButton({ canRedeem }: { canRedeem: boolean }) {
 
   return (
     <div>
-      {error ? <p className="mb-2 text-sm text-brand-red">{error}</p> : null}
+      {error ? <p className="mb-2 text-[15px] text-brand-red">{error}</p> : null}
       <button
         onClick={handleRedeem}
         disabled={!canRedeem || isRedeeming}
-        className="rounded-md bg-brand-black px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-brand-black"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-50 min-h-11 inline-flex items-center justify-center"
       >
         {isRedeeming ? "Canjeando..." : "Canjear puntos"}
       </button>

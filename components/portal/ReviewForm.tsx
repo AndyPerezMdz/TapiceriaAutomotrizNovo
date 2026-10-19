@@ -51,14 +51,14 @@ export function ReviewForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="rounded-lg border border-brand-yellow/30 bg-brand-yellow/10 p-5">
+    <div className="rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-5">
       <p className="font-medium text-foreground">¿Cómo fue tu experiencia?</p>
-      <p className="mt-1 text-sm text-muted">
+      <p className="mt-1 text-[15px] text-muted">
         Tu opinión nos ayuda a mejorar.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-        {error ? <p className="text-sm text-brand-red">{error}</p> : null}
+        {error ? <p className="text-[15px] text-brand-red">{error}</p> : null}
 
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -74,7 +74,7 @@ export function ReviewForm({ orderId }: { orderId: string }) {
                 size={28}
                 className={
                   star <= (hoverRating || rating)
-                    ? "fill-brand-yellow text-brand-yellow-dark"
+                    ? "fill-brand-yellow text-yellow-text"
                     : "text-black/20 dark:text-white/20"
                 }
               />
@@ -88,13 +88,13 @@ export function ReviewForm({ orderId }: { orderId: string }) {
           rows={3}
           placeholder="Cuéntanos más (opcional)"
           disabled={isSaving}
-          className="w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
+          className="block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none"
         />
 
         <button
           type="submit"
           disabled={isSaving}
-          className="rounded-md bg-brand-black px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:opacity-60 dark:bg-white dark:text-brand-black"
+          className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
         >
           {isSaving ? "Enviando..." : "Enviar reseña"}
         </button>

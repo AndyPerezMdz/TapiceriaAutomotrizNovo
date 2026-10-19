@@ -1,18 +1,8 @@
 import { OrderCard } from "@/components/portal/OrderCard";
 import { Pagination } from "@/components/shared/Pagination";
 import { SearchBar } from "@/components/shared/SearchBar";
+import { Pill } from "@/components/taller";
 import { createClient } from "@/lib/supabase/server";
-
-const statusLabels: Record<string, string> = {
-  pendiente_revision: "Pendiente de revisión",
-  cotizado: "Cotizado",
-  aprobado: "Aprobado",
-  rechazado: "Rechazado",
-  en_proceso: "En proceso",
-  listo_para_entrega: "Listo para entrega",
-  entregado: "Entregado",
-  cancelado: "Cancelado",
-};
 
 const groupFilters = [
   { value: "all", label: "Todos", statuses: [] as string[] },
@@ -44,7 +34,7 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
   let query = supabase
     .from("orders")
     .select(
-      "id, vehicle_make, vehicle_model, status, created_at, deleted_at, updated_at, client_last_viewed_at",
+      "id, vehicle_make, vehicle_model, vehicle_year, status, created_at, deleted_at, updated_at, client_last_viewed_at, estimated_price, final_price",
       { count: "exact" },
     )
     .eq("client_id", user?.id)
@@ -76,70 +66,56 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Historial de pedidos
+    <div className="space-y-6">
+      <header>
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-6xl">
+          Historial
         </h1>
-        <p className="mt-1 text-sm text-muted">
-          Todos tus pedidos, incluyendo los ya entregados.
-        </p>
-      </div>
+        <p className="mt-2.5 text-base text-muted">Todos tus pedidos, incluyendo los ya entregados.</p>
+      </header>
 
-      <div className="mb-4">
-        <SearchBar placeholder="Buscar por vehículo o descripción..." />
-      </div>
+      <SearchBar placeholder="Buscar por vehículo o descripción" />
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div role="group" aria-label="Filtrar pedidos" className="flex flex-wrap gap-2">
         {groupFilters.map((g) => {
           const params = new URLSearchParams();
           if (q) params.set("q", q);
           if (g.value !== "all") params.set("group", g.value);
-          const href = `/portal/pedidos?${params.toString()}`;
-
           return (
-            <a
+            <Pill
               key={g.value}
-              href={href}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                activeGroup.value === g.value
-                  ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                  : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
-              }`}
+              href={`/portal/pedidos?${params.toString()}`}
+              active={activeGroup.value === g.value}
             >
               {g.label}
-            </a>
+            </Pill>
           );
         })}
       </div>
 
       {count !== null && count !== undefined ? (
-        <p className="mb-4 text-xs text-muted">
-          {count} pedido{count === 1 ? "" : "s"} encontrado{count === 1 ? "" : "s"}
+        <p className="text-[15px] text-muted">
+          {count} pedido{count === 1 ? "" : "s"}
         </p>
       ) : null}
 
       {!orders || orders.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
-          <p className="text-muted">
+        <div className="rounded-[18px] border-2 border-dashed border-field-border bg-surface px-6 py-16 text-center">
+          <p className="text-base text-muted">
             {q || activeGroup.value !== "all"
-              ? "No se encontraron pedidos con estos filtros."
+              ? "No encontramos pedidos con estos filtros."
               : "Aún no tienes pedidos registrados."}
           </p>
         </div>
       ) : (
-        <>
-          <div className="space-y-3">
+        <div>
+          <div className="space-y-2.5">
             {orders.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                statusLabel={statusLabels[order.status] ?? order.status}
-              />
+              <OrderCard key={order.id} order={order} />
             ))}
           </div>
           <Pagination currentPage={page} totalPages={totalPages} buildHref={buildHref} />
-        </>
+        </div>
       )}
     </div>
   );

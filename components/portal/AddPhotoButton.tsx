@@ -1,4 +1,5 @@
 "use client";
+import { buttonClass } from "@/components/taller";
 
 import { createClient } from "@/lib/supabase/client";
 import { ImagePlus } from "lucide-react";
@@ -65,8 +66,8 @@ export function AddPhotoButton({ orderId }: { orderId: string }) {
 
   return (
     <div>
-      <label className="flex w-fit cursor-pointer items-center gap-1.5 rounded-md border border-black/15 px-3 py-1.5 text-xs font-medium text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5">
-        <ImagePlus size={14} />
+      <label className={`${buttonClass("outline")} cursor-pointer`}>
+        <ImagePlus size={17} />
         {isUploading ? "Subiendo..." : "Agregar foto"}
         <input
           type="file"
@@ -77,7 +78,7 @@ export function AddPhotoButton({ orderId }: { orderId: string }) {
           onChange={handleUpload}
         />
       </label>
-      {error ? <p className="mt-1 text-xs text-brand-red">{error}</p> : null}
+      {error ? <p className="mt-1.5 text-[15px] text-brand-red-dark dark:text-brand-red">{error}</p> : null}
     </div>
   );
 }

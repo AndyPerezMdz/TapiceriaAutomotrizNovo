@@ -75,49 +75,55 @@ export function CouponSelector({
   if (coupons.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-      <h2 className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-        <Tag size={16} /> Cupón disponible para tu pedido
-      </h2>
-      <div className="space-y-2">
+    <fieldset className="min-w-0 rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+      <legend className="float-left mb-5 flex w-full items-center gap-3 p-0">
+        <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-ink text-brand-yellow dark:ring-1 dark:ring-white/10">
+          <Tag size={17} />
+        </span>
+        <span className="font-display text-[26px] font-bold uppercase leading-none text-foreground">
+          ¿Usas un cupón?
+        </span>
+      </legend>
+      <div className="clear-both grid gap-2.5 sm:grid-cols-2">
         {coupons.map((c) => {
           const discountLabel =
             c.discount_type === "percentage"
-              ? `${c.discount_value}% de descuento`
-              : `$${c.discount_value.toLocaleString("es-MX")} de descuento`;
+              ? `${c.discount_value}% menos`
+              : `$${c.discount_value.toLocaleString("es-MX")} menos`;
           const isSelected = selectedCouponId === c.id;
 
           return (
             <button
               key={c.id}
               type="button"
+              aria-pressed={isSelected}
               onClick={() => onSelect(isSelected ? null : c.id)}
-              className={`flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition ${
+              className={`relative min-h-[84px] rounded-xl px-4 py-3.5 text-left transition ${
                 isSelected
-                  ? "border-brand-yellow-dark bg-brand-yellow/10"
-                  : "border-black/15 hover:border-black/30 dark:border-white/15"
+                  ? "bg-brand-yellow text-ink"
+                  : "border-2 border-dashed border-field-border bg-surface text-foreground hover:border-foreground"
               }`}
             >
-              <span>
-                <span className="font-medium text-foreground">{c.title}</span>{" "}
-                <span className="text-muted">— {discountLabel}</span>
-                {c.service_id === null ? (
-                  <span className="ml-1.5 text-xs text-muted">(general)</span>
-                ) : null}
-              </span>
               {isSelected ? (
-                <span className="text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
-                  Canjear ✓
-                </span>
-              ) : (
-                <span className="text-xs font-medium text-foreground underline-offset-2 hover:underline">
-                  Activar
-                </span>
-              )}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-[5px] rounded-2xl border-2 border-dashed border-ink/35"
+                />
+              ) : null}
+              <span className="relative block font-display text-2xl font-extrabold uppercase leading-none">
+                {discountLabel}
+              </span>
+              <span className={`relative mt-1 block text-[13px] ${isSelected ? "text-[#2b2400]" : "text-muted"}`}>
+                {c.title}
+                {c.service_id === null ? " · general" : ""}
+              </span>
+              <span className="relative mt-1 block text-[13px] font-semibold">
+                {isSelected ? "Aplicado ✓ (toca para quitarlo)" : "Usar este cupón"}
+              </span>
             </button>
           );
         })}
       </div>
-    </div>
+    </fieldset>
   );
 }

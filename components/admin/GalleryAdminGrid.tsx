@@ -47,7 +47,7 @@ export function GalleryAdminGrid({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
+      <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-16 text-center">
         <p className="text-muted">Aún no hay fotos en la galería.</p>
       </div>
     );
@@ -60,7 +60,7 @@ export function GalleryAdminGrid({
         {items.map((item) => (
           <div
             key={item.id}
-            className="overflow-hidden rounded-lg border border-black/10 bg-surface dark:border-white/10"
+            className="overflow-hidden rounded-2xl bg-surface dark:ring-1 dark:ring-white/5"
           >
             <div className="grid grid-cols-2 gap-0.5 bg-black/10 dark:bg-white/10">
               {item.image_before_url ? (
@@ -79,7 +79,7 @@ export function GalleryAdminGrid({
               ) : null}
             </div>
             <div className="flex items-center justify-between p-3">
-              <p className="truncate text-sm text-muted">
+              <p className="truncate text-[15px] text-muted">
                 {item.caption ?? "Sin descripción"}
               </p>
               {isAdmin ? (

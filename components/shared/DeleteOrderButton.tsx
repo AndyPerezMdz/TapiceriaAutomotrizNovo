@@ -1,4 +1,5 @@
 "use client";
+import { buttonClass } from "@/components/taller";
 
 import { useConfirm } from "@/lib/hooks/useConfirm";
 import { createClient } from "@/lib/supabase/client";
@@ -45,9 +46,9 @@ export function DeleteOrderButton({
       <button
         onClick={handleDelete}
         disabled={isDeleting}
-        className="flex items-center gap-1.5 text-sm text-muted transition hover:text-brand-red disabled:opacity-50"
+        className={buttonClass("danger")}
       >
-        <Trash2 size={14} /> {isDeleting ? "Eliminando..." : "Eliminar pedido"}
+        <Trash2 size={17} /> {isDeleting ? "Eliminando..." : "Eliminar pedido"}
       </button>
     </>
   );

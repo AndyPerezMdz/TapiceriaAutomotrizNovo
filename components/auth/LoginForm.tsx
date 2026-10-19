@@ -6,18 +6,29 @@ import {
   AuthLink,
   formErrorClassName,
   inputClassName,
+  secondaryButtonClassName,
   submitButtonClassName,
 } from "@/components/auth/AuthLayout";
+import { ShopHours } from "@/components/auth/ShopHours";
 import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type LoginMode = "password" | "magic";
 
-export function LoginForm() {
+interface LoginFormProps {
+  hoursWeekday?: string;
+  hoursSaturday?: string;
+}
+
+export function LoginForm({
+  hoursWeekday = "9:30 am – 5:00 pm",
+  hoursSaturday = "9:30 am – 3:00 pm",
+}: LoginFormProps) {
   const router = useRouter();
 
   const [mode, setMode] = useState<LoginMode>("password");
@@ -70,77 +81,95 @@ export function LoginForm() {
 
   return (
     <AuthLayout
-      title="Iniciar sesión"
-      subtitle="Accede a tu portal de cliente"
+      title="Inicia sesión"
+      subtitle="Revisa tus pedidos, cotizaciones y citas."
       footer={
         <>
-          ¿No tienes cuenta? <AuthLink href="/registro">Regístrate</AuthLink>
+          ¿Primera vez aquí? <AuthLink href="/registro">Crea tu cuenta</AuthLink>
         </>
       }
+      panelExtra={<ShopHours hoursWeekday={hoursWeekday} hoursSaturday={hoursSaturday} />}
+      mobileExtra={
+        <ShopHours hoursWeekday={hoursWeekday} hoursSaturday={hoursSaturday} tone="light" />
+      }
     >
-      <div className="mb-5 grid grid-cols-2 gap-1 rounded-md border border-black/15 p-1 dark:border-white/15">
-        <button
-          type="button"
-          onClick={() => setMode("password")}
-          className={`rounded-sm py-1.5 text-sm font-medium transition ${
-            mode === "password"
-              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-              : "text-muted hover:text-foreground"
-          }`}
-        >
-          Contraseña
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("magic")}
-          className={`rounded-sm py-1.5 text-sm font-medium transition ${
-            mode === "magic"
-              ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-              : "text-muted hover:text-foreground"
-          }`}
-        >
-          Sin contraseña
-        </button>
-      </div>
-
       {mode === "password" ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {formError ? (
-            <div className={formErrorClassName}>{formError}</div>
-          ) : null}
+        <>
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            {formError ? (
+              <div role="alert" className={formErrorClassName}>
+                {formError}
+              </div>
+            ) : null}
 
-          <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              className={inputClassName}
-              disabled={isLoading}
-            />
-          </AuthField>
+            <AuthField id="email" label="Correo electrónico" error={fieldErrors.email}>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="tu@correo.com"
+                aria-invalid={Boolean(fieldErrors.email)}
+                className={inputClassName}
+                disabled={isLoading}
+              />
+            </AuthField>
 
-          <AuthField id="password" label="Contraseña" error={fieldErrors.password}>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              className={inputClassName}
-              disabled={isLoading}
-            />
-          </AuthField>
+            <div>
+              <div className="mb-1.5 flex items-baseline justify-between gap-3">
+                <label htmlFor="password" className="text-[15px] font-semibold text-foreground">
+                  Contraseña
+                </label>
+                <Link href="/recuperar" className="text-sm font-medium text-muted underline-offset-4 hover:text-foreground hover:underline">
+                  ¿La olvidaste?
+                </Link>
+              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                aria-invalid={Boolean(fieldErrors.password)}
+                className={inputClassName}
+                disabled={isLoading}
+              />
+              {fieldErrors.password ? (
+                <p className="mt-1.5 text-sm text-brand-red-dark dark:text-brand-red">
+                  {fieldErrors.password}
+                </p>
+              ) : null}
+            </div>
 
-          <div className="text-right">
-            <AuthLink href="/recuperar">¿Olvidaste tu contraseña?</AuthLink>
+            <button type="submit" disabled={isLoading} className={`${submitButtonClassName} !mt-6`}>
+              {isLoading ? "Entrando…" : "Entrar"}
+            </button>
+          </form>
+
+          <div className="my-6 flex items-center gap-3" aria-hidden="true">
+            <div className="flex-1 border-t-2 border-dashed border-seam" />
+            <span className="text-sm text-muted">o</span>
+            <div className="flex-1 border-t-2 border-dashed border-seam" />
           </div>
 
-          <button type="submit" disabled={isLoading} className={submitButtonClassName}>
-            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+          <button type="button" onClick={() => setMode("magic")} className={secondaryButtonClassName}>
+            Entrar con un enlace a mi correo
           </button>
-        </form>
+        </>
       ) : (
-        <MagicLinkForm redirectPath="/portal" />
+        <>
+          <p className="mb-4 text-[15px] text-muted">
+            Te mandamos un enlace a tu correo; ábrelo desde este dispositivo y entras sin
+            contraseña.
+          </p>
+          <MagicLinkForm redirectPath="/portal" />
+          <button
+            type="button"
+            onClick={() => setMode("password")}
+            className="mt-4 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground underline-offset-4 hover:underline"
+          >
+            ← Usar mi contraseña
+          </button>
+        </>
       )}
     </AuthLayout>
   );

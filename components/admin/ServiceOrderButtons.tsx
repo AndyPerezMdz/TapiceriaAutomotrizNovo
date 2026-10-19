@@ -41,7 +41,7 @@ export function ServiceOrderButton({
     <button
       onClick={handleMove}
       disabled={disabled || isMoving}
-      className="rounded-md p-1 text-muted transition hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/5"
+      className="rounded-xl p-1 text-muted transition hover:bg-black/5 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30 dark:hover:bg-white/5"
     >
       {neighborOrder !== null && neighborOrder < currentOrder ? (
         <ChevronUp size={16} />

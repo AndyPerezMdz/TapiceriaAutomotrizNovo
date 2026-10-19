@@ -33,7 +33,7 @@ export default async function AdminResenasPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-6 text-foreground">
         Reseñas de clientes
       </h1>
 
@@ -42,10 +42,10 @@ export default async function AdminResenasPage({ searchParams }: Props) {
           <a
             key={f.value}
             href={f.value === "all" ? "/admin/resenas" : `/admin/resenas?rating=${f.value}`}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
               activeFilter.value === f.value
-                ? "bg-brand-black text-white dark:bg-white dark:text-brand-black"
-                : "border border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
+                : "border-[1.5px] border-field-border text-muted hover:border-foreground"
             }`}
           >
             {f.label}
@@ -72,12 +72,12 @@ export default async function AdminResenasPage({ searchParams }: Props) {
             return (
               <div
                 key={review.id}
-                className="rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
+                className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium text-foreground">{client?.full_name}</p>
-                    {vehicle ? <p className="text-xs text-muted">{vehicle}</p> : null}
+                    {vehicle ? <p className="text-[13px] text-muted">{vehicle}</p> : null}
                     <div className="mt-1 flex gap-0.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
@@ -85,7 +85,7 @@ export default async function AdminResenasPage({ searchParams }: Props) {
                           size={14}
                           className={
                             star <= review.rating
-                              ? "fill-brand-yellow text-brand-yellow-dark"
+                              ? "fill-brand-yellow text-yellow-text"
                               : "text-black/15 dark:text-white/15"
                           }
                         />
@@ -95,7 +95,7 @@ export default async function AdminResenasPage({ searchParams }: Props) {
                   <ReviewPublishToggle reviewId={review.id} isPublished={review.is_published} />
                 </div>
                 {review.comment ? (
-                  <p className="mt-2 break-words text-sm text-muted">{review.comment}</p>
+                  <p className="mt-2 break-words text-[15px] text-muted">{review.comment}</p>
                 ) : null}
               </div>
             );

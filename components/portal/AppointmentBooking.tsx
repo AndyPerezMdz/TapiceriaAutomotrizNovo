@@ -96,10 +96,10 @@ export function AppointmentBooking({
 
   if (success) {
     return (
-      <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-6 text-center">
+      <div className="rounded-2xl border border-green-500/30 bg-green-500/5 p-6 text-center">
         <Check size={28} className="mx-auto mb-2 text-green-600 dark:text-green-400" />
         <p className="font-medium text-foreground">¡Cita agendada!</p>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1 text-[15px] text-muted">
           Te esperamos el{" "}
           {new Date(`${selectedDate}T00:00:00`).toLocaleDateString("es-MX", {
             weekday: "long",
@@ -113,19 +113,19 @@ export function AppointmentBooking({
   }
 
   return (
-    <div className="rounded-lg border border-black/10 bg-surface p-5 dark:border-white/10">
-      <h2 className="mb-4 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+    <div className="rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
+      <h2 className="font-display text-2xl font-bold uppercase mb-4 flex items-center gap-1.5 text-foreground">
         <Calendar size={16} /> Agenda tu visita al taller
       </h2>
 
       {error ? (
-        <div className="mb-3 rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
+        <div className="mb-3 rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
           {error}
         </div>
       ) : null}
 
       <div className="mb-4">
-        <label className="mb-1.5 block text-xs font-medium text-muted">
+        <label className="mb-1.5 block text-[13px] font-medium text-muted">
           ¿Cuál es el motivo de tu visita?
         </label>
         <textarea
@@ -133,11 +133,11 @@ export function AppointmentBooking({
           onChange={(e) => setReason(e.target.value)}
           rows={2}
           placeholder="Ej. Quiero cotizar piel color café para los asientos de mi Nissan Versa"
-          className="w-full rounded-md border border-black/15 bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15"
+          className="block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none"
         />
       </div>
       
-      <p className="mb-2 text-xs font-medium text-muted">Elige un día</p>
+      <p className="mb-2.5 text-[15px] font-semibold text-foreground">Elige un día</p>
       <div className="mb-4 flex flex-wrap gap-2">
         {availableDays.map((d) => (
           <button
@@ -146,10 +146,11 @@ export function AppointmentBooking({
               setSelectedDate(d.key);
               setSelectedSlot(null);
             }}
-            className={`rounded-md border px-3 py-1.5 text-xs font-medium capitalize transition ${
+            type="button"
+            className={`inline-flex min-h-11 items-center rounded-full px-4 text-[15px] capitalize transition ${
               selectedDate === d.key
-                ? "border-brand-black bg-black/5 dark:border-white dark:bg-white/10"
-                : "border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
+                : "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground"
             }`}
           >
             {d.label}
@@ -159,19 +160,20 @@ export function AppointmentBooking({
 
       {selectedDate ? (
         <>
-          <p className="mb-2 text-xs font-medium text-muted">Elige un horario</p>
+          <p className="mb-2.5 text-[15px] font-semibold text-foreground">Elige un horario</p>
           <div className="mb-4 flex flex-wrap gap-2">
             {slotsForSelectedDay.length === 0 ? (
-              <p className="text-xs text-muted">No hay horarios disponibles ese día.</p>
+              <p className="text-[13px] text-muted">No hay horarios disponibles ese día.</p>
             ) : (
               slotsForSelectedDay.map((slot) => (
                 <button
                   key={slot}
                   onClick={() => setSelectedSlot(slot)}
-                  className={`rounded-md border px-3 py-1.5 text-xs font-medium transition ${
+                  type="button"
+            className={`inline-flex min-h-11 items-center rounded-full px-4 text-[15px] transition ${
                     selectedSlot === slot
-                      ? "border-brand-black bg-black/5 dark:border-white dark:bg-white/10"
-                      : "border-black/15 text-muted hover:border-black/30 dark:border-white/15"
+                      ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
+                      : "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground"
                   }`}
                 >
                   {slot}
@@ -185,7 +187,7 @@ export function AppointmentBooking({
       <button
         onClick={handleConfirm}
         disabled={!selectedDate || !selectedSlot || isSaving}
-        className="rounded-md bg-brand-black px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-brand-black"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-50 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Agendando..." : "Confirmar cita"}
       </button>

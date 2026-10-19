@@ -43,12 +43,12 @@ export default async function AdminContactosPage({ searchParams }: Props) {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl text-foreground">
           Mensajes de contacto
         </h1>
         <a
           href="/api/admin/export/contactos"
-          className="flex items-center gap-1.5 rounded-md border border-black/15 px-3 py-2 text-sm font-medium text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
+          className="flex items-center gap-1.5 rounded-xl border-[1.5px] border-field-border px-3 py-2 text-[15px] font-medium text-foreground transition hover:bg-black/5 dark:hover:bg-white/5 min-h-11"
         >
           <Download size={15} /> Exportar CSV
         </a>
@@ -59,7 +59,7 @@ export default async function AdminContactosPage({ searchParams }: Props) {
       </div>
 
       {!submissions || submissions.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-16 text-center">
           <p className="text-muted">No hay mensajes todavía.</p>
         </div>
       ) : (
@@ -76,16 +76,16 @@ export default async function AdminContactosPage({ searchParams }: Props) {
               return (
                 <div
                   key={s.id}
-                  className={`rounded-lg border bg-surface p-4 transition ${
+                  className={`rounded-2xl border bg-surface p-4 transition ${
                     isNew
                       ? "border-brand-yellow/40"
-                      : "border-black/10 opacity-80 dark:border-white/10"
+                      : "border-seam opacity-80"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-medium text-foreground">{s.name}</p>
-                      <p className="text-xs text-muted">
+                      <p className="text-[13px] text-muted">
                         {new Date(s.created_at).toLocaleDateString("es-MX", {
                           day: "numeric",
                           month: "short",
@@ -98,10 +98,10 @@ export default async function AdminContactosPage({ searchParams }: Props) {
                     <ContactStatusButton id={s.id} status={s.status} />
                   </div>
 
-                  <p className="mt-2 flex items-center gap-1.5 text-sm text-muted">
+                  <p className="mt-2 flex items-center gap-1.5 text-[15px] text-muted">
                     <Phone size={14} /> {s.phone}
                   </p>
-                  <p className="mt-2 break-words text-sm text-foreground">{s.message}</p>
+                  <p className="mt-2 break-words text-[15px] text-foreground">{s.message}</p>
 
                   <div className="mt-3">
                     <WhatsAppLink href={whatsappHref} label="Contactar por WhatsApp" />

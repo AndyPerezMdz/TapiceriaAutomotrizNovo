@@ -4,17 +4,17 @@ import { createClient } from "@/lib/supabase/server";
 import { Clock } from "lucide-react";
 
 const actionColors: Record<string, string> = {
-  "Cambio de estado": "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  "Cambio de precio": "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-  "Eliminación": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-  "Servicio creado": "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
-  "Servicio editado": "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  "Servicio eliminado": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-  "Foto agregada": "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
-  "Foto eliminada": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-  "Cambio de rol": "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
-  "Usuario desactivado": "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-"Usuario reactivado": "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  "Cambio de estado": "bg-brand-yellow text-ink",
+  "Cambio de precio": "border-[1.5px] border-dashed border-foreground text-foreground",
+  "Eliminación": "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
+  "Servicio creado": "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
+  "Servicio editado": "bg-brand-yellow text-ink",
+  "Servicio eliminado": "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
+  "Foto agregada": "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
+  "Foto eliminada": "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
+  "Cambio de rol": "bg-brand-yellow text-ink",
+  "Usuario desactivado": "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red",
+"Usuario reactivado": "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40",
 };
 
 const PAGE_SIZE = 20;
@@ -54,7 +54,7 @@ export default async function AdminHistorialPage({ searchParams }: Props) {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-6 text-foreground">
         Historial de cambios
       </h1>
 
@@ -63,7 +63,7 @@ export default async function AdminHistorialPage({ searchParams }: Props) {
       </div>
 
       {!entries || entries.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-black/15 bg-surface p-16 text-center dark:border-white/15">
+        <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-16 text-center">
           <p className="text-muted">No hay resultados.</p>
         </div>
       ) : (
@@ -72,27 +72,27 @@ export default async function AdminHistorialPage({ searchParams }: Props) {
             {entries.map((entry) => (
               <div
                 key={entry.id}
-                className="flex items-start justify-between gap-4 rounded-lg border border-black/10 bg-surface p-4 dark:border-white/10"
+                className="flex items-start justify-between gap-4 rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        actionColors[entry.action] ?? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                      className={`rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] ${
+                        actionColors[entry.action] ?? "border-[1.5px] border-muted text-muted"
                       }`}
                     >
                       {entry.action}
                     </span>
-                    <span className="text-sm font-medium text-foreground">
+                    <span className="text-[15px] font-medium text-foreground">
                       {entry.entity_type}: {entry.entity_label}
                     </span>
                   </div>
                   {entry.details ? (
-                    <p className="mt-1 break-words text-sm text-muted">{entry.details}</p>
+                    <p className="mt-1 break-words text-[15px] text-muted">{entry.details}</p>
                   ) : null}
-                  <p className="mt-1 text-xs text-muted">Por {entry.actor_name ?? "Sistema"}</p>
+                  <p className="mt-1 text-[13px] text-muted">Por {entry.actor_name ?? "Sistema"}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1 text-xs text-muted">
+                <div className="flex shrink-0 items-center gap-1 text-[13px] text-muted">
                   <Clock size={12} />
                   {new Date(entry.created_at).toLocaleString("es-MX", {
                     day: "numeric",

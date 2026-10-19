@@ -26,7 +26,7 @@ export default async function ConfiguracionPage() {
 
   return (
     <div>
-      <h1 className="mb-8 text-2xl font-bold tracking-tight text-foreground">
+      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-8 text-foreground">
         Configuración del negocio
       </h1>
       <div className="space-y-8">
