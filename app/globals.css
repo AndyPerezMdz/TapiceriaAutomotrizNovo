@@ -178,3 +178,16 @@
 .animate-novi-sway {
   animation: novi-sway 1.4s ease-in-out infinite;
 }
+/* Autocompletado del navegador: que respete los colores de los campos del taller
+   (Chrome pinta los campos autollenados de azul/amarillo por su cuenta). */
+.theme-taller input:-webkit-autofill,
+.theme-taller input:-webkit-autofill:hover,
+.theme-taller input:-webkit-autofill:focus,
+.theme-taller textarea:-webkit-autofill,
+.theme-taller select:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-foreground);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-field) inset;
+  box-shadow: 0 0 0 1000px var(--color-field) inset;
+  caret-color: var(--color-foreground);
+  transition: background-color 9999s ease-out 0s;
+}
