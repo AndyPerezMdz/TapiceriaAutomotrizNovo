@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* El modo oscuro lo controla next-themes con la clase .dark (no la preferencia del sistema). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-yellow: #f5c518;
   --color-brand-yellow-dark: #c9a012;

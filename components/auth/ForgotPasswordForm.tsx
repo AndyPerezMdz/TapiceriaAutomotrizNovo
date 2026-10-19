@@ -58,7 +58,7 @@ export function ForgotPasswordForm() {
         subtitle="Te enviamos un enlace para restablecer tu contraseña"
         footer={<AuthLink href="/login">Volver a iniciar sesión</AuthLink>}
       >
-        <p className="text-center text-sm text-muted">
+        <p className="text-center text-[15px] text-muted">
           Si el correo existe en nuestro sistema, recibirás un enlace en unos minutos.
         </p>
       </AuthLayout>

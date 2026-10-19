@@ -15,7 +15,7 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
   const [isSending, setIsSending] = useState(false);
 
   const fieldClassName =
-    "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
+    "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,7 +49,7 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
 
   if (success) {
     return (
-      <div className="rounded-md border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-sm text-green-700 dark:text-green-400">
+      <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[15px] text-green-700 dark:text-green-400">
         Revisa tu correo — te enviamos un enlace para iniciar sesión sin
         contraseña.
       </div>
@@ -59,7 +59,7 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {error ? (
-        <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
+        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
           {error}
         </div>
       ) : null}
@@ -69,6 +69,8 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="tu@correo.com"
+        aria-label="Correo electrónico"
+        autoComplete="email"
         className={fieldClassName}
         disabled={isSending}
       />
@@ -76,9 +78,9 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
       <button
         type="submit"
         disabled={isSending}
-        className="w-full rounded-md border border-black/15 px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-black/5 disabled:opacity-60 dark:border-white/15 dark:hover:bg-white/5"
+        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[17px] font-bold text-ink transition hover:bg-[#e8b90f] disabled:opacity-60"
       >
-        {isSending ? "Enviando..." : "Enviarme un enlace mágico"}
+        {isSending ? "Enviando…" : "Mandarme el enlace"}
       </button>
     </form>
   );
