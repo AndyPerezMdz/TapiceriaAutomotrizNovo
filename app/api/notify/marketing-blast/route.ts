@@ -1,4 +1,4 @@
-import { emailWrapper, sendEmail } from "@/lib/email/resend";
+import { emailUi, emailWrapper, sendEmail } from "@/lib/email/resend";
 import { escapeHtml } from "@/lib/email/sanitize";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
@@ -58,20 +58,13 @@ export async function POST(request: Request) {
   const html = emailWrapper(
     safeTitle,
     `
-      <p style="font-size: 14px; color: #6b6b6b; line-height: 1.6; margin: 0 0 20px; white-space: pre-line;">${safeMessage}</p>
-      ${
-        buttonUrl && safeButtonText
-          ? `<div style="text-align: center;">
-              <a href="${buttonUrl}" style="display: inline-block; background-color: #f5c518; color: #1a1a1a; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 6px;">
-                ${safeButtonText}
-              </a>
-            </div>`
-          : ""
-      }
-      <p style="text-align: center; font-size: 11px; color: #9a9a9a; margin-top: 24px;">
+      <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#3d3b37;white-space:pre-line;">${safeMessage}</p>
+      ${buttonUrl && safeButtonText ? emailUi.button(buttonUrl, safeButtonText, "yellow") : ""}
+      <p style="margin:28px 0 0;padding-top:14px;border-top:2px dashed #e0dbd0;font-size:12px;line-height:1.5;color:#8f8b83;">
         Recibiste este correo porque te suscribiste a promociones. Puedes darte de baja desde tu perfil en cualquier momento.
       </p>
     `,
+    "Promoción del taller",
   );
 
   const emails: string[] = subscribers.map((s: { email: string }) => s.email);

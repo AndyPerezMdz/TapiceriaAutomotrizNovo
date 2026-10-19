@@ -106,6 +106,8 @@ export async function GET(request: Request, { params }: Props) {
       businessName={businessInfo.name}
       businessAddress={businessInfo.address}
       businessPhone={settings.whatsapp}
+      hoursWeekday={settings.hoursWeekday}
+      hoursSaturday={settings.hoursSaturday}
     />,
   );
 

@@ -1,3 +1,4 @@
+import { LegalPage } from "@/components/public/LegalPage";
 import { businessInfo, formatWhatsApp } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import type { Metadata } from "next";
@@ -9,21 +10,9 @@ export const metadata: Metadata = {
 export default async function PrivacidadPage() {
   const settings = await getBusinessSettings();
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
-        Aviso de Privacidad
-      </h1>
-      <p className="mb-10 text-sm text-muted">
-        Última actualización: {new Date().toLocaleDateString("es-MX", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}
-      </p>
-
-      <div className="space-y-6 text-sm leading-relaxed text-muted">
+    <LegalPage title="Aviso de privacidad">
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Responsable de tus datos
           </h2>
           <p>
@@ -34,7 +23,7 @@ export default async function PrivacidadPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Datos que recopilamos
           </h2>
           <p>
@@ -46,11 +35,11 @@ export default async function PrivacidadPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Finalidad del tratamiento
           </h2>
           <p>Usamos tus datos personales para:</p>
-          <ul className="mt-2 list-inside list-disc space-y-1">
+          <ul>
             <li>Crear y administrar tu cuenta en nuestro portal de cliente.</li>
             <li>Procesar y dar seguimiento a tus solicitudes de cotización y pedidos.</li>
             <li>Contactarte por correo electrónico o WhatsApp respecto a tus pedidos.</li>
@@ -59,7 +48,7 @@ export default async function PrivacidadPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Con quién compartimos tus datos
           </h2>
           <p>
@@ -71,7 +60,7 @@ export default async function PrivacidadPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Derechos ARCO
           </h2>
           <p>
@@ -83,7 +72,7 @@ export default async function PrivacidadPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Cambios a este aviso
           </h2>
           <p>
@@ -91,7 +80,6 @@ export default async function PrivacidadPage() {
             Cualquier cambio será publicado en esta misma página.
           </p>
         </section>
-      </div>
-    </div>
+      </LegalPage>
   );
 }

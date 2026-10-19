@@ -1,4 +1,4 @@
-import { emailWrapper, sendEmail } from "@/lib/email/resend";
+import { emailUi, emailWrapper, sendEmail } from "@/lib/email/resend";
 import { escapeHtml } from "@/lib/email/sanitize";
 import { sendPushToClient } from "@/lib/push/sendPush";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -112,21 +112,11 @@ export async function POST(request: Request) {
     const html = emailWrapper(
       "Tu cotización te está esperando",
       `
-        <p style="font-size: 14px; color: #6b6b6b; line-height: 1.5; margin: 0 0 16px;">
-          Hola ${escapeHtml(client.full_name ?? "")}, ya tenemos lista la cotización de tu pedido${vehicle ? ` de ${escapeHtml(vehicle)}` : ""}.
-          Revísala y dinos si le entramos.
-        </p>
-        ${
-          price
-            ? `<div style="background-color: #f5c518; color: #1a1a1a; font-weight: 800; font-size: 22px; text-align: center; padding: 14px; border-radius: 8px; margin-bottom: 20px;">${price}</div>`
-            : ""
-        }
-        <div style="text-align: center;">
-          <a href="${url}" style="display: inline-block; background-color: #1a1a1a; color: #f5c518; text-decoration: none; font-weight: 700; font-size: 14px; padding: 12px 28px; border-radius: 8px;">
-            Ver mi cotización
-          </a>
-        </div>
+        ${emailUi.p(`Hola ${escapeHtml(client.full_name ?? "")}, ya tenemos lista la cotización de tu pedido${vehicle ? ` de ${escapeHtml(vehicle)}` : ""}. Revísala y dinos si le entramos.`)}
+        ${price ? emailUi.vale("Total estimado", price) : ""}
+        ${emailUi.button(url, "Ver mi cotización")}
       `,
+      "Recordatorio",
     );
     const result = await sendEmail({
       to: client.email,

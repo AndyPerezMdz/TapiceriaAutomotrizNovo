@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
       "./node_modules/unicode-properties/**",
       "./node_modules/linebreak/**",
       "./node_modules/brotli/**",
+      "./lib/pdf/fonts/**",
+      "./public/images/logo-amarillo-wbg.png",
     ],
   },
   images: {

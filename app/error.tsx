@@ -1,8 +1,5 @@
 "use client";
 
-import { businessInfo } from "@/lib/constants/business";
-import { AlertTriangle } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -18,43 +15,43 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background px-4 text-center">
-      <Image
-        src="/images/logo-negro-wbg.png"
-        alt={businessInfo.name}
-        width={160}
-        height={64}
-        className="h-auto w-[140px]"
-      />
+    <div className="dark">
+      <main className="theme-taller flex min-h-screen items-center justify-center bg-[#141413] px-5 py-12 text-on-ink">
+        <div className="w-full max-w-[520px] text-center">
+          <span className="font-display text-3xl font-extrabold uppercase leading-none">Novo</span>
 
-      <div>
-        <AlertTriangle
-          size={40}
-          className="mx-auto mb-3 text-brand-yellow-dark dark:text-brand-yellow"
-        />
-        <h1 className="text-xl font-semibold text-foreground">
-          Algo salió mal
-        </h1>
-        <p className="mt-2 max-w-sm text-sm text-muted">
-          Tuvimos un problema al cargar esta página. Puedes intentar de nuevo,
-          o volver al inicio.
-        </p>
-      </div>
-
-      <div className="flex flex-wrap justify-center gap-3">
-        <button
-          onClick={reset}
-          className="rounded-md bg-brand-black px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 dark:bg-white dark:text-brand-black"
-        >
-          Intentar de nuevo
-        </button>
-        <Link
-          href="/"
-          className="rounded-md border border-black/15 px-6 py-2.5 text-sm font-semibold text-foreground transition hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/5"
-        >
-          Volver al inicio
-        </Link>
-      </div>
-    </main>
+          <section className="mt-7 overflow-hidden rounded-[20px] bg-[#232220] px-6 pb-9 pt-10 sm:px-10">
+            <span className="inline-block -rotate-6 rounded-lg border-[3px] border-brand-yellow px-4 py-1.5 font-display text-3xl font-extrabold uppercase leading-none tracking-wide text-brand-yellow">
+              Se zafó una costura
+            </span>
+            <h1 className="mt-7 font-display text-4xl font-extrabold uppercase leading-[0.95] sm:text-5xl">
+              Algo salió mal
+            </h1>
+            <div className="mx-auto mt-6 max-w-xs border-t-2 border-dashed border-[#3d3b36]" />
+            <p className="mt-5 text-base text-[#d9d5cc]">
+              Tuvimos un problema al cargar esta página. Intenta de nuevo; si sigue, escríbenos por WhatsApp.
+            </p>
+            {error.digest ? (
+              <p className="mt-3 font-code text-xs text-on-ink-muted">Código: {error.digest}</p>
+            ) : null}
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <button
+                type="button"
+                onClick={reset}
+                className="inline-flex min-h-12 items-center rounded-xl bg-brand-yellow px-6 text-base font-bold text-ink transition hover:bg-[#e8b90f]"
+              >
+                Intentar de nuevo
+              </button>
+              <Link
+                href="/"
+                className="inline-flex min-h-12 items-center rounded-xl border-[1.5px] border-white/30 px-6 text-base font-semibold text-on-ink transition hover:border-white/60"
+              >
+                Volver al inicio
+              </Link>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+import { LegalPage } from "@/components/public/LegalPage";
 import { businessInfo } from "@/lib/constants/business";
 import type { Metadata } from "next";
 
@@ -7,21 +8,9 @@ export const metadata: Metadata = {
 
 export default function TerminosPage() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
-        Términos y Condiciones
-      </h1>
-      <p className="mb-10 text-sm text-muted">
-        Última actualización: {new Date().toLocaleDateString("es-MX", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}
-      </p>
-
-      <div className="space-y-6 text-sm leading-relaxed text-muted">
+    <LegalPage title="Términos y condiciones">
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Aceptación de los términos
           </h2>
           <p>
@@ -31,7 +20,7 @@ export default function TerminosPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Sobre las cotizaciones
           </h2>
           <p>
@@ -44,7 +33,7 @@ export default function TerminosPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Colores personalizados
           </h2>
           <p>
@@ -55,7 +44,7 @@ export default function TerminosPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Forma de pago
           </h2>
           <p>
@@ -66,7 +55,7 @@ export default function TerminosPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Cancelaciones
           </h2>
           <p>
@@ -77,7 +66,7 @@ export default function TerminosPage() {
         </section>
 
         <section>
-          <h2 className="mb-2 text-base font-semibold text-foreground">
+          <h2>
             Contenido subido por el usuario
           </h2>
           <p>
@@ -86,7 +75,6 @@ export default function TerminosPage() {
             pedido. No se publican sin tu autorización expresa.
           </p>
         </section>
-      </div>
-    </div>
+      </LegalPage>
   );
 }

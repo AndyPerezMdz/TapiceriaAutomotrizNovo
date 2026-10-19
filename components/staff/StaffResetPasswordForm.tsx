@@ -1,6 +1,12 @@
 "use client";
 
-import { BrandLogo } from "@/components/auth/BrandLogo";
+import {
+  StaffAuthShell,
+  staffButtonClass,
+  staffErrorClass,
+  staffFieldClass,
+  staffLabelClass,
+} from "@/components/staff/StaffAuthShell";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,9 +21,6 @@ const schema = z
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
   });
-
-const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 
 export function StaffResetPasswordForm() {
   const router = useRouter();
@@ -58,63 +61,35 @@ export function StaffResetPasswordForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-brand-black px-4 py-12">
-      <div className="w-full max-w-sm rounded-lg border border-white/10 bg-surface p-8 shadow-2xl">
-        <div className="mb-6 flex justify-center">
-          <BrandLogo />
-        </div>
-
-        <div className="mb-7 text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+    <StaffAuthShell
+      eyebrow="Acceso del equipo"
+      title="Nueva contraseña"
+      footer="Al guardarla entras directo al panel."
+    >
+      <p className="text-base text-[#d9d5cc]">Elige una contraseña nueva para tu cuenta.</p>
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate>
+        {error ? (
+          <div role="alert" className={staffErrorClass}>
+            {error}
+          </div>
+        ) : null}
+        <div>
+          <label htmlFor="password" className={staffLabelClass}>
             Nueva contraseña
-          </h1>
-          <p className="mt-1.5 text-sm text-muted">
-            Elige una nueva contraseña para tu cuenta
-          </p>
+          </label>
+          <input id="password" name="password" type="password" autoComplete="new-password" className={staffFieldClass} disabled={isLoading} />
+          <p className="mt-1.5 text-[13px] text-on-ink-muted">Mínimo 8 caracteres</p>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error ? (
-            <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
-              {error}
-            </div>
-          ) : null}
-
-          <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-foreground">
-              Nueva contraseña
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className={fieldClassName}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-medium text-foreground">
-              Confirmar contraseña
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              className={fieldClassName}
-              disabled={isLoading}
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:opacity-60 dark:bg-white dark:text-brand-black"
-          >
-            {isLoading ? "Guardando..." : "Actualizar contraseña"}
-          </button>
-        </form>
-      </div>
-    </main>
+        <div>
+          <label htmlFor="confirmPassword" className={staffLabelClass}>
+            Confírmala
+          </label>
+          <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" className={staffFieldClass} disabled={isLoading} />
+        </div>
+        <button type="submit" disabled={isLoading} className={`!mt-6 ${staffButtonClass}`}>
+          {isLoading ? "Guardando…" : "Guardar y entrar"}
+        </button>
+      </form>
+    </StaffAuthShell>
   );
 }

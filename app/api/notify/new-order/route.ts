@@ -1,4 +1,5 @@
-import { emailWrapper, sendEmail } from "@/lib/email/resend";
+import { escapeHtml } from "@/lib/email/sanitize";
+import { emailUi, emailWrapper, sendEmail } from "@/lib/email/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
@@ -40,18 +41,11 @@ export async function POST(request: Request) {
   const html = emailWrapper(
     "Nuevo pedido recibido",
     `
-      <p style="font-size: 14px; color: #6b6b6b; line-height: 1.5; margin: 0 0 8px;">
-        <strong style="color: #1a1a1a;">${client?.full_name ?? "Cliente"}</strong> solicitó una cotización${vehicle ? ` para su ${vehicle}` : ""}.
-      </p>
-      <p style="font-size: 13px; color: #6b6b6b; line-height: 1.5; margin: 0 0 20px;">
-        "${order.service_description}"
-      </p>
-      <div style="text-align: center;">
-        <a href="https://tapiceriaautomotrizbynovo.com/admin/pedidos" style="display: inline-block; background-color: #f5c518; color: #1a1a1a; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 6px;">
-          Revisar pedido
-        </a>
-      </div>
+      ${emailUi.p(`<strong>${escapeHtml(client?.full_name ?? "Cliente")}</strong> solicitó una cotización${vehicle ? ` para su ${escapeHtml(vehicle)}` : ""}.`)}
+      ${emailUi.note(`“${escapeHtml(order.service_description ?? "")}”`)}
+      ${emailUi.button("https://tapiceriaautomotrizbynovo.com/admin/pedidos", "Revisar pedido", "yellow")}
     `,
+    "Aviso para el taller",
   );
 
   const result = await sendEmail({

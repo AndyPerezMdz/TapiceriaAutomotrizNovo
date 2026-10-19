@@ -1,6 +1,12 @@
 "use client";
 
-import { BrandLogo } from "@/components/auth/BrandLogo";
+import {
+  StaffAuthShell,
+  staffButtonClass,
+  staffErrorClass,
+  staffFieldClass,
+  staffLabelClass,
+} from "@/components/staff/StaffAuthShell";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,9 +15,6 @@ import { z } from "zod";
 const schema = z.object({
   email: z.string().trim().email("Ingresa un correo electrónico válido"),
 });
-
-const fieldClassName =
-  "w-full rounded-md border border-black/15 bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none transition focus:border-brand-black focus:ring-1 focus:ring-brand-black dark:border-white/15";
 
 export function StaffForgotPasswordForm() {
   const [error, setError] = useState<string | null>(null);
@@ -50,77 +53,43 @@ export function StaffForgotPasswordForm() {
     setIsLoading(false);
   }
 
+  const back = (
+    <Link href="/staff/login" className="font-semibold text-brand-yellow underline-offset-4 hover:underline">
+      Volver a iniciar sesión
+    </Link>
+  );
+
+  if (success) {
+    return (
+      <StaffAuthShell eyebrow="Acceso del equipo" title="Revisa tu correo" footer={back}>
+        <p className="text-base leading-relaxed text-[#d9d5cc]">
+          Si el correo está dado de alta en el taller, te llega un enlace en unos minutos para elegir una contraseña nueva.
+        </p>
+        <div className="mt-5 border-t-2 border-dashed border-[#3d3b36]" />
+        <p className="mt-4 text-sm text-on-ink-muted">¿No llega? Revisa spam o pídele al administrador que te reenvíe la invitación.</p>
+      </StaffAuthShell>
+    );
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-brand-black px-4 py-12">
-      <div className="w-full max-w-sm rounded-lg border border-white/10 bg-surface p-8 shadow-2xl">
-        <div className="mb-6 flex justify-center">
-          <BrandLogo />
-        </div>
-
-        {success ? (
-          <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Revisa tu correo
-            </h1>
-            <p className="mt-2 text-sm text-muted">
-              Si el correo existe en nuestro sistema, recibirás un enlace en unos minutos.
-            </p>
-            <Link
-              href="/staff/login"
-              className="mt-6 inline-block text-sm font-medium text-foreground underline-offset-4 hover:underline"
-            >
-              Volver a iniciar sesión
-            </Link>
+    <StaffAuthShell eyebrow="Acceso del equipo" title="Recuperar contraseña" footer={back}>
+      <p className="text-base text-[#d9d5cc]">Escribe tu correo del taller y te mandamos un enlace.</p>
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate>
+        {error ? (
+          <div role="alert" className={staffErrorClass}>
+            {error}
           </div>
-        ) : (
-          <>
-            <div className="mb-7 text-center">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                Recuperar contraseña
-              </h1>
-              <p className="mt-1.5 text-sm text-muted">
-                Acceso exclusivo para personal del taller
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error ? (
-                <div className="rounded-md border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-sm text-brand-red">
-                  {error}
-                </div>
-              ) : null}
-
-              <div>
-                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
-                  Correo electrónico
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  className={fieldClassName}
-                  disabled={isLoading}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full rounded-md bg-brand-black px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-black/85 disabled:opacity-60 dark:bg-white dark:text-brand-black"
-              >
-                {isLoading ? "Enviando..." : "Enviar enlace"}
-              </button>
-
-              <Link
-                href="/staff/login"
-                className="block text-center text-sm font-medium text-foreground underline-offset-4 hover:underline"
-              >
-                Volver a iniciar sesión
-              </Link>
-            </form>
-          </>
-        )}
-      </div>
-    </main>
+        ) : null}
+        <div>
+          <label htmlFor="email" className={staffLabelClass}>
+            Correo electrónico
+          </label>
+          <input id="email" name="email" type="email" autoComplete="email" className={staffFieldClass} disabled={isLoading} />
+        </div>
+        <button type="submit" disabled={isLoading} className={`!mt-6 ${staffButtonClass}`}>
+          {isLoading ? "Enviando…" : "Enviar enlace"}
+        </button>
+      </form>
+    </StaffAuthShell>
   );
 }

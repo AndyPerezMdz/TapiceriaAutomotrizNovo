@@ -1,4 +1,5 @@
-import { emailWrapper, sendEmail } from "@/lib/email/resend";
+import { escapeHtml } from "@/lib/email/sanitize";
+import { emailUi, emailWrapper, sendEmail } from "@/lib/email/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
@@ -68,18 +69,11 @@ export async function POST(request: Request) {
   const html = emailWrapper(
     "Tu pedido tiene una actualización",
     `
-      <p style="font-size: 14px; color: #6b6b6b; line-height: 1.5; margin: 0 0 16px;">
-        Hola ${client.full_name}, tu pedido${vehicle ? ` de ${vehicle}` : ""} cambió de estado a:
-      </p>
-      <div style="background-color: #fdf3d6; color: #a67c00; font-weight: 600; text-align: center; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
-        ${statusLabel}
-      </div>
-      <div style="text-align: center;">
-        <a href="https://tapiceriaautomotrizbynovo.com/portal" style="display: inline-block; background-color: #1a1a1a; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 6px;">
-          Ver mi pedido
-        </a>
-      </div>
+      ${emailUi.p(`Hola ${escapeHtml(client.full_name ?? "")}, tu pedido${vehicle ? ` de ${escapeHtml(vehicle)}` : ""} cambió de estado:`)}
+      ${emailUi.stamp(escapeHtml(statusLabel))}
+      ${emailUi.button("https://tapiceriaautomotrizbynovo.com/portal", "Ver mi pedido")}
     `,
+    "Orden de trabajo",
   );
 
   const result = await sendEmail({

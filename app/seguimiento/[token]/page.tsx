@@ -1,12 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { businessInfo } from "@/lib/constants/business";
-import { Calendar, Car } from "lucide-react";
-import Image from "next/image";
+import { Stamp, StageStepper, Ticket, type StepperStage } from "@/components/taller";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ServiceStageProgress,
-  type ProgressStage,
-} from "@/components/shared/ServiceStageProgress";
 
 const statusLabels: Record<string, string> = {
   pendiente_revision: "Pendiente de revisión",
@@ -45,7 +41,7 @@ interface StageGroup {
   itemId: string;
   serviceTitle: string;
   currentStageId: string | null;
-  stages: ProgressStage[];
+  stages: StepperStage[];
 }
 
 function groupStages(rows: StageRow[]): StageGroup[] {
@@ -103,127 +99,126 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
     order.status === "listo_para_entrega" || order.status === "entregado";
   const stageGroups = showStages ? groupStages((stagesData as StageRow[] | null) ?? []) : [];
 
+  const folio = order.id ? String(order.id).slice(0, 8).toUpperCase() : null;
+  const started = new Date(order.created_at).toLocaleDateString("es-MX", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "America/Merida",
+  });
+  const card = "rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5";
+  const h2 = "mb-4 font-display text-[28px] font-bold uppercase leading-none text-foreground";
+
   return (
-    <div className="mx-auto min-h-screen max-w-lg px-6 py-16">
-      <div className="mb-8 text-center">
-        <Image
-          src="/images/logo-negro-wbg.png"
-          alt={businessInfo.name}
-          width={140}
-          height={56}
-          className="mx-auto h-auto w-[120px]"
-        />
-      </div>
+    <div className="theme-taller min-h-screen bg-background">
+      <div className="mx-auto max-w-2xl space-y-6 px-5 py-10 sm:py-14">
+        <div className="flex items-center justify-between gap-4">
+          <Link href="/" className="font-display text-3xl font-extrabold uppercase leading-none text-foreground">
+            Novo
+          </Link>
+          <span className="text-sm text-muted">Seguimiento de pedido</span>
+        </div>
 
-      <div className="rounded-lg border border-black/10 bg-surface p-6 dark:border-white/10">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <Car size={16} className="text-muted" />
-            <span className="text-sm font-medium text-foreground">
-              {vehicle || "Pedido"}
-            </span>
+        <Ticket
+          stub={
+            <dl className="flex flex-wrap gap-x-10 gap-y-3">
+              {folio ? (
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Folio</dt>
+                  <dd className="mt-1 font-code text-base font-semibold">{folio}</dd>
+                </div>
+              ) : null}
+              <div>
+                <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Recibido</dt>
+                <dd className="mt-1 text-base font-semibold">{started}</dd>
+              </div>
+              {order.total_price !== null ? (
+                <div>
+                  <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Total</dt>
+                  <dd className="mt-1 font-display text-2xl font-extrabold leading-none text-brand-yellow">
+                    ${order.total_price.toLocaleString("es-MX")}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          }
+        >
+          <div className="flex flex-wrap items-start justify-between gap-5">
+            <div className="min-w-0">
+              <p className="font-display text-sm font-bold uppercase tracking-[0.18em] text-brand-yellow">Orden de trabajo</p>
+              <h1 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.9] sm:text-6xl">
+                {vehicle || "Pedido"}
+              </h1>
+            </div>
+            <Stamp label={statusLabels[order.status] ?? order.status} size="md" />
           </div>
-          <span className="rounded-full bg-brand-yellow/20 px-3 py-1 text-xs font-medium text-brand-yellow-dark dark:text-brand-yellow">
-            {statusLabels[order.status] ?? order.status}
-          </span>
-        </div>
-
-        <div className="mb-4 flex items-center gap-1.5 text-xs text-muted">
-          <Calendar size={12} />
-          Iniciado el{" "}
-          {new Date(order.created_at).toLocaleDateString("es-MX", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
-        </div>
+        </Ticket>
 
         {items.length > 0 ? (
-          <div className="mb-4 border-t border-black/10 pt-4 dark:border-white/10">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
-              Servicios
-            </p>
-            <div className="space-y-2">
+          <section className={card}>
+            <h2 className={h2}>Servicios</h2>
+            <ul className="divide-y divide-seam">
               {items.map((item, i) => (
-                <div key={i} className="flex items-center justify-between text-sm">
-                  <div>
-                    <p className="text-foreground">
-                      {items.length > 1 ? `${i + 1}. ` : ""}
-                      {item.service_title}
-                    </p>
-                    {item.material_label ? (
-                      <p className="text-xs text-muted">{item.material_label}</p>
-                    ) : null}
+                <li key={i} className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0">
+                  <div className="flex min-w-0 gap-3">
+                    <span className="font-display text-lg font-extrabold leading-6 text-yellow-text">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-foreground">{item.service_title}</p>
+                      {item.material_label ? <p className="text-sm text-muted">{item.material_label}</p> : null}
+                    </div>
                   </div>
                   {item.price !== null ? (
-                    <p className="font-medium text-foreground">
+                    <p className="shrink-0 font-display text-xl font-bold text-foreground">
                       ${item.price.toLocaleString("es-MX")}
                     </p>
                   ) : null}
-                </div>
+                </li>
               ))}
-            </div>
-            {order.total_price !== null ? (
-              <div className="mt-3 flex items-center justify-between border-t border-black/10 pt-3 text-sm font-semibold dark:border-white/10">
-                <span className="text-foreground">Total</span>
-                <span className="text-foreground">
-                  ${order.total_price.toLocaleString("es-MX")}
-                </span>
-              </div>
-            ) : null}
-          </div>
+            </ul>
+          </section>
         ) : null}
 
         {stageGroups.length > 0 ? (
-          <div className="mb-4 border-t border-black/10 pt-4 dark:border-white/10">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
-              Avance por servicio
-            </p>
-            <div className="space-y-4">
-              {stageGroups.map((group) => (
-                <div key={group.itemId}>
-                  <p className="text-sm text-foreground">{group.serviceTitle}</p>
-                  <ServiceStageProgress
-                    stages={group.stages}
-                    currentStageId={group.currentStageId}
-                    completed={stagesCompleted}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        <div className="border-t border-black/10 pt-4 dark:border-white/10">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">
-            Seguimiento
-          </p>
-          <div className="space-y-3">
-            {(history as HistoryEntry[] | null)?.map((h, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="h-2 w-2 shrink-0 rounded-full bg-brand-yellow" />
-                <div>
-                  <p className="text-sm text-foreground">
-                    {statusLabels[h.status] ?? h.status}
-                  </p>
-                  <p className="text-xs text-muted">
-                    {new Date(h.created_at).toLocaleDateString("es-MX", {
-                      day: "numeric",
-                      month: "short",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
+          <section className={`${card} space-y-6`}>
+            <h2 className={`${h2} !mb-0`}>Avance en el taller</h2>
+            {stageGroups.map((group, i) => (
+              <div key={group.itemId} className={i > 0 ? "border-t-2 border-dashed border-seam pt-6" : ""}>
+                {stageGroups.length > 1 ? (
+                  <p className="mb-3 font-display text-xl font-bold uppercase text-foreground">{group.serviceTitle}</p>
+                ) : null}
+                <StageStepper stages={group.stages} currentStageId={group.currentStageId} completed={stagesCompleted} />
               </div>
             ))}
-          </div>
-        </div>
-      </div>
+          </section>
+        ) : null}
 
-      <p className="mt-6 text-center text-xs text-muted">
-        Este es un enlace de solo consulta compartido por {businessInfo.name}.
-      </p>
+        <section className={card}>
+          <h2 className={h2}>Historial</h2>
+          <ol className="relative space-y-4 border-l-2 border-dashed border-seam pl-5">
+            {(history as HistoryEntry[] | null)?.map((h, i) => (
+              <li key={i} className="relative">
+                <span className="absolute -left-[27px] top-1.5 h-3 w-3 rounded-full border-2 border-ink bg-brand-yellow dark:border-white" />
+                <p className="font-semibold text-foreground">{statusLabels[h.status] ?? h.status}</p>
+                <p className="text-sm text-muted">
+                  {new Date(h.created_at).toLocaleString("es-MX", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    timeZone: "America/Merida",
+                  })}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <p className="text-center text-sm text-muted">
+          Enlace de solo consulta compartido por {businessInfo.name}.
+        </p>
+      </div>
     </div>
   );
 }
