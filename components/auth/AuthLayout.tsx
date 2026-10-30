@@ -1,5 +1,6 @@
 import { BrandLogo } from "@/components/auth/BrandLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { TextSizeButton } from "@/components/a11y/TextSizeButton";
 import Image from "next/image";
 import Link from "next/link";
 import { buttonClass, fieldClass } from "@/components/taller";
@@ -54,29 +55,30 @@ export function AuthLayout({
 
         <div className="relative z-10 flex h-full flex-col justify-between gap-10 p-12 xl:p-14">
           <Link href="/" className="block w-fit">
-            <p className="font-display text-[34px] font-extrabold uppercase leading-none">Novo</p>
+            <p className="font-display text-[2.125rem] font-extrabold uppercase leading-none">Novo</p>
             <p className="mt-1 text-xs uppercase tracking-[0.16em] text-on-ink-muted">
               Tapicería automotriz · Mérida
             </p>
           </Link>
 
           <div className="max-w-md">
-            <h2 className="font-display text-6xl font-extrabold uppercase leading-[0.92] xl:text-[76px]">
+            <h2 className="font-display text-6xl font-extrabold uppercase leading-[0.92] xl:text-[4.75rem]">
               {panelTitle}
             </h2>
             {panelBody ? (
-              <p className="mt-5 text-[17px] leading-relaxed text-[#d9d5cc]">{panelBody}</p>
+              <p className="mt-5 text-[1.0625rem] leading-relaxed text-[#d9d5cc]">{panelBody}</p>
             ) : null}
             {panelExtra ? <div className="mt-8">{panelExtra}</div> : null}
           </div>
 
-          <p className="text-[13px] text-on-ink-muted">Trabajo hecho a mano en Mérida, Yucatán</p>
+          <p className="text-[0.8125rem] text-on-ink-muted">Trabajo hecho a mano en Mérida, Yucatán</p>
         </div>
       </div>
 
       {/* Formulario */}
       <div className="relative flex items-start justify-center px-5 pb-12 pt-10 sm:items-center sm:px-10 sm:py-14">
-        <div className="absolute right-5 top-5 sm:right-8 sm:top-8">
+        <div className="absolute right-5 top-5 flex items-center gap-2 sm:right-8 sm:top-8">
+          <TextSizeButton />
           <ThemeToggle />
         </div>
 
@@ -88,14 +90,14 @@ export function AuthLayout({
           <p className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-yellow-text">
             {eyebrow}
           </p>
-          <h1 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+          <h1 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
             {title}
           </h1>
           {subtitle ? <p className="mt-2.5 text-base text-muted">{subtitle}</p> : null}
 
           <div className="mt-7">{children}</div>
 
-          <div className="mt-8 text-center text-[15px] text-muted">{footer}</div>
+          <div className="mt-8 text-center text-[0.9375rem] text-muted">{footer}</div>
 
           {mobileExtra ? <div className="mt-8 lg:hidden">{mobileExtra}</div> : null}
         </div>
@@ -134,7 +136,7 @@ export function AuthField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-1.5 block text-[15px] font-semibold text-foreground">
+      <label htmlFor={id} className="mb-1.5 block text-[0.9375rem] font-semibold text-foreground">
         {label}
       </label>
       {children}
@@ -145,9 +147,9 @@ export function AuthField({
 
 export const inputClassName = fieldClass;
 
-export const submitButtonClassName = `${buttonClass("primary", "lg")} w-full !text-[17px] !font-bold`;
+export const submitButtonClassName = `${buttonClass("primary", "lg")} w-full !text-[1.0625rem] !font-bold`;
 
 export const secondaryButtonClassName = `${buttonClass("outline", "lg")} w-full`;
 
 export const formErrorClassName =
-  "rounded-xl border-[1.5px] border-brand-red-dark/40 bg-brand-red/5 px-4 py-3 text-[15px] text-brand-red-dark dark:text-brand-red";
+  "rounded-xl border-[1.5px] border-brand-red-dark/40 bg-brand-red/5 px-4 py-3 text-[0.9375rem] text-brand-red-dark dark:text-brand-red";

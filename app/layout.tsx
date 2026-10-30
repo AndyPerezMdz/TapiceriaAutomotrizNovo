@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { ToastProvider } from "@/components/shared/ToastProvider";
 import { RegisterServiceWorker } from "@/components/shared/RegisterServiceWorker";
+import { a11yBootScript } from "@/lib/a11y/preferences";
 
 const barlow = Barlow({
   subsets: ["latin"],
@@ -53,6 +54,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${barlow.variable} ${barlowCondensed.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        {/* Tamaño de letra, contraste y animaciones elegidos por el usuario (antes de pintar). */}
+        <script dangerouslySetInnerHTML={{ __html: a11yBootScript }} />
+      </head>
       <body>
         <RegisterServiceWorker />
         <ThemeProvider>

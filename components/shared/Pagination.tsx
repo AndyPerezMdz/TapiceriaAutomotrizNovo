@@ -13,11 +13,11 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   const base =
-    "inline-flex min-h-11 items-center gap-1.5 rounded-xl border-[1.5px] px-4 text-[15px] font-semibold transition";
+    "inline-flex min-h-11 items-center gap-1.5 rounded-xl border-[1.5px] px-4 text-[0.9375rem] font-semibold transition";
 
   return (
     <nav aria-label="Paginación" className="mt-6 flex flex-wrap items-center justify-between gap-3">
-      <p className="text-[15px] text-muted">
+      <p className="text-[0.9375rem] text-muted">
         Página {currentPage} de {totalPages}
       </p>
       <div className="flex gap-2">

@@ -10,7 +10,7 @@ interface Props {
 const sizes = {
   sm: { box: "border-2 rounded-[7px] px-2.5 py-1", text: "text-sm" },
   md: { box: "border-2 rounded-lg px-3.5 py-1.5", text: "text-xl" },
-  lg: { box: "border-[3px] rounded-[10px] px-5 py-2.5", text: "text-[28px]" },
+  lg: { box: "border-[3px] rounded-[10px] px-5 py-2.5", text: "text-[1.75rem]" },
 };
 
 /** Estado como sello de goma, ligeramente ladeado. */
@@ -25,7 +25,7 @@ export function Stamp({ label, detail, size = "md", tone = "yellow", className =
         {label}
       </p>
       {detail ? (
-        <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-on-ink-muted">{detail}</p>
+        <p className="mt-1 text-[0.6875rem] uppercase tracking-[0.12em] text-on-ink-muted">{detail}</p>
       ) : null}
     </div>
   );

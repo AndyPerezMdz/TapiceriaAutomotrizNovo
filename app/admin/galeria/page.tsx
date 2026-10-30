@@ -67,7 +67,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
         {isAdmin ? (
           <Link
             href="/admin/galeria/nueva"
-            className="flex items-center gap-1.5 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[15px] font-semibold text-ink transition min-h-11"
+            className="flex items-center gap-1.5 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[0.9375rem] font-semibold text-ink transition min-h-11"
           >
             <Plus size={16} /> Agregar foto
           </Link>
@@ -83,7 +83,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
       <div className="mb-6 flex flex-wrap gap-2">
         <a
           href="/admin/galeria"
-          className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
+          className={`rounded-full px-4 py-1.5 text-[0.9375rem] font-medium transition ${
             !service
               ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
               : "border-[1.5px] border-field-border text-muted hover:border-foreground"
@@ -95,7 +95,7 @@ export default async function AdminGaleriaPage({ searchParams }: Props) {
           <a
             key={s.id}
             href={`/admin/galeria?service=${s.id}`}
-            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[0.9375rem] font-medium transition ${
               service === s.id
                 ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
                 : "border-[1.5px] border-field-border text-muted hover:border-foreground"

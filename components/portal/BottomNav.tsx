@@ -13,7 +13,7 @@ const leftItems = [
 
 const rightItems = [{ href: "/portal/mis-citas", label: "Citas", icon: CalendarDays }];
 
-export function BottomNav() {
+export function BottomNav({ simple = false }: { simple?: boolean }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
 
@@ -22,9 +22,40 @@ export function BottomNav() {
   }
 
   function itemClass(active: boolean) {
-    return `flex min-h-14 flex-col items-center justify-center gap-1 rounded-[14px] text-[11px] transition ${
+    return `flex min-h-14 flex-col items-center justify-center gap-1 rounded-[14px] text-[0.6875rem] transition ${
       active ? "bg-brand-yellow font-semibold text-ink" : "text-[#d9d5cc]"
     }`;
+  }
+
+  if (simple) {
+    // Modo sencillo: tres botones grandes.
+    return (
+      <>
+        <nav
+          aria-label="Portal"
+          className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 lg:hidden"
+        >
+          <div className="mx-auto grid max-w-md grid-cols-3 gap-1 rounded-[22px] bg-ink p-2 shadow-[0_8px_30px_rgba(0,0,0,0.25)] dark:ring-1 dark:ring-white/10">
+            <Link href="/portal" className={`${itemClass(isActive("/portal"))} !min-h-16 !text-[0.9375rem]`}>
+              <LayoutDashboard size={24} />
+              Inicio
+            </Link>
+            <Link
+              href="/portal/nuevo-pedido"
+              className={`${itemClass(isActive("/portal/nuevo-pedido"))} !min-h-16 !text-[0.9375rem]`}
+            >
+              <Plus size={26} strokeWidth={2.6} />
+              Pedir
+            </Link>
+            <button type="button" onClick={() => setMoreOpen(true)} className={`${itemClass(false)} !min-h-16 !text-[0.9375rem]`}>
+              <MoreHorizontal size={24} />
+              Más
+            </button>
+          </div>
+        </nav>
+        {moreOpen ? <MoreSheet onClose={() => setMoreOpen(false)} /> : null}
+      </>
+    );
   }
 
   return (

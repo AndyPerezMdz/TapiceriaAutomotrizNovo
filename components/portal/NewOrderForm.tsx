@@ -37,7 +37,7 @@ function NumberedSection({
         <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-ink font-display text-lg font-extrabold text-brand-yellow dark:ring-1 dark:ring-white/10">
           {n}
         </span>
-        <span className="font-display text-[26px] font-bold uppercase leading-none text-foreground">
+        <span className="font-display text-[1.625rem] font-bold uppercase leading-none text-foreground">
           {title}
         </span>
       </legend>
@@ -328,7 +328,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
   const vehicleSummary = [vehicleMake, vehicleModel, vehicleYear].filter(Boolean).join(" ");
 
   if (!initialLoaded) {
-    return <p className="text-[15px] text-muted">Cargando...</p>;
+    return <p className="text-[0.9375rem] text-muted">Cargando...</p>;
   }
 
   const missing = [
@@ -348,7 +348,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         {formError ? (
           <div
             role="alert"
-            className="rounded-xl border-[1.5px] border-brand-red-dark/40 bg-brand-red/5 px-4 py-3 text-[15px] text-brand-red-dark dark:text-brand-red"
+            className="rounded-xl border-[1.5px] border-brand-red-dark/40 bg-brand-red/5 px-4 py-3 text-[0.9375rem] text-brand-red-dark dark:text-brand-red"
           >
             {formError}
           </div>
@@ -395,7 +395,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               <button
                 type="button"
                 onClick={addLine}
-                className="mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-foreground"
+                className="mt-3 inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-semibold text-foreground"
               >
                 <Plus size={18} strokeWidth={2.4} /> Agregar otro servicio a este pedido
               </button>
@@ -408,7 +408,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
             <p className="text-base font-semibold text-foreground">
               Este color necesita una visita al taller
             </p>
-            <p className="mt-1.5 text-[15px] leading-relaxed text-foreground/80">
+            <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-foreground/80">
               Para pieles distintas al negro de fábrica tomamos una muestra de tu asiento y así
               igualamos el tono exacto. Agenda tu visita en línea o escríbenos.
             </p>
@@ -510,7 +510,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                 <p className={fieldErrorClass}>{fieldErrors.serviceDescription}</p>
               ) : null}
 
-              <p className="mb-2.5 mt-6 text-[15px] font-semibold text-foreground">
+              <p className="mb-2.5 mt-6 text-[0.9375rem] font-semibold text-foreground">
                 Fotos{" "}
                 <span className="font-normal text-muted">
                   (opcional, máx. {MAX_PHOTOS} · ayudan a cotizar más rápido)
@@ -532,7 +532,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                 ))}
 
                 {photos.length < MAX_PHOTOS ? (
-                  <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-field-border text-[15px] font-semibold text-foreground/80 transition hover:border-foreground">
+                  <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed border-field-border text-[0.9375rem] font-semibold text-foreground/80 transition hover:border-foreground">
                     <ImagePlus size={22} />
                     Agregar
                     <input
@@ -563,14 +563,14 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         aria-label="Resumen de tu solicitud"
         className="relative min-w-0 flex-[1_1_300px] overflow-hidden rounded-[18px] bg-ink px-6 py-7 text-on-ink lg:sticky lg:top-6 dark:ring-1 dark:ring-white/10"
       >
-        <p className="font-display text-[13px] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
+        <p className="font-display text-[0.8125rem] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
           Tu orden
         </p>
-        <p className="mt-1.5 font-display text-[34px] font-extrabold uppercase leading-none">
+        <p className="mt-1.5 font-display text-[2.125rem] font-extrabold uppercase leading-none">
           {vehicleSummary || "Tu vehículo"}
         </p>
         {!anyRequiresVisit && missing.length > 0 ? (
-          <p className="mt-1.5 text-[15px] text-on-ink-muted">Falta {missing.join(", ")}</p>
+          <p className="mt-1.5 text-[0.9375rem] text-on-ink-muted">Falta {missing.join(", ")}</p>
         ) : null}
 
         <ul className="mt-5 space-y-3">
@@ -583,12 +583,12 @@ export function NewOrderForm({ services }: { services: Service[] }) {
                 aria-hidden="true"
               />
               <div className="min-w-0">
-                <p className="text-[15px] font-semibold">
+                <p className="text-[0.9375rem] font-semibold">
                   {line.selection.serviceName ??
                     `Servicio ${stack.length > 1 ? index + 1 : ""} sin elegir`}
                 </p>
                 {line.selection.materialName ? (
-                  <p className="text-[13px] text-[#bdbab3]">
+                  <p className="text-[0.8125rem] text-[#bdbab3]">
                     {line.selection.materialName}
                     {line.selection.colorName ? ` · ${line.selection.colorName}` : ""}
                   </p>
@@ -599,7 +599,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           {photos.length > 0 ? (
             <li className="flex items-start gap-2.5">
               <Check size={18} strokeWidth={2.6} className="mt-0.5 shrink-0 text-brand-yellow" aria-hidden="true" />
-              <p className="text-[15px]">
+              <p className="text-[0.9375rem]">
                 {photos.length} {photos.length === 1 ? "foto adjunta" : "fotos adjuntas"}
               </p>
             </li>
@@ -607,7 +607,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
           {selectedCouponId ? (
             <li className="flex items-start gap-2.5">
               <Check size={18} strokeWidth={2.6} className="mt-0.5 shrink-0 text-brand-yellow" aria-hidden="true" />
-              <p className="text-[15px]">Cupón aplicado</p>
+              <p className="text-[0.9375rem]">Cupón aplicado</p>
             </li>
           ) : null}
         </ul>
@@ -619,13 +619,13 @@ export function NewOrderForm({ services }: { services: Service[] }) {
         </div>
 
         {anyRequiresVisit ? (
-          <p className="text-[15px] leading-relaxed text-[#d9d5cc]">
+          <p className="text-[0.9375rem] leading-relaxed text-[#d9d5cc]">
             Primero agenda tu visita para tomar la muestra del color. Ahí mismo armamos tu
             cotización.
           </p>
         ) : (
           <>
-            <p className="text-[15px] leading-relaxed text-[#d9d5cc]">
+            <p className="text-[0.9375rem] leading-relaxed text-[#d9d5cc]">
               Revisamos tu solicitud y te mandamos el precio de cada servicio. Tú decides si la
               aceptas.
             </p>
@@ -633,7 +633,7 @@ export function NewOrderForm({ services }: { services: Service[] }) {
               type="submit"
               form="new-order-form"
               disabled={isLoading}
-              className={`${buttonClass("primary", "lg")} mt-4 w-full !text-[17px] !font-bold`}
+              className={`${buttonClass("primary", "lg")} mt-4 w-full !text-[1.0625rem] !font-bold`}
             >
               {isLoading ? "Enviando…" : "Enviar solicitud"}
             </button>

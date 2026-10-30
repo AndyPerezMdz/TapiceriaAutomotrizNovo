@@ -114,8 +114,8 @@ export function OrderStagesPanel({ items }: { items: StageItem[] }) {
 
   return (
     <div className="rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
-      <h2 className="font-display text-[28px] font-bold uppercase leading-none text-foreground">Etapas</h2>
-      <p className="mb-5 mt-2 text-[15px] text-muted">
+      <h2 className="font-display text-[1.75rem] font-bold uppercase leading-none text-foreground">Etapas</h2>
+      <p className="mb-5 mt-2 text-[0.9375rem] text-muted">
         Lo que cambies aquí lo ve el cliente en su pedido al momento.
       </p>
 
@@ -133,7 +133,7 @@ export function OrderStagesPanel({ items }: { items: StageItem[] }) {
               className="rounded-2xl border-[1.5px] border-seam p-5"
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[17px] font-semibold text-foreground">
+                <p className="text-[1.0625rem] font-semibold text-foreground">
                   {item.serviceTitle ?? "Servicio"}
                 </p>
                 {currentStage ? (
@@ -144,7 +144,7 @@ export function OrderStagesPanel({ items }: { items: StageItem[] }) {
               </div>
 
               {list.length === 0 ? (
-                <p className="mt-2 text-[15px] text-muted">
+                <p className="mt-2 text-[0.9375rem] text-muted">
                   Este servicio todavía no tiene etapas. El admin puede agregarlas desde
                   Servicios.
                 </p>
@@ -189,14 +189,14 @@ export function OrderStagesPanel({ items }: { items: StageItem[] }) {
                         type="button"
                         onClick={() => changeStage(item, next.id)}
                         disabled={busyItem === item.id}
-                        className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-ink px-5 text-[15px] font-semibold text-brand-yellow transition hover:bg-ink-soft disabled:opacity-60 dark:ring-1 dark:ring-white/10"
+                        className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-ink px-5 text-[0.9375rem] font-semibold text-brand-yellow transition hover:bg-ink-soft disabled:opacity-60 dark:ring-1 dark:ring-white/10"
                       >
                         {currentStage ? "Pasar a" : "Iniciar:"} {next.name}
                         <ArrowRight size={17} />
                       </button>
                     </div>
                   ) : (
-                    <p className="text-[15px] font-semibold text-foreground">
+                    <p className="text-[0.9375rem] font-semibold text-foreground">
                       ✓ Este servicio ya llegó a su última etapa.
                     </p>
                   )}
@@ -208,7 +208,7 @@ export function OrderStagesPanel({ items }: { items: StageItem[] }) {
       </div>
 
       <div className="mt-5 flex min-h-11 items-center justify-between gap-3">
-        <span className="text-[15px] text-foreground">Avisar al cliente por notificación</span>
+        <span className="text-[0.9375rem] text-foreground">Avisar al cliente por notificación</span>
         <button
           type="button"
           role="switch"
@@ -229,7 +229,7 @@ export function OrderStagesPanel({ items }: { items: StageItem[] }) {
 
       {history.length > 0 ? (
         <div className="mt-5 border-t-2 border-dashed border-seam pt-4">
-          <p className="mb-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-muted">Cambios recientes</p>
+          <p className="mb-2 text-[0.8125rem] font-semibold uppercase tracking-[0.12em] text-muted">Cambios recientes</p>
           <div className="space-y-1.5">
             {history.map((h) => {
               const serviceTitle = items.find((i) => i.id === h.order_item_id)?.serviceTitle;

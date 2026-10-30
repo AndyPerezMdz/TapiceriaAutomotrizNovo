@@ -83,16 +83,16 @@ export default async function AdminHistorialPage({ searchParams }: Props) {
                     >
                       {entry.action}
                     </span>
-                    <span className="text-[15px] font-medium text-foreground">
+                    <span className="text-[0.9375rem] font-medium text-foreground">
                       {entry.entity_type}: {entry.entity_label}
                     </span>
                   </div>
                   {entry.details ? (
-                    <p className="mt-1 break-words text-[15px] text-muted">{entry.details}</p>
+                    <p className="mt-1 break-words text-[0.9375rem] text-muted">{entry.details}</p>
                   ) : null}
-                  <p className="mt-1 text-[13px] text-muted">Por {entry.actor_name ?? "Sistema"}</p>
+                  <p className="mt-1 text-[0.8125rem] text-muted">Por {entry.actor_name ?? "Sistema"}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1 text-[13px] text-muted">
+                <div className="flex shrink-0 items-center gap-1 text-[0.8125rem] text-muted">
                   <Clock size={12} />
                   {new Date(entry.created_at).toLocaleString("es-MX", {
                     day: "numeric",

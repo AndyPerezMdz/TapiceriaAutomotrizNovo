@@ -3,7 +3,9 @@ import { StaffAvatarUploader } from "@/components/admin/StaffAvatarUploader";
 import { StaffProfileForm } from "@/components/admin/StaffProfileForm";
 import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
 import { createClient } from "@/lib/supabase/server";
-import { BookOpen, KeyRound, UserRound } from "lucide-react";
+import { Accessibility, BookOpen, KeyRound, UserRound } from "lucide-react";
+import { AccessibilitySettings } from "@/components/a11y/AccessibilitySettings";
+import { prefsFromProfile } from "@/lib/a11y/preferences";
 import Link from "next/link";
 
 const MANUALES = "https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/public/manuales";
@@ -11,6 +13,7 @@ const MANUALES = "https://uselstfcbygkzohamzhd.supabase.co/storage/v1/object/pub
 const tabs = [
   { value: "datos", label: "Mis datos", icon: UserRound },
   { value: "seguridad", label: "Contraseña", icon: KeyRound },
+  { value: "accesibilidad", label: "Accesibilidad", icon: Accessibility },
   { value: "ayuda", label: "Manuales", icon: BookOpen },
 ] as const;
 
@@ -38,7 +41,7 @@ export default async function StaffPerfilPage({ searchParams }: Props) {
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("full_name, phone, email, avatar_url, role, created_at")
+        .select("full_name, phone, email, avatar_url, role, created_at, ui_mode, text_size, high_contrast, reduce_motion")
         .eq("id", user.id)
         .single()
     : { data: null };
@@ -50,7 +53,7 @@ export default async function StaffPerfilPage({ searchParams }: Props) {
     : null;
 
   const card = "rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5";
-  const h2 = "mb-5 font-display text-[28px] font-bold uppercase leading-none text-foreground";
+  const h2 = "mb-5 font-display text-[1.75rem] font-bold uppercase leading-none text-foreground";
 
   return (
     <div className="max-w-5xl space-y-6">
@@ -96,7 +99,7 @@ export default async function StaffPerfilPage({ searchParams }: Props) {
                     href={`/admin/perfil?tab=${t.value}`}
                     scroll={false}
                     aria-current={active ? "page" : undefined}
-                    className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-xl px-4 text-[15px] transition ${
+                    className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-xl px-4 text-[0.9375rem] transition ${
                       active
                         ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
                         : "bg-surface text-foreground hover:ring-1 hover:ring-foreground/30 dark:ring-1 dark:ring-white/5"
@@ -127,6 +130,13 @@ export default async function StaffPerfilPage({ searchParams }: Props) {
             <section className={card}>
               <h2 className={h2}>Contraseña</h2>
               <ChangePasswordForm />
+            </section>
+          ) : null}
+
+          {tab === "accesibilidad" ? (
+            <section className={card}>
+              <h2 className={h2}>Accesibilidad</h2>
+              <AccessibilitySettings initial={prefsFromProfile(profile)} />
             </section>
           ) : null}
 

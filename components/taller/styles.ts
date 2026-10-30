@@ -20,7 +20,7 @@ const buttonVariants: Record<ButtonVariant, string> = {
 };
 
 const buttonSizes: Record<ButtonSize, string> = {
-  md: "min-h-11 px-4 text-[15px]",
+  md: "min-h-11 px-4 text-[0.9375rem]",
   lg: "min-h-[52px] px-6 text-base",
 };
 
@@ -28,7 +28,7 @@ export function buttonClass(variant: ButtonVariant = "primary", size: ButtonSize
   return `${buttonBase} ${buttonVariants[variant]} ${buttonSizes[size]}`;
 }
 
-export const labelClass = "mb-1.5 block text-[15px] font-semibold text-foreground";
+export const labelClass = "mb-1.5 block text-[0.9375rem] font-semibold text-foreground";
 
 export const fieldClass =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none aria-[invalid=true]:border-brand-red-dark aria-[invalid=true]:bg-brand-red/5";

@@ -143,14 +143,14 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
     load();
   }
 
-  if (loading) return <p className="text-[15px] text-muted">Cargando etapas...</p>;
+  if (loading) return <p className="text-[0.9375rem] text-muted">Cargando etapas...</p>;
 
   return (
     <div className="space-y-3">
       {dialog}
 
       {stages.length === 0 ? (
-        <p className="rounded-2xl border-2 border-dashed border-field-border p-4 text-[15px] text-muted">
+        <p className="rounded-2xl border-2 border-dashed border-field-border p-4 text-[0.9375rem] text-muted">
           Este servicio todavía no tiene etapas. Agrega la primera abajo.
         </p>
       ) : null}
@@ -180,13 +180,13 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
               <div className="flex gap-2">
                 <button
                   onClick={() => saveEdit(stage.id)}
-                  className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
+                  className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
                 >
                   Guardar
                 </button>
                 <button
                   onClick={() => setEditingId(null)}
-                  className="flex items-center gap-1 rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[13px] font-medium text-foreground min-h-11"
+                  className="flex items-center gap-1 rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[0.8125rem] font-medium text-foreground min-h-11"
                 >
                   <X size={12} /> Cancelar
                 </button>
@@ -195,13 +195,13 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
           ) : (
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 gap-3">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-highlight text-[13px] font-semibold text-yellow-text">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-highlight text-[0.8125rem] font-semibold text-yellow-text">
                   {index + 1}
                 </span>
                 <div className="min-w-0">
-                  <p className="text-[15px] font-medium text-foreground">{stage.name}</p>
+                  <p className="text-[0.9375rem] font-medium text-foreground">{stage.name}</p>
                   {stage.client_description ? (
-                    <p className="mt-0.5 text-[13px] text-muted">{stage.client_description}</p>
+                    <p className="mt-0.5 text-[0.8125rem] text-muted">{stage.client_description}</p>
                   ) : null}
                 </div>
               </div>
@@ -231,7 +231,7 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
                 </button>
                 <button
                   onClick={() => toggleActive(stage)}
-                  className="rounded px-2 py-1 text-[11px] font-medium text-muted transition hover:bg-black/5 dark:hover:bg-white/5"
+                  className="rounded px-2 py-1 text-[0.6875rem] font-medium text-muted transition hover:bg-black/5 dark:hover:bg-white/5"
                 >
                   {stage.is_active ? "Desactivar" : "Activar"}
                 </button>
@@ -249,7 +249,7 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
       ))}
 
       <div className="rounded-2xl border-2 border-dashed border-field-border p-3">
-        <p className="mb-2 text-[15px] font-medium text-foreground">Agregar etapa</p>
+        <p className="mb-2 text-[0.9375rem] font-medium text-foreground">Agregar etapa</p>
         <div className="space-y-2">
           <input
             value={newName}
@@ -266,7 +266,7 @@ export function ServiceStagesManager({ serviceId }: { serviceId: string }) {
           />
           <button
             onClick={addStage}
-            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11"
+            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11"
           >
             <Plus size={14} /> Agregar
           </button>

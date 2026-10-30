@@ -1,5 +1,10 @@
 import { ActiveOrderTicket, type TicketService } from "@/components/portal/ActiveOrderTicket";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ModeChooser } from "@/components/portal/ModeChooser";
+import { SimpleHome, type SimpleOrder } from "@/components/portal/SimpleHome";
+import { prefsFromProfile } from "@/lib/a11y/preferences";
+import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getBusinessSettings } from "@/lib/data/business-settings";
 import {
   SectionTitle,
   StatusTag,
@@ -48,7 +53,11 @@ export default async function PortalDashboardPage() {
     { data: activeCoupon },
   ] = await Promise.all([
     user
-      ? supabase.from("profiles").select("full_name").eq("id", user.id).single()
+      ? supabase
+          .from("profiles")
+          .select("full_name, ui_mode, text_size, high_contrast, reduce_motion, ui_mode_chosen")
+          .eq("id", user.id)
+          .single()
       : Promise.resolve({ data: null }),
     supabase
       .from("orders")
@@ -151,14 +160,46 @@ export default async function PortalDashboardPage() {
       : `$${Number(coupon.discount_value).toLocaleString("es-MX")} menos`
     : null;
 
+  const prefs = prefsFromProfile(profile);
+
+  if (prefs.uiMode === "sencillo") {
+    const settings = await getBusinessSettings();
+    const toSimple = (o: (typeof allOrders)[number]): SimpleOrder => {
+      const first = ticketServices((o.order_items ?? []) as unknown as OrderItemRow[]).find(
+        (sv) => sv.currentIndex !== -1,
+      );
+      return {
+        id: o.id,
+        vehicle: vehicleOf(o),
+        statusLabel: statusLabels[o.status] ?? o.status,
+        stageText:
+          o.status === "listo_para_entrega"
+            ? "Listo para que pases por él"
+            : first
+              ? `${first.currentName} · paso ${first.currentIndex + 1} de ${first.stageCount}`
+              : null,
+        price: o.estimated_price ? Number(o.estimated_price) : null,
+      };
+    };
+    return (
+      <SimpleHome
+        firstName={firstName ?? null}
+        quotes={waitingQuote.map(toSimple)}
+        inShop={inShop.map(toSimple)}
+        reviewing={inReview.map(toSimple)}
+        whatsappHref={buildWhatsAppLink("Hola, tengo una duda sobre mi pedido.", settings.whatsapp)}
+      />
+    );
+  }
+
   const hasAnything = allOrders.some((o) => !["rechazado", "cancelado"].includes(o.status));
 
   return (
     <div className="space-y-10">
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div>
-          <p className="text-[15px] capitalize text-muted">{todayLabel}</p>
-          <h1 className={`${displayClass} mt-1.5 text-5xl text-foreground sm:text-[64px]`}>
+          <p className="text-[0.9375rem] capitalize text-muted">{todayLabel}</p>
+          <h1 className={`${displayClass} mt-1.5 text-5xl text-foreground sm:text-[4rem]`}>
             Hola{firstName ? `, ${firstName}` : ""}
           </h1>
         </div>
@@ -166,6 +207,8 @@ export default async function PortalDashboardPage() {
           <Plus size={18} strokeWidth={2.4} /> Nuevo pedido
         </Link>
       </header>
+
+      {profile && !profile.ui_mode_chosen ? <ModeChooser current={prefs} /> : null}
 
       {!hasAnything ? (
         <EmptyState
@@ -192,7 +235,7 @@ export default async function PortalDashboardPage() {
                       <p className="text-lg font-semibold text-foreground">
                         Tu cotización está lista · {vehicleOf(o)}
                       </p>
-                      <p className="mt-0.5 text-[15px] text-muted">
+                      <p className="mt-0.5 text-[0.9375rem] text-muted">
                         {o.estimated_price
                           ? `$${Number(o.estimated_price).toLocaleString("es-MX")} · `
                           : ""}
@@ -239,8 +282,8 @@ export default async function PortalDashboardPage() {
                     }`}
                   >
                     <div className="min-w-0">
-                      <p className="text-[17px] font-semibold text-foreground">{vehicleOf(o)}</p>
-                      <p className="mt-0.5 truncate text-[15px] text-muted">
+                      <p className="text-[1.0625rem] font-semibold text-foreground">{vehicleOf(o)}</p>
+                      <p className="mt-0.5 truncate text-[0.9375rem] text-muted">
                         Te mandamos la cotización pronto
                       </p>
                     </div>
@@ -258,24 +301,24 @@ export default async function PortalDashboardPage() {
           <p className={eyebrowClass}>Próxima cita</p>
           {nextAppointment ? (
             <>
-              <p className={`${displayClass} mt-2.5 text-[40px] text-foreground`}>
+              <p className={`${displayClass} mt-2.5 text-[2.5rem] text-foreground`}>
                 {new Date(`${nextAppointment.appointment_date}T12:00:00`).toLocaleDateString(
                   "es-MX",
                   { weekday: "short", day: "numeric", month: "short" },
                 )}
               </p>
-              <p className="mt-1.5 text-[15px] text-muted">
+              <p className="mt-1.5 text-[0.9375rem] text-muted">
                 {nextAppointment.appointment_time?.slice(0, 5)}
                 {nextAppointment.status === "pendiente" ? " · por confirmar" : ""}
               </p>
             </>
           ) : (
-            <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+            <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
               No tienes citas. Solo se agenda una si eliges una piel que necesita muestra de color.
             </p>
           )}
           {nextAppointment ? (
-            <Link href="/portal/mis-citas" className="mt-2 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+            <Link href="/portal/mis-citas" className="mt-2 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
               Ver mis citas
             </Link>
           ) : null}
@@ -283,7 +326,7 @@ export default async function PortalDashboardPage() {
 
         <article className={cardClass}>
           <p className={eyebrowClass}>Tus puntos</p>
-          <p className={`${displayClass} mt-2.5 text-[40px] text-foreground`}>
+          <p className={`${displayClass} mt-2.5 text-[2.5rem] text-foreground`}>
             {balance.toLocaleString("es-MX")}
           </p>
           {goal > 0 ? (
@@ -291,14 +334,14 @@ export default async function PortalDashboardPage() {
               <div className="mt-3 h-2 rounded-full bg-seam">
                 <div className="h-2 rounded-full bg-foreground" style={{ width: `${progress}%` }} />
               </div>
-              <p className="mt-2 text-[15px] text-muted">
+              <p className="mt-2 text-[0.9375rem] text-muted">
                 {balance >= goal
                   ? "Ya puedes canjear un cupón"
                   : `Te faltan ${(goal - balance).toLocaleString("es-MX")} para tu próximo cupón`}
               </p>
             </>
           ) : null}
-          <Link href="/portal/puntos" className="mt-1 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+          <Link href="/portal/puntos" className="mt-1 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
             Ver puntos
           </Link>
         </article>
@@ -307,10 +350,10 @@ export default async function PortalDashboardPage() {
           <article className="relative overflow-hidden rounded-[18px] bg-brand-yellow p-5 text-ink sm:p-7">
             <span aria-hidden="true" className="absolute inset-2 rounded-xl border-2 border-dashed border-ink/35" />
             <div className="relative">
-              <p className="text-[13px] uppercase tracking-[0.14em] text-[#3d3200]">Cupón activo</p>
-              <p className={`${displayClass} mt-2.5 text-[40px]`}>{couponLabel}</p>
-              <p className="mt-1.5 text-[15px] text-[#2b2400]">{coupon?.title}</p>
-              <Link href="/portal/cupones" className="mt-1 inline-flex min-h-11 items-center text-[15px] font-semibold">
+              <p className="text-[0.8125rem] uppercase tracking-[0.14em] text-[#3d3200]">Cupón activo</p>
+              <p className={`${displayClass} mt-2.5 text-[2.5rem]`}>{couponLabel}</p>
+              <p className="mt-1.5 text-[0.9375rem] text-[#2b2400]">{coupon?.title}</p>
+              <Link href="/portal/cupones" className="mt-1 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold">
                 Ver cupones
               </Link>
             </div>
@@ -318,8 +361,8 @@ export default async function PortalDashboardPage() {
         ) : (
           <article className="relative overflow-hidden rounded-[18px] border-2 border-dashed border-field-border p-5 sm:p-7">
             <p className={eyebrowClass}>Cupones</p>
-            <p className="mt-2.5 text-[15px] text-muted">No tienes un cupón activo.</p>
-            <Link href="/portal/cupones" className="mt-2 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+            <p className="mt-2.5 text-[0.9375rem] text-muted">No tienes un cupón activo.</p>
+            <Link href="/portal/cupones" className="mt-2 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
               Ver cupones disponibles
             </Link>
           </article>
@@ -330,7 +373,7 @@ export default async function PortalDashboardPage() {
         <section className="space-y-3">
           <SectionTitle
             action={
-              <Link href="/portal/pedidos" className="inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+              <Link href="/portal/pedidos" className="inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
                 Ver historial
               </Link>
             }
@@ -352,8 +395,8 @@ export default async function PortalDashboardPage() {
                   }`}
                 >
                   <div className="min-w-0">
-                    <p className="text-[17px] font-semibold text-foreground">{vehicleOf(o)}</p>
-                    <p className="mt-0.5 truncate text-[15px] text-muted">
+                    <p className="text-[1.0625rem] font-semibold text-foreground">{vehicleOf(o)}</p>
+                    <p className="mt-0.5 truncate text-[0.9375rem] text-muted">
                       {[firstService, delivered ? `entregado ${delivered}` : null]
                         .filter(Boolean)
                         .join(" · ")}

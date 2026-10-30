@@ -78,7 +78,7 @@ export function StaffResetPasswordForm() {
             Nueva contraseña
           </label>
           <input id="password" name="password" type="password" autoComplete="new-password" className={staffFieldClass} disabled={isLoading} />
-          <p className="mt-1.5 text-[13px] text-on-ink-muted">Mínimo 8 caracteres</p>
+          <p className="mt-1.5 text-[0.8125rem] text-on-ink-muted">Mínimo 8 caracteres</p>
         </div>
         <div>
           <label htmlFor="confirmPassword" className={staffLabelClass}>

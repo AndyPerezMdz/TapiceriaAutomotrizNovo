@@ -34,10 +34,10 @@ export function BeforeAfter({ before, after, caption }: Props) {
         ↔
       </div>
 
-      <span className="pointer-events-none absolute left-3.5 top-3.5 -rotate-[5deg] rounded-[7px] border-2 border-ink bg-white/85 px-2.5 py-1 font-display text-[15px] font-extrabold uppercase leading-none tracking-[0.06em] text-ink">
+      <span className="pointer-events-none absolute left-3.5 top-3.5 -rotate-[5deg] rounded-[7px] border-2 border-ink bg-white/85 px-2.5 py-1 font-display text-[0.9375rem] font-extrabold uppercase leading-none tracking-[0.06em] text-ink">
         Antes
       </span>
-      <span className="pointer-events-none absolute right-3.5 top-3.5 -rotate-[5deg] rounded-[7px] border-2 border-brand-yellow bg-ink/70 px-2.5 py-1 font-display text-[15px] font-extrabold uppercase leading-none tracking-[0.06em] text-brand-yellow">
+      <span className="pointer-events-none absolute right-3.5 top-3.5 -rotate-[5deg] rounded-[7px] border-2 border-brand-yellow bg-ink/70 px-2.5 py-1 font-display text-[0.9375rem] font-extrabold uppercase leading-none tracking-[0.06em] text-brand-yellow">
         Después
       </span>
 

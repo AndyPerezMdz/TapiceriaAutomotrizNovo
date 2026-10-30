@@ -94,7 +94,7 @@ export default async function HistorialPedidosPage({ searchParams }: Props) {
       </div>
 
       {count !== null && count !== undefined ? (
-        <p className="text-[15px] text-muted">
+        <p className="text-[0.9375rem] text-muted">
           {count} pedido{count === 1 ? "" : "s"}
         </p>
       ) : null}

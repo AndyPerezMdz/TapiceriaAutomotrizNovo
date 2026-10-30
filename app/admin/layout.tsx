@@ -1,6 +1,8 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { UserMenu } from "@/components/shared/UserMenu";
+import { A11ySync } from "@/components/a11y/A11ySync";
+import { prefsFromProfile } from "@/lib/a11y/preferences";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminLayout({
@@ -15,7 +17,7 @@ export default async function AdminLayout({
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("full_name, role, avatar_url")
+        .select("full_name, role, avatar_url, ui_mode, text_size, high_contrast, reduce_motion")
         .eq("id", user.id)
         .single()
     : { data: null };
@@ -54,6 +56,7 @@ export default async function AdminLayout({
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-4 sm:px-8 lg:px-10">{children}</main>
       </div>
+      {user ? <A11ySync prefs={prefsFromProfile(profile)} /> : null}
     </div>
   );
 }

@@ -51,7 +51,7 @@ export function AppointmentEditForm({
 
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-[13px] text-muted">Fecha</label>
+            <label className="mb-1 block text-[0.8125rem] text-muted">Fecha</label>
             <input
               type="date"
               value={date}
@@ -60,7 +60,7 @@ export function AppointmentEditForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-[13px] text-muted">Hora</label>
+            <label className="mb-1 block text-[0.8125rem] text-muted">Hora</label>
             <input
               type="time"
               value={time}
@@ -73,7 +73,7 @@ export function AppointmentEditForm({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="mt-4 w-full rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+          className="mt-4 w-full rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2.5 text-[0.9375rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
         >
           {isSaving ? "Guardando..." : "Guardar cambios"}
         </button>

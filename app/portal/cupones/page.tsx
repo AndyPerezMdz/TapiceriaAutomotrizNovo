@@ -64,14 +64,14 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Mis cupones
       </h1>
-      <p className="mb-6 text-[15px] text-muted">
+      <p className="mb-6 text-[0.9375rem] text-muted">
         {isFrequent
           ? "Gracias por ser cliente frecuente — estos son tus cupones."
           : "Descuentos disponibles para tu próximo pedido."}
       </p>
 
       {activeCouponId ? (
-        <div className="mb-6 rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-5 py-4 text-[15px] text-foreground">
+        <div className="mb-6 rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-5 py-4 text-[0.9375rem] text-foreground">
           Tienes un cupón activado — aparecerá automáticamente cuando cotices un
           servicio compatible.
         </div>
@@ -133,11 +133,11 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
                   </p>
                   <p className="mt-2 text-base font-semibold">{c.title}</p>
                   {c.description ? (
-                    <p className={`mt-1 text-[15px] ${activeTab === "activos" ? "text-[#2b2400]" : "text-muted"}`}>
+                    <p className={`mt-1 text-[0.9375rem] ${activeTab === "activos" ? "text-[#2b2400]" : "text-muted"}`}>
                       {c.description}
                     </p>
                   ) : null}
-                  <p className={`mt-2 text-[15px] ${activeTab === "activos" ? "text-[#3d3200]" : "text-muted"}`}>
+                  <p className={`mt-2 text-[0.9375rem] ${activeTab === "activos" ? "text-[#3d3200]" : "text-muted"}`}>
                     Válido en: {service ?? "cualquier servicio"}
                     {c.expires_at
                       ? ` · Vence ${new Date(`${c.expires_at}T00:00:00`).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`

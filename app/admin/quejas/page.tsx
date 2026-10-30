@@ -45,7 +45,7 @@ export default async function AdminQuejasPage({ searchParams }: Props) {
           <a
             key={filter.value}
             href={filter.value === "all" ? "/admin/quejas" : `/admin/quejas?status=${filter.value}`}
-            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[0.9375rem] font-medium transition ${
               activeFilter === filter.value
                 ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
                 : "border-[1.5px] border-field-border text-muted hover:border-foreground"
@@ -74,21 +74,21 @@ export default async function AdminQuejasPage({ searchParams }: Props) {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-medium text-foreground">{client?.full_name}</p>
-                    <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-muted">
+                    <p className="mt-0.5 flex items-center gap-1.5 text-[0.8125rem] text-muted">
                       <Calendar size={11} />
                       {new Date(c.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
                       {" · "}Folio {c.order_id.slice(0, 8).toUpperCase()}
                       {" · "}
                       {c.source === "web" ? "En línea" : "WhatsApp"}
                     </p>
-                    <p className="mt-1.5 truncate text-[15px] text-muted">{c.description}</p>
+                    <p className="mt-1.5 truncate text-[0.9375rem] text-muted">{c.description}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1.5">
                     <span className={`rounded-md px-2.5 py-1 font-display text-sm font-bold uppercase leading-none tracking-[0.08em] ${statusColors[c.status]}`}>
                       {c.status}
                     </span>
                     {c.satisfaction_rating ? (
-                      <span className="text-[13px] text-yellow-text">
+                      <span className="text-[0.8125rem] text-yellow-text">
                         {"★".repeat(c.satisfaction_rating)}
                       </span>
                     ) : null}

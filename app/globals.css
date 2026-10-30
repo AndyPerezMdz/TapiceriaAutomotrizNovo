@@ -191,3 +191,67 @@
   caret-color: var(--color-foreground);
   transition: background-color 9999s ease-out 0s;
 }
+
+/* ------------------------------------------------------------------
+   Accesibilidad: lo elige cada usuario (Mi perfil → Accesibilidad o el
+   botón "Aa" del login). Se aplica con atributos en <html>.
+   ------------------------------------------------------------------ */
+
+/* Tamaño de letra: todo el sitio usa rem, así que crece parejo. */
+html[data-text-size="grande"] {
+  font-size: 112.5%;
+}
+html[data-text-size="extra"] {
+  font-size: 125%;
+}
+
+/* Alto contraste: textos secundarios y bordes más oscuros. */
+html[data-contrast="alto"],
+html[data-contrast="alto"] .theme-taller {
+  --color-muted: #2e2d2a;
+  --color-on-ink-muted: #e6e3dc;
+  --color-seam: #8f8b83;
+  --color-field-border: #5c5a55;
+  --color-yellow-text: #4d3a00;
+}
+html[data-contrast="alto"].dark,
+html[data-contrast="alto"].dark .theme-taller {
+  --color-muted: #e6e3dc;
+  --color-seam: #8f8b83;
+  --color-field-border: #a8a49c;
+  --color-yellow-text: #ffd84d;
+}
+html[data-contrast="alto"] :focus-visible {
+  outline: 3px solid #f5c518;
+  outline-offset: 2px;
+}
+
+/* Menos animaciones: por elección o por la configuración del sistema. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-fade-up-on-scroll {
+    opacity: 1;
+    transform: none;
+    animation: none !important;
+  }
+}
+html[data-motion="reducido"] *,
+html[data-motion="reducido"] *::before,
+html[data-motion="reducido"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+html[data-motion="reducido"] .animate-fade-up-on-scroll {
+  opacity: 1;
+  transform: none;
+  animation: none !important;
+}

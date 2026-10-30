@@ -60,7 +60,7 @@ export function SiteFeedbackForm() {
         <button
           type="button"
           onClick={() => setType("sugerencia")}
-          className={`rounded-sm py-1.5 text-[15px] font-medium transition ${
+          className={`rounded-sm py-1.5 text-[0.9375rem] font-medium transition ${
             type === "sugerencia"
               ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
               : "text-muted hover:text-foreground"
@@ -71,7 +71,7 @@ export function SiteFeedbackForm() {
         <button
           type="button"
           onClick={() => setType("queja")}
-          className={`rounded-sm py-1.5 text-[15px] font-medium transition ${
+          className={`rounded-sm py-1.5 text-[0.9375rem] font-medium transition ${
             type === "queja"
               ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
               : "text-muted hover:text-foreground"
@@ -97,7 +97,7 @@ export function SiteFeedbackForm() {
       <button
         type="submit"
         disabled={isSaving || !message.trim()}
-        className="mt-2 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-1.5 text-[13px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+        className="mt-2 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-1.5 text-[0.8125rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Enviando..." : type === "sugerencia" ? "Enviar sugerencia" : "Enviar queja"}
       </button>

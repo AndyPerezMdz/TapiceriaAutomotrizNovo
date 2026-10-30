@@ -52,7 +52,7 @@ export default async function AdminCuponesPage() {
       <h2 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">Cupones existentes</h2>
       {formattedCoupons.length === 0 ? (
         <div className="rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
-          <p className="text-[15px] text-muted">Aún no has creado ningún cupón.</p>
+          <p className="text-[0.9375rem] text-muted">Aún no has creado ningún cupón.</p>
         </div>
       ) : (
         <div className="space-y-2">

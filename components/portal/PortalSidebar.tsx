@@ -55,8 +55,33 @@ const groups: NavGroup[] = [
   },
 ];
 
-export function PortalSidebar() {
+/** Modo sencillo: lo principal arriba y lo demás agrupado aparte. */
+const simpleGroups: NavGroup[] = [
+  {
+    title: null,
+    items: [
+      { href: "/portal", label: "Inicio", icon: LayoutDashboard },
+      { href: "/portal/nuevo-pedido", label: "Pedir cotización", icon: PlusCircle },
+      { href: "/portal/pedidos", label: "Mis pedidos", icon: History },
+      { href: "/portal/perfil", label: "Mi perfil", icon: User },
+    ],
+  },
+  {
+    title: "Más opciones",
+    items: [
+      { href: "/portal/mis-citas", label: "Mis citas", icon: CalendarDays },
+      { href: "/portal/cupones", label: "Cupones", icon: Tag },
+      { href: "/portal/puntos", label: "Puntos", icon: Award },
+      { href: "/portal/referidos", label: "Referidos", icon: Gift },
+      { href: "/portal/quejas", label: "Quejas", icon: MessageSquareWarning },
+      { href: "/portal/sugerencias", label: "Sugerencias", icon: Lightbulb },
+    ],
+  },
+];
+
+export function PortalSidebar({ simple = false }: { simple?: boolean }) {
   const pathname = usePathname();
+  const navGroups = simple ? simpleGroups : groups;
 
   function isActive(href: string) {
     return href === "/portal" ? pathname === "/portal" : pathname.startsWith(href);
@@ -77,10 +102,10 @@ export function PortalSidebar() {
         <div className="mx-2.5 mt-5 border-t-2 border-dashed border-brand-yellow/50" />
 
         <nav aria-label="Portal" className="mt-6 flex-1 space-y-6">
-          {groups.map((group) => (
+          {navGroups.map((group) => (
             <div key={group.title ?? "principal"} className="space-y-1">
               {group.title ? (
-                <p className="px-3 pb-1 text-[11px] uppercase tracking-[0.16em] text-on-ink-muted">
+                <p className="px-3 pb-1 text-[0.6875rem] uppercase tracking-[0.16em] text-on-ink-muted">
                   {group.title}
                 </p>
               ) : null}
@@ -91,7 +116,9 @@ export function PortalSidebar() {
                     key={item.href}
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-[15px] transition ${
+                    className={`flex items-center gap-3 rounded-[10px] px-3 transition ${
+                      simple ? "min-h-14 text-[1.0625rem]" : "min-h-11 text-[0.9375rem]"
+                    } ${
                       active
                         ? "bg-brand-yellow font-semibold text-ink"
                         : "text-[#e6e3dc] hover:bg-white/5"

@@ -51,10 +51,10 @@ export default async function EditarServicioPage({ params }: Props) {
           Editar servicio
         </h1>
         <div className="flex gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-brand-yellow text-ink px-3 py-1 text-[13px] font-medium">
+          <div className="flex items-center gap-1.5 rounded-full bg-brand-yellow text-ink px-3 py-1 text-[0.8125rem] font-medium">
             <ClipboardList size={13} /> {ordersCount ?? 0} pedidos
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-brand-yellow text-ink px-3 py-1 text-[13px] font-medium">
+          <div className="flex items-center gap-1.5 rounded-full bg-brand-yellow text-ink px-3 py-1 text-[0.8125rem] font-medium">
             <ImageIcon size={13} /> {galleryCount ?? 0} fotos
           </div>
         </div>
@@ -70,7 +70,7 @@ export default async function EditarServicioPage({ params }: Props) {
         <h2 className="font-display text-2xl font-bold uppercase mb-1 text-foreground">
           Etapas del proceso
         </h2>
-        <p className="mb-4 text-[13px] text-muted">
+        <p className="mb-4 text-[0.8125rem] text-muted">
           El cliente ve estas etapas mientras su pedido está &quot;En proceso&quot;. Puedes
           agregar, reordenar o desactivar etapas cuando cambie la forma de trabajar.
         </p>

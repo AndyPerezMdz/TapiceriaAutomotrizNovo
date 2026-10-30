@@ -44,23 +44,23 @@ export default async function ServiciosPage() {
       {/* Encabezado */}
       <section className="bg-ink text-on-ink">
         <div className="mx-auto max-w-6xl animate-fade-up px-6 pb-12 pt-16 sm:pb-14 sm:pt-20">
-          <p className="font-display text-[15px] font-semibold uppercase tracking-[0.2em] text-brand-yellow">
+          <p className="font-display text-[0.9375rem] font-semibold uppercase tracking-[0.2em] text-brand-yellow">
             Lo que hacemos
           </p>
-          <h1 className="mt-3 font-display text-6xl font-extrabold uppercase leading-[0.9] sm:text-[88px]">
+          <h1 className="mt-3 font-display text-6xl font-extrabold uppercase leading-[0.9] sm:text-[5.5rem]">
             Servicios
           </h1>
-          <p className="mt-4 max-w-xl text-[17px] leading-relaxed text-[#d9d5cc] sm:text-lg">
+          <p className="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-[#d9d5cc] sm:text-lg">
             Tapicería automotriz con atención al detalle, para todo tipo de vehículo. Elige uno y
             ve sus materiales, colores y costuras.
           </p>
         </div>
         <div className="mx-6 border-t-2 border-dashed border-brand-yellow/50" />
-        <ol className="mx-auto flex max-w-6xl flex-wrap gap-x-8 gap-y-2 px-6 py-5 text-[15px] text-[#d9d5cc]">
+        <ol className="mx-auto flex max-w-6xl flex-wrap gap-x-8 gap-y-2 px-6 py-5 text-[0.9375rem] text-[#d9d5cc]">
           {["Eliges servicio y material", "Te cotizamos sin compromiso", "Sigues tu coche en línea"].map(
             (step, i) => (
               <li key={step} className="flex items-center gap-2">
-                <span className="font-display text-[22px] font-extrabold text-brand-yellow">{i + 1}</span>
+                <span className="font-display text-[1.375rem] font-extrabold text-brand-yellow">{i + 1}</span>
                 {step}
               </li>
             ),
@@ -96,7 +96,7 @@ export default async function ServiciosPage() {
                 <p className="font-display text-xl font-extrabold text-yellow-text">
                   {String(index + 1).padStart(2, "0")}
                 </p>
-                <h2 className="mt-1.5 font-display text-4xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[44px]">
+                <h2 className="mt-1.5 font-display text-4xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[2.75rem]">
                   {service.title}
                 </h2>
                 {service.short_description ? (
@@ -131,7 +131,7 @@ export default async function ServiciosPage() {
       <section className="mx-auto max-w-6xl px-6 pb-20 sm:pb-24">
         <div className="flex flex-wrap items-center justify-between gap-5 rounded-[20px] border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-6 py-7 sm:px-9 dark:border-brand-yellow/40">
           <div>
-            <p className="font-display text-[32px] font-extrabold uppercase leading-none text-foreground">
+            <p className="font-display text-[2rem] font-extrabold uppercase leading-none text-foreground">
               ¿No ves lo que buscas?
             </p>
             <p className="mt-2 text-base text-foreground/80">

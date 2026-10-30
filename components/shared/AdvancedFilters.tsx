@@ -52,7 +52,7 @@ export function AdvancedFilters({ showPrice = false }: { showPrice?: boolean }) 
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[15px] font-medium transition ${
+        className={`flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[0.9375rem] font-medium transition ${
           hasActiveFilters
             ? "border-brand-yellow-dark bg-highlight text-yellow-text dark:border-brand-yellow"
             : "border-field-border text-foreground hover:bg-black/5 dark:hover:bg-white/5"
@@ -65,21 +65,21 @@ export function AdvancedFilters({ showPrice = false }: { showPrice?: boolean }) 
         <div className="absolute right-0 top-full z-10 mt-2 w-72 space-y-3 rounded-2xl bg-surface p-5 sm:p-6 shadow-lg dark:ring-1 dark:ring-white/5">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="mb-1 block text-[13px] font-medium text-muted">Desde</label>
+              <label className="mb-1 block text-[0.8125rem] font-medium text-muted">Desde</label>
               <input
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[15px] text-foreground outline-none"
+                className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[0.9375rem] text-foreground outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-[13px] font-medium text-muted">Hasta</label>
+              <label className="mb-1 block text-[0.8125rem] font-medium text-muted">Hasta</label>
               <input
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[15px] text-foreground outline-none"
+                className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[0.9375rem] text-foreground outline-none"
               />
             </div>
           </div>
@@ -87,21 +87,21 @@ export function AdvancedFilters({ showPrice = false }: { showPrice?: boolean }) 
           {showPrice ? (
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="mb-1 block text-[13px] font-medium text-muted">Precio mín.</label>
+                <label className="mb-1 block text-[0.8125rem] font-medium text-muted">Precio mín.</label>
                 <input
                   type="number"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[15px] text-foreground outline-none"
+                  className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[0.9375rem] text-foreground outline-none"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-[13px] font-medium text-muted">Precio máx.</label>
+                <label className="mb-1 block text-[0.8125rem] font-medium text-muted">Precio máx.</label>
                 <input
                   type="number"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[15px] text-foreground outline-none"
+                  className="w-full rounded-xl border-[1.5px] border-field-border bg-surface px-2 py-1.5 text-[0.9375rem] text-foreground outline-none"
                 />
               </div>
             </div>
@@ -111,14 +111,14 @@ export function AdvancedFilters({ showPrice = false }: { showPrice?: boolean }) 
             <button
               type="button"
               onClick={apply}
-              className="flex-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[15px] font-semibold text-ink transition min-h-11 inline-flex items-center justify-center"
+              className="flex-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.9375rem] font-semibold text-ink transition min-h-11 inline-flex items-center justify-center"
             >
               Aplicar
             </button>
             <button
               type="button"
               onClick={clear}
-              className="rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[15px] text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
+              className="rounded-xl border-[1.5px] border-field-border px-3 py-1.5 text-[0.9375rem] text-foreground transition hover:bg-black/5 dark:hover:bg-white/5"
             >
               Limpiar
             </button>

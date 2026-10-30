@@ -1,5 +1,7 @@
 "use client";
 
+import { TextSizeButton } from "@/components/a11y/TextSizeButton";
+
 import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
 import { createClient } from "@/lib/supabase/client";
@@ -140,22 +142,25 @@ export function StaffLoginForm() {
   return (
     <div className="dark">
       <main className="theme-taller flex min-h-screen flex-wrap bg-[#141413] text-on-ink">
+        <div className="fixed right-4 top-4 z-20">
+          <TextSizeButton tone="ink" />
+        </div>
         {/* Reloj checador */}
         <section className="hidden min-w-0 flex-[1_1_480px] flex-col justify-between gap-10 border-r-2 border-dashed border-brand-yellow/25 p-12 lg:flex xl:p-14">
           <Link href="/" className="flex w-fit items-center gap-2.5">
-            <span className="font-display text-[34px] font-extrabold uppercase leading-none">Novo</span>
-            <span className="rounded-[5px] bg-brand-yellow px-2 py-0.5 font-display text-[13px] font-bold uppercase tracking-[0.12em] text-ink">
+            <span className="font-display text-[2.125rem] font-extrabold uppercase leading-none">Novo</span>
+            <span className="rounded-[5px] bg-brand-yellow px-2 py-0.5 font-display text-[0.8125rem] font-bold uppercase tracking-[0.12em] text-ink">
               Taller
             </span>
           </Link>
 
           <div>
-            <p className="flex items-center gap-2.5 text-[15px] text-on-ink-muted">
+            <p className="flex items-center gap-2.5 text-[0.9375rem] text-on-ink-muted">
               <span className="h-2.5 w-2.5 rounded-full bg-brand-yellow shadow-[0_0_0_4px_rgba(245,197,24,0.2)]" />
               Sistema en línea
             </p>
             <p
-              className="mt-3.5 font-display text-[150px] font-extrabold leading-[0.85] tabular-nums"
+              className="mt-3.5 font-display text-[9.375rem] font-extrabold leading-[0.85] tabular-nums"
               aria-label={time ? `Son las ${time}` : undefined}
             >
               {time ?? "--:--"}
@@ -165,7 +170,7 @@ export function StaffLoginForm() {
             </p>
           </div>
 
-          <p className="text-[13px] text-on-ink-muted">Acceso exclusivo para el equipo del taller</p>
+          <p className="text-[0.8125rem] text-on-ink-muted">Acceso exclusivo para el equipo del taller</p>
         </section>
 
         {/* Formulario */}
@@ -179,7 +184,7 @@ export function StaffLoginForm() {
               {time ? <span className="ml-auto font-code text-sm text-on-ink-muted">{time}</span> : null}
             </div>
 
-            <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-[56px]">
+            <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-[3.5rem]">
               Panel de staff
             </h1>
             <p className="mt-2.5 text-base text-on-ink-muted">Entra con tu cuenta de equipo.</p>
@@ -193,7 +198,7 @@ export function StaffLoginForm() {
                 type="button"
                 aria-pressed={mode === "password"}
                 onClick={() => setMode("password")}
-                className={`min-h-11 rounded-[10px] text-[15px] transition ${
+                className={`min-h-11 rounded-[10px] text-[0.9375rem] transition ${
                   mode === "password" ? "bg-brand-yellow font-bold text-ink" : "font-medium text-[#d9d5cc] hover:text-white"
                 }`}
               >
@@ -203,7 +208,7 @@ export function StaffLoginForm() {
                 type="button"
                 aria-pressed={mode === "magic"}
                 onClick={() => setMode("magic")}
-                className={`min-h-11 rounded-[10px] text-[15px] transition ${
+                className={`min-h-11 rounded-[10px] text-[0.9375rem] transition ${
                   mode === "magic" ? "bg-brand-yellow font-bold text-ink" : "font-medium text-[#d9d5cc] hover:text-white"
                 }`}
               >
@@ -214,13 +219,13 @@ export function StaffLoginForm() {
           {mode === "password" ? (
             <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {formError ? (
-                <div role="alert" className="rounded-[10px] border-[1.5px] border-brand-red-dark bg-brand-red/10 px-4 py-3 text-[15px] text-[#ffb4b4]">
+                <div role="alert" className="rounded-[10px] border-[1.5px] border-brand-red-dark bg-brand-red/10 px-4 py-3 text-[0.9375rem] text-[#ffb4b4]">
                   {formError}
                 </div>
               ) : null}
 
               <div>
-                <label htmlFor="email" className="mb-1.5 block text-[15px] font-semibold text-[#e6e3dc]">
+                <label htmlFor="email" className="mb-1.5 block text-[0.9375rem] font-semibold text-[#e6e3dc]">
                   Correo electrónico
                 </label>
                 <input
@@ -237,7 +242,7 @@ export function StaffLoginForm() {
               </div>
 
               <div>
-                <label htmlFor="password" className="mb-1.5 block text-[15px] font-semibold text-[#e6e3dc]">
+                <label htmlFor="password" className="mb-1.5 block text-[0.9375rem] font-semibold text-[#e6e3dc]">
                   Contraseña
                 </label>
                 <PasswordInput id="password" name="password" disabled={isLoading} />
@@ -258,7 +263,7 @@ export function StaffLoginForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[17px] font-bold text-ink transition hover:bg-[#e8b90f] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[1.0625rem] font-bold text-ink transition hover:bg-[#e8b90f] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isLoading ? "Verificando…" : "Entrar al taller"}
               </button>

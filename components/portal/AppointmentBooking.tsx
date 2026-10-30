@@ -99,7 +99,7 @@ export function AppointmentBooking({
       <div className="rounded-2xl border border-green-500/30 bg-green-500/5 p-6 text-center">
         <Check size={28} className="mx-auto mb-2 text-green-600 dark:text-green-400" />
         <p className="font-medium text-foreground">¡Cita agendada!</p>
-        <p className="mt-1 text-[15px] text-muted">
+        <p className="mt-1 text-[0.9375rem] text-muted">
           Te esperamos el{" "}
           {new Date(`${selectedDate}T00:00:00`).toLocaleDateString("es-MX", {
             weekday: "long",
@@ -119,13 +119,13 @@ export function AppointmentBooking({
       </h2>
 
       {error ? (
-        <div className="mb-3 rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
+        <div className="mb-3 rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[0.9375rem] text-brand-red">
           {error}
         </div>
       ) : null}
 
       <div className="mb-4">
-        <label className="mb-1.5 block text-[13px] font-medium text-muted">
+        <label className="mb-1.5 block text-[0.8125rem] font-medium text-muted">
           ¿Cuál es el motivo de tu visita?
         </label>
         <textarea
@@ -137,7 +137,7 @@ export function AppointmentBooking({
         />
       </div>
       
-      <p className="mb-2.5 text-[15px] font-semibold text-foreground">Elige un día</p>
+      <p className="mb-2.5 text-[0.9375rem] font-semibold text-foreground">Elige un día</p>
       <div className="mb-4 flex flex-wrap gap-2">
         {availableDays.map((d) => (
           <button
@@ -147,7 +147,7 @@ export function AppointmentBooking({
               setSelectedSlot(null);
             }}
             type="button"
-            className={`inline-flex min-h-11 items-center rounded-full px-4 text-[15px] capitalize transition ${
+            className={`inline-flex min-h-11 items-center rounded-full px-4 text-[0.9375rem] capitalize transition ${
               selectedDate === d.key
                 ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
                 : "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground"
@@ -160,17 +160,17 @@ export function AppointmentBooking({
 
       {selectedDate ? (
         <>
-          <p className="mb-2.5 text-[15px] font-semibold text-foreground">Elige un horario</p>
+          <p className="mb-2.5 text-[0.9375rem] font-semibold text-foreground">Elige un horario</p>
           <div className="mb-4 flex flex-wrap gap-2">
             {slotsForSelectedDay.length === 0 ? (
-              <p className="text-[13px] text-muted">No hay horarios disponibles ese día.</p>
+              <p className="text-[0.8125rem] text-muted">No hay horarios disponibles ese día.</p>
             ) : (
               slotsForSelectedDay.map((slot) => (
                 <button
                   key={slot}
                   onClick={() => setSelectedSlot(slot)}
                   type="button"
-            className={`inline-flex min-h-11 items-center rounded-full px-4 text-[15px] transition ${
+            className={`inline-flex min-h-11 items-center rounded-full px-4 text-[0.9375rem] transition ${
                     selectedSlot === slot
                       ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
                       : "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground"
@@ -187,7 +187,7 @@ export function AppointmentBooking({
       <button
         onClick={handleConfirm}
         disabled={!selectedDate || !selectedSlot || isSaving}
-        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-50 min-h-11 inline-flex items-center justify-center"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[0.9375rem] font-semibold text-ink transition disabled:cursor-not-allowed disabled:opacity-50 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Agendando..." : "Confirmar cita"}
       </button>

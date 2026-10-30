@@ -73,7 +73,7 @@ export function UserMenu({ name, subtitle, avatarUrl, profileHref }: Props) {
     );
 
   const item =
-    "flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-[15px] text-foreground transition hover:bg-black/5 dark:hover:bg-white/5";
+    "flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-[0.9375rem] text-foreground transition hover:bg-black/5 dark:hover:bg-white/5";
 
   return (
     <div className="relative" ref={ref}>
@@ -86,7 +86,7 @@ export function UserMenu({ name, subtitle, avatarUrl, profileHref }: Props) {
         className="flex min-h-11 items-center gap-2 rounded-xl py-1 pl-1 pr-2 transition hover:bg-black/5 dark:hover:bg-white/5"
       >
         {avatar(36)}
-        <span className="hidden max-w-[140px] truncate text-[15px] font-semibold text-foreground sm:block">
+        <span className="hidden max-w-[140px] truncate text-[0.9375rem] font-semibold text-foreground sm:block">
           {firstName}
         </span>
         <ChevronDown size={16} className={`hidden text-muted transition sm:block ${open ? "rotate-180" : ""}`} />
@@ -101,7 +101,7 @@ export function UserMenu({ name, subtitle, avatarUrl, profileHref }: Props) {
             {avatar(44)}
             <div className="min-w-0">
               <p className="truncate font-display text-xl font-bold uppercase leading-none">{name ?? "Mi cuenta"}</p>
-              {subtitle ? <p className="mt-1 truncate text-[13px] capitalize text-on-ink-muted">{subtitle}</p> : null}
+              {subtitle ? <p className="mt-1 truncate text-[0.8125rem] capitalize text-on-ink-muted">{subtitle}</p> : null}
             </div>
           </div>
           <div className="p-1.5">

@@ -36,19 +36,19 @@ export function MyAppointmentsList({ appointments }: { appointments: Appointment
             <div className="flex items-center gap-3">
               <Calendar size={16} className="text-muted" />
               <div>
-                <p className="text-[15px] font-medium capitalize text-foreground">
+                <p className="text-[0.9375rem] font-medium capitalize text-foreground">
                   {new Date(`${a.appointment_date}T00:00:00`).toLocaleDateString(
                     "es-MX",
                     { weekday: "long", day: "numeric", month: "long" },
                   )}
                 </p>
-                <p className="flex items-center gap-1 text-[13px] text-muted">
+                <p className="flex items-center gap-1 text-[0.8125rem] text-muted">
                   <Clock size={11} /> {a.appointment_time}
                 </p>
               </div>
             </div>
             <span
-              className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[15px] font-bold uppercase leading-none tracking-[0.08em] ${
+              className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[0.9375rem] font-bold uppercase leading-none tracking-[0.08em] ${
                 statusColors[a.status] ?? "border-[1.5px] border-muted text-muted"
               }`}
             >

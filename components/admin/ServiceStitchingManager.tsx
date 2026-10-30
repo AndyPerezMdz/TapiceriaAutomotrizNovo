@@ -21,7 +21,7 @@ interface StitchingType {
 }
 
 const inputClassName =
-  "rounded-xl border-[1.5px] border-field-border bg-surface px-2.5 py-1.5 text-[15px] text-foreground outline-none";
+  "rounded-xl border-[1.5px] border-field-border bg-surface px-2.5 py-1.5 text-[0.9375rem] text-foreground outline-none";
 
 export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
   const [items, setItems] = useState<StitchingType[]>([]);
@@ -117,11 +117,11 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
     load();
   }
 
-  if (loading) return <p className="text-[15px] text-muted">Cargando costuras...</p>;
+  if (loading) return <p className="text-[0.9375rem] text-muted">Cargando costuras...</p>;
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-3 text-[13px] text-yellow-text">
+      <div className="rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-3 text-[0.8125rem] text-yellow-text">
         <strong>Regla para las fotos:</strong> la imagen debe mostrar únicamente el tipo de
         costura, de cerca y de punta a punta, sin ningún otro objeto en la foto.
       </div>
@@ -132,7 +132,7 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
             <div className="flex flex-wrap items-center gap-2">
               <input value={editName} onChange={(e) => setEditName(e.target.value)} className={inputClassName} placeholder="Nombre" />
               <input value={editHint} onChange={(e) => setEditHint(e.target.value)} className={inputClassName} placeholder="Precio de referencia" />
-              <button onClick={() => saveEdit(item.id)} className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11 inline-flex items-center justify-center">
+              <button onClick={() => saveEdit(item.id)} className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11 inline-flex items-center justify-center">
                 Guardar
               </button>
               <button onClick={() => setEditingId(null)} className="text-muted hover:text-foreground">
@@ -150,7 +150,7 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
                 />
                 <div>
                   <p className="font-medium text-foreground">{item.name}</p>
-                  {item.price_hint ? <p className="text-[13px] text-muted">{item.price_hint}</p> : null}
+                  {item.price_hint ? <p className="text-[0.8125rem] text-muted">{item.price_hint}</p> : null}
                 </div>
               </div>
               <div className="flex gap-1">
@@ -184,7 +184,7 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
                   {!color.image_url && color.hex_color ? (
                     <span className="h-4 w-4 rounded-full border-[1.5px] border-seam" style={{ backgroundColor: color.hex_color }} />
                   ) : null}
-                  <span className="text-[15px] text-foreground">{color.name}</span>
+                  <span className="text-[0.9375rem] text-foreground">{color.name}</span>
                 </div>
                 <button onClick={() => deleteColor(color.id)} className="text-muted hover:text-brand-red">
                   <X size={13} />
@@ -224,11 +224,11 @@ export function ServiceStitchingManager({ serviceId }: { serviceId: string }) {
       ))}
 
       <div className="rounded-2xl border-2 border-dashed border-field-border p-4">
-        <p className="mb-2 text-[15px] font-medium text-foreground">Agregar tipo de costura</p>
+        <p className="mb-2 text-[0.9375rem] font-medium text-foreground">Agregar tipo de costura</p>
         <div className="flex flex-wrap gap-2">
           <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nombre (ej. Costura doble)" className={inputClassName} />
           <input value={newHint} onChange={(e) => setNewHint(e.target.value)} placeholder="Precio de referencia (opcional)" className={inputClassName} />
-          <button onClick={addType} className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11">
+          <button onClick={addType} className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11">
             <Plus size={14} /> Agregar
           </button>
         </div>

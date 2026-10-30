@@ -33,7 +33,7 @@ export default async function MisQuejasPage() {
   return (
     <div className="max-w-3xl">
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">Mis quejas</h1>
-      <p className="mb-6 text-[15px] text-muted">
+      <p className="mb-6 text-[0.9375rem] text-muted">
         Aquí puedes ver el estado de cualquier problema que hayas reportado, ya sea desde la
         página o por WhatsApp.
       </p>
@@ -41,7 +41,7 @@ export default async function MisQuejasPage() {
       {!complaints || complaints.length === 0 ? (
         <div className="flex flex-col items-center rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
           <AlertTriangle size={24} className="mb-2 text-muted" />
-          <p className="text-[15px] text-muted">No tienes ninguna queja registrada.</p>
+          <p className="text-[0.9375rem] text-muted">No tienes ninguna queja registrada.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -60,10 +60,10 @@ export default async function MisQuejasPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[15px] font-medium text-foreground">
+                    <p className="text-[0.9375rem] font-medium text-foreground">
                       {vehicle || "Pedido"} · Folio {c.order_id.slice(0, 8).toUpperCase()}
                     </p>
-                    <p className="mt-1 flex items-center gap-1.5 text-[13px] text-muted">
+                    <p className="mt-1 flex items-center gap-1.5 text-[0.8125rem] text-muted">
                       <Calendar size={11} />
                       {new Date(c.created_at).toLocaleDateString("es-MX", {
                         day: "numeric",
@@ -72,16 +72,16 @@ export default async function MisQuejasPage() {
                       })}{" "}
                       · {c.source === "web" ? "Reportada en línea" : "Reportada por WhatsApp"}
                     </p>
-                    <p className="mt-1.5 truncate text-[15px] text-muted">{c.description}</p>
+                    <p className="mt-1.5 truncate text-[0.9375rem] text-muted">{c.description}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1.5">
                     <span
-                      className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[15px] font-bold uppercase leading-none tracking-[0.08em] ${statusColors[c.status]}`}
+                      className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[0.9375rem] font-bold uppercase leading-none tracking-[0.08em] ${statusColors[c.status]}`}
                     >
                       {statusLabels[c.status]}
                     </span>
                     {c.satisfaction_rating ? (
-                      <span className="text-[13px] text-yellow-text">
+                      <span className="text-[0.8125rem] text-yellow-text">
                         {"★".repeat(c.satisfaction_rating)}
                       </span>
                     ) : null}

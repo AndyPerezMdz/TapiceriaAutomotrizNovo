@@ -7,6 +7,8 @@ import { UserMenu } from "@/components/shared/UserMenu";
 import { getPortalNotifications } from "@/lib/notifications/get-portal-notifications";
 import { createClient } from "@/lib/supabase/server";
 import { FooterLogo } from "@/components/FooterLogo";
+import { A11ySync } from "@/components/a11y/A11ySync";
+import { prefsFromProfile } from "@/lib/a11y/preferences";
 import Link from "next/link";
 
 export default async function PortalLayout({
@@ -21,15 +23,17 @@ export default async function PortalLayout({
   const { data: profile } = user
     ? await supabase
         .from("profiles")
-        .select("full_name, avatar_url")
+        .select("full_name, avatar_url, ui_mode, text_size, high_contrast, reduce_motion")
         .eq("id", user.id)
         .single()
     : { data: null };
+  const prefs = prefsFromProfile(profile);
+  const simple = prefs.uiMode === "sencillo";
   const notifications = user ? await getPortalNotifications(supabase, user.id) : [];
 
   return (
     <div className="theme-taller flex min-h-screen overflow-x-hidden bg-background text-foreground">
-      <PortalSidebar />
+      <PortalSidebar simple={simple} />
       <div className="flex min-w-0 flex-1 flex-col">
         <header>
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 pt-3 sm:px-8 sm:pt-4 lg:justify-end">
@@ -54,7 +58,8 @@ export default async function PortalLayout({
           {children}
         </main>
       </div>
-      <BottomNav />
+      <BottomNav simple={simple} />
+      {user ? <A11ySync prefs={prefs} /> : null}
       <ApplyPendingReferral />
     </div>
   );

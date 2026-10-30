@@ -80,7 +80,7 @@ export function CouponSelector({
         <span className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full bg-ink text-brand-yellow dark:ring-1 dark:ring-white/10">
           <Tag size={17} />
         </span>
-        <span className="font-display text-[26px] font-bold uppercase leading-none text-foreground">
+        <span className="font-display text-[1.625rem] font-bold uppercase leading-none text-foreground">
           ¿Usas un cupón?
         </span>
       </legend>
@@ -113,11 +113,11 @@ export function CouponSelector({
               <span className="relative block font-display text-2xl font-extrabold uppercase leading-none">
                 {discountLabel}
               </span>
-              <span className={`relative mt-1 block text-[13px] ${isSelected ? "text-[#2b2400]" : "text-muted"}`}>
+              <span className={`relative mt-1 block text-[0.8125rem] ${isSelected ? "text-[#2b2400]" : "text-muted"}`}>
                 {c.title}
                 {c.service_id === null ? " · general" : ""}
               </span>
-              <span className="relative mt-1 block text-[13px] font-semibold">
+              <span className="relative mt-1 block text-[0.8125rem] font-semibold">
                 {isSelected ? "Aplicado ✓ (toca para quitarlo)" : "Usar este cupón"}
               </span>
             </button>

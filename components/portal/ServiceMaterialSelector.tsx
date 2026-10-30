@@ -130,7 +130,7 @@ export function ServiceMaterialSelector({
   return (
     <div className="space-y-6">
       <div role="radiogroup" aria-label="Servicio">
-        <p className="mb-2.5 text-[15px] font-semibold text-foreground">Servicio</p>
+        <p className="mb-2.5 text-[0.9375rem] font-semibold text-foreground">Servicio</p>
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           {services.map((s) => {
             const active = serviceId === s.id;
@@ -155,12 +155,12 @@ export function ServiceMaterialSelector({
       </div>
 
       {serviceId && loadingMaterials ? (
-        <p className="text-[15px] text-muted">Cargando materiales…</p>
+        <p className="text-[0.9375rem] text-muted">Cargando materiales…</p>
       ) : null}
 
       {serviceId && !loadingMaterials && materialTypes.length > 0 ? (
         <div role="radiogroup" aria-label="Material">
-          <p className="mb-2.5 text-[15px] font-semibold text-foreground">Material</p>
+          <p className="mb-2.5 text-[0.9375rem] font-semibold text-foreground">Material</p>
           <div className="flex flex-wrap gap-2">
             {materialTypes.map((m) => {
               const active = materialTypeId === m.id;
@@ -171,7 +171,7 @@ export function ServiceMaterialSelector({
                   role="radio"
                   aria-checked={active}
                   onClick={() => setMaterialTypeId(m.id)}
-                  className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[15px] transition ${
+                  className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[0.9375rem] transition ${
                     active
                       ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
                       : "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground"
@@ -190,7 +190,7 @@ export function ServiceMaterialSelector({
 
       {materialTypeId && colors.length > 0 ? (
         <div role="radiogroup" aria-label="Color">
-          <p className="mb-2.5 text-[15px] font-semibold text-foreground">
+          <p className="mb-2.5 text-[0.9375rem] font-semibold text-foreground">
             Color
             {selectedColor ? (
               <span className="font-medium text-muted"> · {selectedColor.name}</span>
@@ -216,12 +216,12 @@ export function ServiceMaterialSelector({
                   style={{ backgroundColor: c.hex_color ?? "#cfcac0" }}
                 >
                   {!c.hex_color ? (
-                    <span className="text-[11px] font-semibold text-ink">{c.name.slice(0, 3)}</span>
+                    <span className="text-[0.6875rem] font-semibold text-ink">{c.name.slice(0, 3)}</span>
                   ) : null}
                   {c.requires_visit ? (
                     <span
                       aria-hidden="true"
-                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-yellow text-[11px] font-bold text-ink ring-2 ring-surface"
+                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-yellow text-[0.6875rem] font-bold text-ink ring-2 ring-surface"
                     >
                       !
                     </span>
@@ -231,7 +231,7 @@ export function ServiceMaterialSelector({
             })}
           </div>
           {colors.some((c) => c.requires_visit) ? (
-            <p className="mt-2.5 text-[15px] text-muted">
+            <p className="mt-2.5 text-[0.9375rem] text-muted">
               Los colores con <span className="font-semibold text-foreground">!</span> necesitan
               una visita para igualar el tono.
             </p>

@@ -42,15 +42,15 @@ export function ActiveOrderTicket({
 
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="flex items-center gap-2 font-code text-[13px] text-on-ink-muted">
+          <p className="flex items-center gap-2 font-code text-[0.8125rem] text-on-ink-muted">
             {id.slice(0, 8).toUpperCase()} · ingresó {date}
             {hasUpdate ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-brand-red px-2 py-0.5 font-taller text-[11px] font-semibold text-white">
+              <span className="inline-flex items-center gap-1 rounded-full bg-brand-red px-2 py-0.5 font-taller text-[0.6875rem] font-semibold text-white">
                 Novedades
               </span>
             ) : null}
           </p>
-          <p className="mt-1.5 font-display text-[30px] font-extrabold uppercase leading-none sm:text-[40px]">
+          <p className="mt-1.5 font-display text-[1.875rem] font-extrabold uppercase leading-none sm:text-[2.5rem]">
             {vehicle}
           </p>
         </div>
@@ -64,7 +64,7 @@ export function ActiveOrderTicket({
           <div className="mt-5 space-y-4">
             {services.map((s) => (
               <div key={s.id}>
-                <div className="flex flex-wrap justify-between gap-x-3 gap-y-0.5 text-[15px]">
+                <div className="flex flex-wrap justify-between gap-x-3 gap-y-0.5 text-[0.9375rem]">
                   <span>{s.title}</span>
                   <span className="text-[#d9d5cc]">
                     {completed ? (
@@ -92,7 +92,7 @@ export function ActiveOrderTicket({
         </>
       ) : null}
 
-      <p className="mt-5 flex items-center gap-1.5 text-[15px] font-semibold text-brand-yellow">
+      <p className="mt-5 flex items-center gap-1.5 text-[0.9375rem] font-semibold text-brand-yellow">
         Ver orden completa
         <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
       </p>

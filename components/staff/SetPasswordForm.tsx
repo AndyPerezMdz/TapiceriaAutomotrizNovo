@@ -1,5 +1,7 @@
 "use client";
 
+import { TextSizeButton } from "@/components/a11y/TextSizeButton";
+
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -77,6 +79,9 @@ export function SetPasswordForm() {
   return (
     <div className="dark">
       <main className="theme-taller flex min-h-screen items-center justify-center bg-[#141413] px-5 py-12 text-on-ink">
+        <div className="fixed right-4 top-4 z-20">
+          <TextSizeButton tone="ink" />
+        </div>
         <div className="w-full max-w-[560px]">
           <div className="flex items-center justify-center gap-2.5">
             <span className="font-display text-3xl font-extrabold uppercase leading-none">Novo</span>
@@ -105,13 +110,13 @@ export function SetPasswordForm() {
                     {email ? (
                       <div className="min-w-0">
                         <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Correo</dt>
-                        <dd className="mt-1 break-all text-[17px] font-semibold">{email}</dd>
+                        <dd className="mt-1 break-all text-[1.0625rem] font-semibold">{email}</dd>
                       </div>
                     ) : null}
                     {role ? (
                       <div>
                         <dt className="text-xs uppercase tracking-[0.14em] text-on-ink-muted">Rol</dt>
-                        <dd className="mt-1 text-[17px] font-semibold">{roleLabels[role] ?? role}</dd>
+                        <dd className="mt-1 text-[1.0625rem] font-semibold">{roleLabels[role] ?? role}</dd>
                       </div>
                     ) : null}
                   </dl>
@@ -123,13 +128,13 @@ export function SetPasswordForm() {
 
               <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate>
                 {error ? (
-                  <div role="alert" className="rounded-[10px] border-[1.5px] border-brand-red-dark bg-brand-red/10 px-4 py-3 text-[15px] text-[#ffb4b4]">
+                  <div role="alert" className="rounded-[10px] border-[1.5px] border-brand-red-dark bg-brand-red/10 px-4 py-3 text-[0.9375rem] text-[#ffb4b4]">
                     {error}
                   </div>
                 ) : null}
 
                 <div>
-                  <label htmlFor="password" className="mb-1.5 block text-[15px] font-semibold text-[#e6e3dc]">
+                  <label htmlFor="password" className="mb-1.5 block text-[0.9375rem] font-semibold text-[#e6e3dc]">
                     Contraseña
                   </label>
                   <input
@@ -146,7 +151,7 @@ export function SetPasswordForm() {
                       <div key={n} className={`h-[5px] flex-1 rounded-full ${strength >= n ? "bg-brand-yellow" : "bg-[#3a3936]"}`} />
                     ))}
                   </div>
-                  <p className="mt-1.5 text-[13px] text-on-ink-muted">
+                  <p className="mt-1.5 text-[0.8125rem] text-on-ink-muted">
                     {password.length === 0
                       ? "Mínimo 8 caracteres"
                       : password.length < 8
@@ -158,7 +163,7 @@ export function SetPasswordForm() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="mb-1.5 block text-[15px] font-semibold text-[#e6e3dc]">
+                  <label htmlFor="confirmPassword" className="mb-1.5 block text-[0.9375rem] font-semibold text-[#e6e3dc]">
                     Confírmala
                   </label>
                   <input
@@ -171,7 +176,7 @@ export function SetPasswordForm() {
                     disabled={isSaving}
                   />
                   {confirmPassword.length > 0 ? (
-                    <p className={`mt-1.5 text-[13px] font-semibold ${matches ? "text-brand-yellow" : "text-[#ffb4b4]"}`}>
+                    <p className={`mt-1.5 text-[0.8125rem] font-semibold ${matches ? "text-brand-yellow" : "text-[#ffb4b4]"}`}>
                       {matches ? "✓ Coinciden" : "No coinciden todavía"}
                     </p>
                   ) : null}
@@ -180,7 +185,7 @@ export function SetPasswordForm() {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="!mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[17px] font-bold text-ink transition hover:bg-[#e8b90f] disabled:opacity-60"
+                  className="!mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[1.0625rem] font-bold text-ink transition hover:bg-[#e8b90f] disabled:opacity-60"
                 >
                   {isSaving ? "Guardando…" : "Crear contraseña y entrar"}
                 </button>

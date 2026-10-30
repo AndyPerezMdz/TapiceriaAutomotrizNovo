@@ -30,7 +30,7 @@ export default async function AdminServiciosPage() {
         {isAdmin ? (
           <Link
             href="/admin/servicios/nuevo"
-            className="flex items-center gap-1.5 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[15px] font-semibold text-ink transition min-h-11"
+            className="flex items-center gap-1.5 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[0.9375rem] font-semibold text-ink transition min-h-11"
           >
             <Plus size={16} /> Nuevo servicio
           </Link>

@@ -11,7 +11,7 @@ interface Service {
 
 const fieldClassName =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
-const labelClassName = "mb-1.5 block text-[15px] font-medium text-foreground";
+const labelClassName = "mb-1.5 block text-[0.9375rem] font-medium text-foreground";
 
 export function CouponForm({ services }: { services: Service[] }) {
   const router = useRouter();
@@ -111,13 +111,13 @@ export function CouponForm({ services }: { services: Service[] }) {
       <h2 className="font-display text-2xl font-bold uppercase text-foreground">Nuevo cupón</h2>
 
       {error ? (
-        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
+        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[0.9375rem] text-brand-red">
           {error}
         </div>
       ) : null}
 
       {notifyResult ? (
-        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[15px] text-green-700 dark:text-green-400">
+        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[0.9375rem] text-green-700 dark:text-green-400">
           {notifyResult}
         </div>
       ) : null}
@@ -218,7 +218,7 @@ export function CouponForm({ services }: { services: Service[] }) {
         </div>
       </div>
 
-      <label className="flex items-start gap-2 text-[15px] text-foreground">
+      <label className="flex items-start gap-2 text-[0.9375rem] text-foreground">
         <input
           type="checkbox"
           checked={notifySubscribers}
@@ -234,7 +234,7 @@ export function CouponForm({ services }: { services: Service[] }) {
       <button
         type="submit"
         disabled={isSaving}
-        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[0.9375rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Guardando..." : "Crear cupón"}
       </button>

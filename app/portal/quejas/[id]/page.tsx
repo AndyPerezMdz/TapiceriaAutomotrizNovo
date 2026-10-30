@@ -70,14 +70,14 @@ export default async function ClienteQuejaDetallePage({ params }: Props) {
     <div className="max-w-3xl">
       <Link
         href="/portal/quejas"
-        className="mb-6 inline-flex items-center gap-1.5 text-[15px] font-medium text-muted transition hover:text-foreground"
+        className="mb-6 inline-flex items-center gap-1.5 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
       >
         <ArrowLeft size={16} /> Volver a mis quejas
       </Link>
 
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl text-foreground">Detalle de tu queja</h1>
-        <span className="rounded-full bg-highlight px-3 py-1 text-[13px] font-medium text-yellow-text">
+        <span className="rounded-full bg-highlight px-3 py-1 text-[0.8125rem] font-medium text-yellow-text">
           {statusLabels[complaint.status]}
         </span>
       </div>
@@ -87,25 +87,25 @@ export default async function ClienteQuejaDetallePage({ params }: Props) {
           <h2 className="font-display text-2xl font-bold uppercase mb-3 flex items-center gap-1.5 text-foreground">
             <Car size={16} /> {vehicle || "Pedido"}
           </h2>
-          <p className="mb-3 text-[13px] text-muted">
+          <p className="mb-3 text-[0.8125rem] text-muted">
             Folio: <span className="font-mono font-medium text-foreground">{order.id.slice(0, 8).toUpperCase()}</span>
           </p>
           <div className="space-y-2">
             {formattedItems.map((item) => (
-              <div key={item.id} className="text-[15px]">
+              <div key={item.id} className="text-[0.9375rem]">
                 <p className="font-medium text-foreground">{item.title}</p>
-                {item.materialLabel ? <p className="text-[13px] text-muted">{item.materialLabel}</p> : null}
+                {item.materialLabel ? <p className="text-[0.8125rem] text-muted">{item.materialLabel}</p> : null}
               </div>
             ))}
           </div>
           {order.final_price ?? order.estimated_price ? (
-            <p className="mt-3 border-t-2 border-dashed border-seam pt-3 text-[15px] font-semibold text-foreground">
+            <p className="mt-3 border-t-2 border-dashed border-seam pt-3 text-[0.9375rem] font-semibold text-foreground">
               Total: ${(order.final_price ?? order.estimated_price)?.toLocaleString("es-MX")}
             </p>
           ) : null}
           <Link
             href={`/portal/pedidos/${order.id}`}
-            className="mt-3 inline-block text-[13px] font-medium text-yellow-text hover:underline"
+            className="mt-3 inline-block text-[0.8125rem] font-medium text-yellow-text hover:underline"
           >
             Ver pedido completo →
           </Link>
@@ -113,23 +113,23 @@ export default async function ClienteQuejaDetallePage({ params }: Props) {
       ) : null}
 
       <div className="mb-4 rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
-        <p className="mb-1 flex items-center gap-1.5 text-[13px] text-muted">
+        <p className="mb-1 flex items-center gap-1.5 text-[0.8125rem] text-muted">
           <Calendar size={11} />
           {new Date(complaint.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
         </p>
-        <p className="mt-2 break-words text-[15px] text-foreground">{complaint.description}</p>
+        <p className="mt-2 break-words text-[0.9375rem] text-foreground">{complaint.description}</p>
       </div>
 
       {complaint.resolution_note ? (
         <div className="mb-4 rounded-2xl ring-1 ring-black/10 dark:ring-white/10 bg-black/5 p-5 dark:bg-white/5">
-          <p className="mb-1 text-[13px] font-semibold text-muted">Respuesta del taller</p>
-          <p className="text-[15px] text-foreground">{complaint.resolution_note}</p>
+          <p className="mb-1 text-[0.8125rem] font-semibold text-muted">Respuesta del taller</p>
+          <p className="text-[0.9375rem] text-foreground">{complaint.resolution_note}</p>
         </div>
       ) : null}
 
       {complaint.satisfaction_rating ? (
         <div className="rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-5">
-          <p className="mb-1 text-[15px] font-medium text-foreground">Tu calificación</p>
+          <p className="mb-1 text-[0.9375rem] font-medium text-foreground">Tu calificación</p>
           <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
               <span
@@ -141,7 +141,7 @@ export default async function ClienteQuejaDetallePage({ params }: Props) {
             ))}
           </div>
           {complaint.satisfaction_comment ? (
-            <p className="mt-2 text-[15px] text-muted">{complaint.satisfaction_comment}</p>
+            <p className="mt-2 text-[0.9375rem] text-muted">{complaint.satisfaction_comment}</p>
           ) : null}
         </div>
       ) : canRate ? (

@@ -107,7 +107,7 @@ export default async function SeguimientoPublicoPage({ params }: Props) {
     timeZone: "America/Merida",
   });
   const card = "rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5";
-  const h2 = "mb-4 font-display text-[28px] font-bold uppercase leading-none text-foreground";
+  const h2 = "mb-4 font-display text-[1.75rem] font-bold uppercase leading-none text-foreground";
 
   return (
     <div className="theme-taller min-h-screen bg-background">

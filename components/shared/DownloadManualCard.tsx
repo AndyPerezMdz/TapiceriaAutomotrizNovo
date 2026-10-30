@@ -20,8 +20,8 @@ export function DownloadManualCard({
         <FileText size={18} />
       </div>
       <div>
-        <p className="text-[15px] font-medium text-foreground">{title}</p>
-        <p className="text-[13px] text-muted">{description}</p>
+        <p className="text-[0.9375rem] font-medium text-foreground">{title}</p>
+        <p className="text-[0.8125rem] text-muted">{description}</p>
       </div>
     </a>
   );

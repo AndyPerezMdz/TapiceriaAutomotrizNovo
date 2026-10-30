@@ -58,7 +58,7 @@ export function Header() {
               key={link.href}
               href={link.href}
               aria-current={isActive(link.href) ? "page" : undefined}
-              className={`border-b-2 pb-0.5 text-[15px] transition ${
+              className={`border-b-2 pb-0.5 text-[0.9375rem] transition ${
                 isActive(link.href)
                   ? "border-dashed border-brand-yellow-dark font-bold text-foreground dark:border-brand-yellow"
                   : "border-transparent font-medium text-foreground/80 hover:text-foreground"
@@ -73,7 +73,7 @@ export function Header() {
           <ThemeToggle />
           <Link
             href="/login"
-            className="inline-flex min-h-11 items-center rounded-xl bg-ink px-5 text-[15px] font-semibold text-brand-yellow transition hover:bg-ink-soft dark:ring-1 dark:ring-white/15"
+            className="inline-flex min-h-11 items-center rounded-xl bg-ink px-5 text-[0.9375rem] font-semibold text-brand-yellow transition hover:bg-ink-soft dark:ring-1 dark:ring-white/15"
           >
             Mi portal
           </Link>
@@ -109,7 +109,7 @@ export function Header() {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex min-h-11 items-center rounded-xl bg-ink px-5 text-[15px] font-semibold text-brand-yellow dark:ring-1 dark:ring-white/15"
+                className="inline-flex min-h-11 items-center rounded-xl bg-ink px-5 text-[0.9375rem] font-semibold text-brand-yellow dark:ring-1 dark:ring-white/15"
               >
                 Mi portal
               </Link>

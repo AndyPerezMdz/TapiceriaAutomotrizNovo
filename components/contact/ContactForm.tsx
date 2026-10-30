@@ -7,7 +7,7 @@ import { useState } from "react";
 const fieldClassName =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 
-const labelClassName = "mb-1.5 block text-[15px] font-semibold text-foreground";
+const labelClassName = "mb-1.5 block text-[0.9375rem] font-semibold text-foreground";
 
 export function ContactForm() {
   const [fieldErrors, setFieldErrors] = useState
@@ -80,7 +80,7 @@ export function ContactForm() {
     return (
       <div className="rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-6 text-center">
         <p className="font-display text-3xl font-extrabold uppercase text-foreground">¡Mensaje enviado!</p>
-        <p className="mt-1 text-[15px] text-muted">
+        <p className="mt-1 text-[0.9375rem] text-muted">
           Te contactaremos pronto por teléfono o WhatsApp.
         </p>
       </div>
@@ -90,7 +90,7 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {status === "error" ? (
-        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
+        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[0.9375rem] text-brand-red">
           Hubo un problema al enviar tu mensaje. Intenta de nuevo.
         </div>
       ) : null}
@@ -119,7 +119,7 @@ export function ContactForm() {
           disabled={status === "loading"}
         />
         {fieldErrors.name ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.name}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.name}</p>
         ) : null}
       </div>
 
@@ -137,7 +137,7 @@ export function ContactForm() {
           disabled={status === "loading"}
         />
         {fieldErrors.phone ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.phone}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.phone}</p>
         ) : null}
       </div>
 
@@ -154,14 +154,14 @@ export function ContactForm() {
           disabled={status === "loading"}
         />
         {fieldErrors.message ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.message}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.message}</p>
         ) : null}
       </div>
 
       <button
         type="submit"
         disabled={status === "loading"}
-        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[17px] font-bold text-ink transition hover:bg-[#e8b90f] disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[1.0625rem] font-bold text-ink transition hover:bg-[#e8b90f] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {status === "loading" ? "Enviando..." : "Enviar mensaje"}
       </button>

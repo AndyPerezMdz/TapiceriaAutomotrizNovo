@@ -21,15 +21,15 @@ export default async function ContactoPage() {
     settings.whatsapp,
   );
   const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(businessInfo.address)}`;
-  const label = "font-display text-[22px] font-bold uppercase leading-none tracking-[0.04em]";
+  const label = "font-display text-[1.375rem] font-bold uppercase leading-none tracking-[0.04em]";
 
   return (
     <div className="mx-auto max-w-6xl px-6 pb-20 pt-14 sm:pb-24 sm:pt-16">
       <header className="animate-fade-up">
-        <h1 className="font-display text-6xl font-extrabold uppercase leading-[0.9] text-foreground sm:text-[88px]">
+        <h1 className="font-display text-6xl font-extrabold uppercase leading-[0.9] text-foreground sm:text-[5.5rem]">
           Contáctanos
         </h1>
-        <p className="mt-3.5 max-w-xl text-[17px] leading-relaxed text-muted sm:text-lg">
+        <p className="mt-3.5 max-w-xl text-[1.0625rem] leading-relaxed text-muted sm:text-lg">
           ¿Dudas o quieres una cotización? Lo más rápido es WhatsApp; si prefieres, déjanos un
           mensaje y te llamamos.
         </p>
@@ -42,11 +42,11 @@ export default async function ContactoPage() {
             href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand-yellow text-[17px] font-bold text-ink transition hover:bg-[#e8b90f]"
+            className="flex min-h-14 items-center justify-center gap-2.5 rounded-[14px] bg-brand-yellow text-[1.0625rem] font-bold text-ink transition hover:bg-[#e8b90f]"
           >
             <MessageCircle size={20} /> Escribir por WhatsApp
           </a>
-          <p className="mt-2.5 text-center text-[15px] text-on-ink-muted">
+          <p className="mt-2.5 text-center text-[0.9375rem] text-on-ink-muted">
             {formatWhatsApp(settings.whatsapp)}
           </p>
 
@@ -62,7 +62,7 @@ export default async function ContactoPage() {
                 href={mapsHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center text-[15px] font-semibold text-brand-yellow hover:underline"
+                className="inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-brand-yellow hover:underline"
               >
                 Abrir en Google Maps →
               </a>
@@ -70,7 +70,7 @@ export default async function ContactoPage() {
                 href={businessInfo.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center text-[15px] font-semibold text-brand-yellow hover:underline"
+                className="inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-brand-yellow hover:underline"
               >
                 Facebook →
               </a>
@@ -80,12 +80,12 @@ export default async function ContactoPage() {
 
         {/* Formulario */}
         <section className="min-w-0 flex-[1_1_460px] rounded-[20px] bg-surface p-6 sm:p-9 dark:ring-1 dark:ring-white/5">
-          <h2 className="font-display text-[34px] font-extrabold uppercase leading-none text-foreground">
+          <h2 className="font-display text-[2.125rem] font-extrabold uppercase leading-none text-foreground">
             Déjanos un mensaje
           </h2>
-          <p className="mb-6 mt-2 text-[15px] text-muted">Te contestamos en horario del taller.</p>
+          <p className="mb-6 mt-2 text-[0.9375rem] text-muted">Te contestamos en horario del taller.</p>
           <ContactForm />
-          <div className="mt-6 border-t-2 border-dashed border-seam pt-4 text-[15px] text-muted">
+          <div className="mt-6 border-t-2 border-dashed border-seam pt-4 text-[0.9375rem] text-muted">
             ¿Ya sabes lo que quieres?{" "}
             <Link href="/registro" className="font-bold text-foreground underline-offset-4 hover:underline">
               Pide tu cotización en línea
@@ -98,7 +98,7 @@ export default async function ContactoPage() {
       {/* Mapa a todo lo ancho */}
       <section aria-label="Mapa" className="mt-6">
         <div className="relative h-[340px] overflow-hidden rounded-[20px] bg-seam sm:h-[420px] dark:ring-1 dark:ring-white/5">
-          <p className="absolute inset-0 flex items-center justify-center text-[15px] text-muted">
+          <p className="absolute inset-0 flex items-center justify-center text-[0.9375rem] text-muted">
             Cargando mapa…
           </p>
           <iframe

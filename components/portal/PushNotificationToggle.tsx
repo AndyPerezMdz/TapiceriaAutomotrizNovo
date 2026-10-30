@@ -88,11 +88,11 @@ export function PushNotificationToggle() {
   if (debugError) {
     return (
       <div className="rounded-2xl border border-brand-red/30 bg-brand-red/5 p-4">
-        <p className="text-[15px] font-medium text-brand-red">No se pudo activar</p>
-        <p className="mt-1 break-words text-[13px] text-brand-red/80">{debugError}</p>
+        <p className="text-[0.9375rem] font-medium text-brand-red">No se pudo activar</p>
+        <p className="mt-1 break-words text-[0.8125rem] text-brand-red/80">{debugError}</p>
         <button
           onClick={() => setDebugError(null)}
-          className="mt-2 text-[13px] font-medium text-brand-red underline"
+          className="mt-2 text-[0.8125rem] font-medium text-brand-red underline"
         >
           Intentar de nuevo
         </button>
@@ -105,29 +105,29 @@ export function PushNotificationToggle() {
       <div className="rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
         <div className="mb-2 flex items-center gap-2.5">
           <Bell size={16} className="text-muted" />
-          <p className="text-[15px] font-medium text-foreground">Activar notificaciones</p>
+          <p className="text-[0.9375rem] font-medium text-foreground">Activar notificaciones</p>
         </div>
-        <p className="mb-3 text-[13px] text-muted">
+        <p className="mb-3 text-[0.8125rem] text-muted">
           En iPhone, primero necesitas agregar esta página a tu pantalla de inicio para poder
           recibir notificaciones:
         </p>
-        <ol className="space-y-2 text-[13px] text-foreground">
+        <ol className="space-y-2 text-[0.8125rem] text-foreground">
           <li className="flex items-center gap-2">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-highlight text-[10px] font-semibold text-yellow-text">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-highlight text-[0.625rem] font-semibold text-yellow-text">
               1
             </span>
             Toca el ícono de compartir <Share size={13} className="inline" /> en la barra de
             Safari.
           </li>
           <li className="flex items-center gap-2">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-highlight text-[10px] font-semibold text-yellow-text">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-highlight text-[0.625rem] font-semibold text-yellow-text">
               2
             </span>
             Elige <SquarePlus size={13} className="inline" /> &quot;Agregar a pantalla de
             inicio&quot;.
           </li>
           <li className="flex items-center gap-2">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-highlight text-[10px] font-semibold text-yellow-text">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-highlight text-[0.625rem] font-semibold text-yellow-text">
               3
             </span>
             Abre la app desde el ícono nuevo en tu pantalla de inicio, y activa notificaciones
@@ -143,8 +143,8 @@ export function PushNotificationToggle() {
       <div className="flex items-center gap-2.5 rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
         <BellOff size={16} className="text-muted" />
         <div>
-          <p className="text-[15px] font-medium text-foreground">Notificaciones no disponibles</p>
-          <p className="text-[13px] text-muted">
+          <p className="text-[0.9375rem] font-medium text-foreground">Notificaciones no disponibles</p>
+          <p className="text-[0.8125rem] text-muted">
             Tu navegador actual no soporta esta función.
           </p>
         </div>
@@ -157,8 +157,8 @@ export function PushNotificationToggle() {
       <div className="flex items-center gap-2.5 rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
         <Bell size={16} className="text-yellow-text" />
         <div>
-          <p className="text-[15px] font-medium text-foreground">Notificaciones activadas</p>
-          <p className="text-[13px] text-muted">Vas a recibir avisos en este dispositivo.</p>
+          <p className="text-[0.9375rem] font-medium text-foreground">Notificaciones activadas</p>
+          <p className="text-[0.8125rem] text-muted">Vas a recibir avisos en este dispositivo.</p>
         </div>
       </div>
     );
@@ -169,8 +169,8 @@ export function PushNotificationToggle() {
       <div className="flex items-center gap-2.5 rounded-2xl bg-surface p-5 sm:p-6 dark:ring-1 dark:ring-white/5">
         <BellOff size={16} className="text-muted" />
         <div>
-          <p className="text-[15px] font-medium text-foreground">Notificaciones bloqueadas</p>
-          <p className="text-[13px] text-muted">
+          <p className="text-[0.9375rem] font-medium text-foreground">Notificaciones bloqueadas</p>
+          <p className="text-[0.8125rem] text-muted">
             Las bloqueaste antes. Actívalas desde la configuración de tu navegador si cambias de
             opinión.
           </p>
@@ -187,10 +187,10 @@ export function PushNotificationToggle() {
     >
       <Bell size={16} className="text-muted" />
       <div>
-        <p className="text-[15px] font-medium text-foreground">
+        <p className="text-[0.9375rem] font-medium text-foreground">
           {isLoading ? "Activando..." : "Activar notificaciones"}
         </p>
-        <p className="text-[13px] text-muted">
+        <p className="text-[0.8125rem] text-muted">
           Recibe avisos aunque no tengas la página abierta.
         </p>
       </div>

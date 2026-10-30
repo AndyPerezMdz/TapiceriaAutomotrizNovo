@@ -50,7 +50,7 @@ export function ServiceImageUploader({
 
   return (
     <div>
-      <label className="mb-1.5 block text-[15px] font-medium text-foreground">
+      <label className="mb-1.5 block text-[0.9375rem] font-medium text-foreground">
         Foto representativa
       </label>
       <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export function ServiceImageUploader({
 
         <label className="flex h-20 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-field-border text-muted transition hover:border-foreground">
           <ImagePlus size={20} />
-          <span className="text-[10px]">{isUploading ? "Subiendo..." : "Subir"}</span>
+          <span className="text-[0.625rem]">{isUploading ? "Subiendo..." : "Subir"}</span>
           <input
             type="file"
             accept="image/*"

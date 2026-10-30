@@ -159,7 +159,7 @@ export function AdminSidebar({
                 <div key={group.title} className="mb-1">
                   <button
                     onClick={() => toggleGroup(group.title)}
-                    className="flex min-h-9 w-full items-center justify-between rounded-md px-3 text-[11px] uppercase tracking-[0.16em] text-on-ink-muted transition hover:text-on-ink"
+                    className="flex min-h-9 w-full items-center justify-between rounded-md px-3 text-[0.6875rem] uppercase tracking-[0.16em] text-on-ink-muted transition hover:text-on-ink"
                   >
                     {group.title}
                     <ChevronDown
@@ -179,7 +179,7 @@ export function AdminSidebar({
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
                             aria-current={isActive ? "page" : undefined}
-                            className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-[15px] transition ${
+                            className={`flex min-h-11 items-center gap-3 rounded-[10px] px-3 text-[0.9375rem] transition ${
                               isActive
                                 ? "bg-brand-yellow font-semibold text-ink"
                                 : "text-[#e6e3dc] hover:bg-white/5"

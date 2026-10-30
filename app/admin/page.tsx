@@ -165,7 +165,7 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-9">
       <header>
-        <p className="text-[15px] capitalize text-muted">{todayLabel}</p>
+        <p className="text-[0.9375rem] capitalize text-muted">{todayLabel}</p>
         <h1 className={`${displayClass} mt-1.5 text-5xl text-foreground sm:text-6xl`}>
           Tablero del taller
         </h1>
@@ -183,7 +183,7 @@ export default async function AdminDashboardPage() {
             className="px-5 py-5 transition hover:bg-white/5 sm:border-r-2 sm:border-dashed sm:border-brand-yellow/35 sm:px-6 sm:py-6"
           >
             <p
-              className={`font-display text-5xl font-extrabold leading-none sm:text-[56px] ${
+              className={`font-display text-5xl font-extrabold leading-none sm:text-[3.5rem] ${
                 c.hot && c.value > 0 ? "text-brand-yellow" : ""
               }`}
             >
@@ -193,7 +193,7 @@ export default async function AdminDashboardPage() {
           </Link>
         ))}
         <div className="col-span-2 border-t-2 border-dashed border-brand-yellow/35 px-5 py-5 sm:col-span-1 sm:border-t-0 sm:px-6 sm:py-6">
-          <p className="font-display text-[34px] font-extrabold leading-none sm:mt-2">
+          <p className="font-display text-[2.125rem] font-extrabold leading-none sm:mt-2">
             ${monthlyRevenue.toLocaleString("es-MX")}
           </p>
           <p className="mt-1.5 text-sm capitalize text-[#d9d5cc]">Entregado en {monthName}</p>
@@ -224,7 +224,7 @@ export default async function AdminDashboardPage() {
                     }`}
                   >
                     <div className="min-w-0">
-                      <p className="text-[17px] font-semibold text-foreground">
+                      <p className="text-[1.0625rem] font-semibold text-foreground">
                         {vehicleOf(o)}
                         {client ? <span className="font-medium text-foreground/75"> · {client}</span> : null}
                       </p>
@@ -266,8 +266,8 @@ export default async function AdminDashboardPage() {
                     }`}
                   >
                     <div className="min-w-0">
-                      <p className="flex flex-wrap items-center gap-2 text-[17px] font-semibold text-foreground">
-                        <span className="rounded-md bg-brand-red-dark px-2 py-1 font-display text-[13px] font-bold uppercase leading-none tracking-[0.1em] text-white">
+                      <p className="flex flex-wrap items-center gap-2 text-[1.0625rem] font-semibold text-foreground">
+                        <span className="rounded-md bg-brand-red-dark px-2 py-1 font-display text-[0.8125rem] font-bold uppercase leading-none tracking-[0.1em] text-white">
                           Queja
                         </span>
                         {client ?? "Cliente"}
@@ -290,7 +290,7 @@ export default async function AdminDashboardPage() {
         <section className="min-w-0 flex-[1_1_300px] space-y-3.5">
           <SectionTitle
             action={
-              <Link href="/admin/citas" className="inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+              <Link href="/admin/citas" className="inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
                 Ver citas
               </Link>
             }
@@ -306,7 +306,7 @@ export default async function AdminDashboardPage() {
                     i === todayAppointments.length - 1 ? "" : "border-b-2 border-dashed border-seam"
                   }`}
                 >
-                  <p className="w-16 shrink-0 font-display text-[26px] font-extrabold leading-none text-foreground">
+                  <p className="w-16 shrink-0 font-display text-[1.625rem] font-extrabold leading-none text-foreground">
                     {a.appointment_time?.slice(0, 5)}
                   </p>
                   <div className="min-w-0">
@@ -319,7 +319,7 @@ export default async function AdminDashboardPage() {
                 </div>
               ))
             ) : (
-              <p className="py-4 text-[15px] text-muted">No hay citas para hoy.</p>
+              <p className="py-4 text-[0.9375rem] text-muted">No hay citas para hoy.</p>
             )}
           </div>
         </section>
@@ -330,7 +330,7 @@ export default async function AdminDashboardPage() {
         <section className="space-y-3.5">
           <SectionTitle
             action={
-              <Link href="/admin/pedidos" className="inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+              <Link href="/admin/pedidos" className="inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
                 Ver todos los pedidos
               </Link>
             }
@@ -349,10 +349,10 @@ export default async function AdminDashboardPage() {
                   className="block rounded-2xl bg-surface p-5 transition hover:ring-2 hover:ring-foreground/80 dark:ring-1 dark:ring-white/5"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="font-code text-[13px] text-muted">{o.id.slice(0, 8).toUpperCase()}</p>
+                    <p className="font-code text-[0.8125rem] text-muted">{o.id.slice(0, 8).toUpperCase()}</p>
                     {ready ? <StatusTag status={o.status} /> : null}
                   </div>
-                  <p className="mt-1 font-display text-[26px] font-extrabold uppercase leading-none text-foreground">
+                  <p className="mt-1 font-display text-[1.625rem] font-extrabold uppercase leading-none text-foreground">
                     {vehicleOf(o)}
                   </p>
                   {p ? (
@@ -365,7 +365,7 @@ export default async function AdminDashboardPage() {
                   ) : (
                     <p className="mt-3 text-sm text-muted">Sin etapas configuradas</p>
                   )}
-                  <p className={`mt-2.5 text-[13px] ${days >= 7 && !ready ? "font-semibold text-brand-red-dark dark:text-brand-red" : "text-muted"}`}>
+                  <p className={`mt-2.5 text-[0.8125rem] ${days >= 7 && !ready ? "font-semibold text-brand-red-dark dark:text-brand-red" : "text-muted"}`}>
                     {days === 0 ? "Ingresó hoy" : `${days} ${days === 1 ? "día" : "días"} desde que ingresó`}
                   </p>
                 </Link>
@@ -379,7 +379,7 @@ export default async function AdminDashboardPage() {
       <section className="space-y-3.5">
         <SectionTitle
           action={
-            <Link href="/admin/historial" className="inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground">
+            <Link href="/admin/historial" className="inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
               Ver todo
             </Link>
           }
@@ -402,7 +402,7 @@ export default async function AdminDashboardPage() {
                 }`}
               >
                 <div className="min-w-0">
-                  <p className="text-[15px] text-foreground">
+                  <p className="text-[0.9375rem] text-foreground">
                     <span className="font-semibold">{entry.actor_name ?? "Sistema"}</span>{" "}
                     {entry.action.toLowerCase()}
                   </p>

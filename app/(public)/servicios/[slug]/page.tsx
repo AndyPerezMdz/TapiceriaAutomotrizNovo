@@ -51,13 +51,13 @@ function Swatches({ colors }: { colors: SwatchColor[] }) {
             {c.requires_visit ? (
               <span
                 aria-hidden="true"
-                className="absolute -right-1 -top-1 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-brand-yellow text-[11px] font-bold text-ink ring-2 ring-surface"
+                className="absolute -right-1 -top-1 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-brand-yellow text-[0.6875rem] font-bold text-ink ring-2 ring-surface"
               >
                 !
               </span>
             ) : null}
           </span>
-          <span className="w-full truncate text-center text-[13px] text-foreground">
+          <span className="w-full truncate text-center text-[0.8125rem] text-foreground">
             {c.name}
             {c.requires_visit ? <span className="sr-only"> (requiere visita)</span> : null}
           </span>
@@ -87,7 +87,7 @@ function OptionCard({
       ) : null}
       <div className="p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h3 className="font-display text-[30px] font-bold uppercase leading-none text-foreground">{name}</h3>
+          <h3 className="font-display text-[1.875rem] font-bold uppercase leading-none text-foreground">{name}</h3>
           {priceHint ? (
             <span className="rounded-full bg-highlight px-3 py-1 text-sm font-semibold text-yellow-text">
               {priceHint}
@@ -153,7 +153,7 @@ export default async function ServicioDetallePage({ params }: Props) {
       <div className="mx-auto max-w-6xl px-6 pt-7">
         <Link
           href="/servicios"
-          className="inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
+          className="inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
         >
           <ArrowLeft size={18} /> Todos los servicios
         </Link>
@@ -166,11 +166,11 @@ export default async function ServicioDetallePage({ params }: Props) {
               <Image src={service.image_url} alt="" fill priority sizes="(min-width: 1024px) 66vw, 100vw" className="object-cover" />
             </div>
           ) : null}
-          <h1 className="mt-7 font-display text-5xl font-extrabold uppercase leading-[0.9] text-foreground sm:text-[76px]">
+          <h1 className="mt-7 font-display text-5xl font-extrabold uppercase leading-[0.9] text-foreground sm:text-[4.75rem]">
             {service.title}
           </h1>
           {service.full_description ? (
-            <p className="mt-5 max-w-2xl whitespace-pre-line text-[17px] leading-relaxed text-foreground/80">
+            <p className="mt-5 max-w-2xl whitespace-pre-line text-[1.0625rem] leading-relaxed text-foreground/80">
               {service.full_description}
             </p>
           ) : null}
@@ -182,7 +182,7 @@ export default async function ServicioDetallePage({ params }: Props) {
           <div className="relative">
             <p className="text-xs uppercase tracking-[0.16em] text-[#3d3200]">Cotización sin compromiso</p>
             <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.95]">Cotiza este servicio</p>
-            <p className="mt-2.5 text-[15px] leading-relaxed text-[#2b2400]">
+            <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-[#2b2400]">
               Eliges material y color, mandas fotos y te respondemos con el precio.
             </p>
             <Link
@@ -195,7 +195,7 @@ export default async function ServicioDetallePage({ params }: Props) {
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2.5 flex min-h-12 items-center justify-center gap-2 rounded-xl border-[1.5px] border-ink text-[15px] font-semibold text-ink transition hover:bg-ink/5"
+              className="mt-2.5 flex min-h-12 items-center justify-center gap-2 rounded-xl border-[1.5px] border-ink text-[0.9375rem] font-semibold text-ink transition hover:bg-ink/5"
             >
               <MessageCircle size={17} /> Preguntar por WhatsApp
             </a>

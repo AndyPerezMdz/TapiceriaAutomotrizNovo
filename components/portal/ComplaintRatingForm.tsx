@@ -26,10 +26,10 @@ export function ComplaintRatingForm({ complaintId }: { complaintId: string }) {
 
   return (
     <div className="rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
-      <p className="mb-1 text-[15px] font-medium text-foreground">
+      <p className="mb-1 text-[0.9375rem] font-medium text-foreground">
         ¿Qué tan bien se resolvió tu queja?
       </p>
-      <p className="mb-3 text-[13px] text-muted">Tu opinión nos ayuda a mejorar.</p>
+      <p className="mb-3 text-[0.8125rem] text-muted">Tu opinión nos ayuda a mejorar.</p>
 
       <div className="mb-3 flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -58,7 +58,7 @@ export function ComplaintRatingForm({ complaintId }: { complaintId: string }) {
       <button
         onClick={handleSubmit}
         disabled={isSaving || rating === 0}
-        className="mt-3 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-5 py-2 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+        className="mt-3 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-5 py-2 text-[0.9375rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Enviando..." : "Enviar calificación"}
       </button>

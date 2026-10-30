@@ -69,22 +69,22 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="font-medium text-foreground">{coupon.title}</p>
-            <p className="mt-0.5 text-[15px] text-yellow-text">
+            <p className="mt-0.5 text-[0.9375rem] text-yellow-text">
               {discountLabel}
             </p>
             {coupon.description ? (
-              <p className="mt-1 text-[13px] text-muted">{coupon.description}</p>
+              <p className="mt-1 text-[0.8125rem] text-muted">{coupon.description}</p>
             ) : null}
             <div className="mt-2 flex flex-wrap gap-1.5">
-              <span className="inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-[13px] text-muted dark:bg-white/5">
+              <span className="inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-[0.8125rem] text-muted dark:bg-white/5">
                 {audienceLabels[coupon.audience]}
               </span>
-              <span className="inline-block rounded-full bg-brand-yellow text-ink px-2.5 py-0.5 text-[13px]">
+              <span className="inline-block rounded-full bg-brand-yellow text-ink px-2.5 py-0.5 text-[0.8125rem]">
                 {coupon.service_title ?? "General"}
               </span>
               {coupon.expires_at ? (
                 <span
-                  className={`inline-block rounded-full px-2.5 py-0.5 text-[13px] ${
+                  className={`inline-block rounded-full px-2.5 py-0.5 text-[0.8125rem] ${
                     isExpired
                       ? "border-[1.5px] border-brand-red-dark text-brand-red-dark dark:border-brand-red dark:text-brand-red"
                       : "border-[1.5px] border-dashed border-foreground text-foreground"

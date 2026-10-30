@@ -197,7 +197,7 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
       ) : (
         <div>
           <div className="overflow-x-auto rounded-[18px] bg-surface dark:ring-1 dark:ring-white/5">
-            <table className="w-full min-w-[760px] border-collapse text-[15px]">
+            <table className="w-full min-w-[760px] border-collapse text-[0.9375rem]">
               <thead>
                 <tr className="border-b-2 border-dashed border-seam">
                   <th scope="col" className={`${th} pl-6`}>Vehículo</th>
@@ -222,7 +222,7 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
                           <span className="block text-base font-semibold text-foreground">
                             {o.vehicle || "Sin vehículo"}
                           </span>
-                          <span className="mt-0.5 block text-[13px] text-muted">
+                          <span className="mt-0.5 block text-[0.8125rem] text-muted">
                             <span className="font-code">{o.id.slice(0, 8).toUpperCase()}</span> ·{" "}
                             {new Date(o.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}
                           </span>
@@ -231,7 +231,7 @@ export default async function AdminPedidosPage({ searchParams }: Props) {
                       <td className="px-5 py-4 align-top">
                         <span className="block text-foreground">{o.client_name ?? "Cliente"}</span>
                         {o.services ? (
-                          <span className="mt-0.5 block max-w-[220px] truncate text-[13px] text-muted">{o.services}</span>
+                          <span className="mt-0.5 block max-w-[220px] truncate text-[0.8125rem] text-muted">{o.services}</span>
                         ) : null}
                       </td>
                       <td className="px-5 py-4 align-top">

@@ -29,8 +29,8 @@ export function MarketingOptInToggle({ initialValue }: { initialValue: boolean }
       <div className="flex items-start gap-2.5">
         <Mail size={16} className="mt-0.5 shrink-0 text-muted" />
         <div>
-          <p className="text-[15px] font-medium text-foreground">Correos promocionales</p>
-          <p className="text-[13px] text-muted">
+          <p className="text-[0.9375rem] font-medium text-foreground">Correos promocionales</p>
+          <p className="text-[0.8125rem] text-muted">
             Recibe avisos de cupones nuevos y novedades del taller.
           </p>
         </div>

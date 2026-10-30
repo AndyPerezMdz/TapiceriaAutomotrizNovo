@@ -59,7 +59,7 @@ export function StaffComplaintForm({ orderId }: { orderId: string }) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="text-[13px] font-medium text-brand-red underline-offset-2 hover:underline"
+        className="text-[0.8125rem] font-medium text-brand-red underline-offset-2 hover:underline"
       >
         Registrar queja por WhatsApp
       </button>
@@ -71,7 +71,7 @@ export function StaffComplaintForm({ orderId }: { orderId: string }) {
       onSubmit={handleSubmit}
       className="mt-2 rounded-xl border-[1.5px] border-seam bg-background p-3"
     >
-      {error ? <p className="mb-2 text-[13px] text-brand-red">{error}</p> : null}
+      {error ? <p className="mb-2 text-[0.8125rem] text-brand-red">{error}</p> : null}
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
@@ -84,14 +84,14 @@ export function StaffComplaintForm({ orderId }: { orderId: string }) {
         <button
           type="submit"
           disabled={isSaving || !description.trim()}
-          className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1 text-[13px] font-semibold text-ink disabled:opacity-60"
+          className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1 text-[0.8125rem] font-semibold text-ink disabled:opacity-60"
         >
           {isSaving ? "Guardando..." : "Registrar"}
         </button>
         <button
           type="button"
           onClick={() => setIsOpen(false)}
-          className="rounded-xl border-[1.5px] border-field-border px-3 py-1 text-[13px] font-medium text-foreground"
+          className="rounded-xl border-[1.5px] border-field-border px-3 py-1 text-[0.8125rem] font-medium text-foreground"
         >
           Cancelar
         </button>

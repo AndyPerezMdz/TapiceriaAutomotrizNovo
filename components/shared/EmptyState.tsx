@@ -16,11 +16,11 @@ export function EmptyState({ icon: Icon, title, description, actionLabel, action
         <Icon size={26} />
       </div>
       <p className="font-display text-2xl font-bold uppercase text-foreground">{title}</p>
-      <p className="mx-auto mt-2 max-w-sm text-[15px] text-muted">{description}</p>
+      <p className="mx-auto mt-2 max-w-sm text-[0.9375rem] text-muted">{description}</p>
       {actionLabel && actionHref ? (
         <Link
           href={actionHref}
-          className="mt-6 inline-flex min-h-12 items-center rounded-xl bg-brand-yellow px-6 text-[15px] font-semibold text-ink transition hover:bg-[#e8b90f]"
+          className="mt-6 inline-flex min-h-12 items-center rounded-xl bg-brand-yellow px-6 text-[0.9375rem] font-semibold text-ink transition hover:bg-[#e8b90f]"
         >
           {actionLabel}
         </Link>

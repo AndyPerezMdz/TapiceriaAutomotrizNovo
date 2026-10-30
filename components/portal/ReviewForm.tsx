@@ -53,12 +53,12 @@ export function ReviewForm({ orderId }: { orderId: string }) {
   return (
     <div className="rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-5">
       <p className="font-medium text-foreground">¿Cómo fue tu experiencia?</p>
-      <p className="mt-1 text-[15px] text-muted">
+      <p className="mt-1 text-[0.9375rem] text-muted">
         Tu opinión nos ayuda a mejorar.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-        {error ? <p className="text-[15px] text-brand-red">{error}</p> : null}
+        {error ? <p className="text-[0.9375rem] text-brand-red">{error}</p> : null}
 
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -94,7 +94,7 @@ export function ReviewForm({ orderId }: { orderId: string }) {
         <button
           type="submit"
           disabled={isSaving}
-          className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+          className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[0.9375rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
         >
           {isSaving ? "Enviando..." : "Enviar reseña"}
         </button>

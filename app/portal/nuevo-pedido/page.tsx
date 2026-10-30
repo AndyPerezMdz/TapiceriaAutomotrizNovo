@@ -12,7 +12,7 @@ export default async function NuevoPedidoPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <header className="mb-7">
-        <p className="font-display text-[15px] font-semibold uppercase tracking-[0.18em] text-yellow-text">
+        <p className="font-display text-[0.9375rem] font-semibold uppercase tracking-[0.18em] text-yellow-text">
           Solicitud de servicio
         </p>
         <h1 className="mt-1.5 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-6xl">

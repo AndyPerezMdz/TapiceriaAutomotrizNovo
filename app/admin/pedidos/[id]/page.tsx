@@ -69,13 +69,13 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       <div className="mx-auto max-w-md text-center">
         <Link
           href="/admin/pedidos"
-          className="mb-6 inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
+          className="mb-6 inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
         >
           <ArrowLeft size={18} /> Volver a pedidos
         </Link>
         <div className={`${cardClass} !py-12 text-center`}>
           <p className="font-display text-2xl font-bold uppercase text-foreground">Este pedido fue eliminado</p>
-          <p className="mt-2 text-[15px] text-muted">
+          <p className="mt-2 text-[0.9375rem] text-muted">
             Ya no se puede consultar la información de este pedido.
           </p>
         </div>
@@ -135,13 +135,13 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
   const daysInShop = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 86400000);
   const showDays = !["entregado", "cancelado", "rechazado"].includes(order.status);
 
-  const eyebrow = "text-[13px] uppercase tracking-[0.14em] text-on-ink-muted";
+  const eyebrow = "text-[0.8125rem] uppercase tracking-[0.14em] text-on-ink-muted";
 
   return (
     <div className="mx-auto max-w-6xl space-y-7 overflow-x-hidden">
       <Link
         href="/admin/pedidos"
-        className="inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
+        className="inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
       >
         <ArrowLeft size={18} /> Pedidos
       </Link>
@@ -153,13 +153,13 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             <dl className="flex flex-wrap gap-x-8 gap-y-4">
               <div>
                 <dt className={eyebrow}>Cliente</dt>
-                <dd className="mt-1 text-[17px] font-semibold">{client?.full_name ?? "Cliente"}</dd>
+                <dd className="mt-1 text-[1.0625rem] font-semibold">{client?.full_name ?? "Cliente"}</dd>
               </div>
               {client?.phone ? (
                 <div>
                   <dt className={eyebrow}>Teléfono</dt>
                   <dd className="mt-1">
-                    <a href={`tel:${client.phone}`} className="inline-flex items-center gap-1.5 text-[17px] font-medium text-on-ink hover:text-brand-yellow">
+                    <a href={`tel:${client.phone}`} className="inline-flex items-center gap-1.5 text-[1.0625rem] font-medium text-on-ink hover:text-brand-yellow">
                       <Phone size={15} /> {client.phone}
                     </a>
                   </dd>
@@ -168,7 +168,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
               {total ? (
                 <div>
                   <dt className={eyebrow}>Total</dt>
-                  <dd className="mt-0.5 font-display text-[26px] font-bold leading-none">
+                  <dd className="mt-0.5 font-display text-[1.625rem] font-bold leading-none">
                     ${Number(total).toLocaleString("es-MX")}
                   </dd>
                 </div>
@@ -187,12 +187,12 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       >
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div className="min-w-0">
-            <p className="font-code text-[13px] text-on-ink-muted sm:text-sm">
+            <p className="font-code text-[0.8125rem] text-on-ink-muted sm:text-sm">
               Folio {order.id.slice(0, 8).toUpperCase()} · ingresó{" "}
               {new Date(order.created_at).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}
               {showDays ? ` · ${daysInShop} ${daysInShop === 1 ? "día" : "días"} en el taller` : ""}
             </p>
-            <h1 className={`${displayClass} mt-2 text-[44px] sm:text-6xl`}>
+            <h1 className={`${displayClass} mt-2 text-[2.75rem] sm:text-6xl`}>
               {vehicle || "Vehículo sin detalle"}
             </h1>
           </div>
@@ -207,7 +207,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             <section className="flex flex-wrap items-start justify-between gap-4 rounded-[18px] border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-5 sm:p-6 dark:border-brand-yellow/40">
               <div className="min-w-0">
                 <p className="text-base font-semibold text-foreground">Esperando respuesta del cliente</p>
-                <p className="mt-1 text-[15px] text-foreground/80">
+                <p className="mt-1 text-[0.9375rem] text-foreground/80">
                   {waitingDays <= 0
                     ? "La cotización se mandó hoy."
                     : `Lleva ${waitingDays} ${waitingDays === 1 ? "día" : "días"} sin aceptar ni rechazar.`}{" "}
@@ -257,7 +257,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             {order.service_description ? (
               <>
                 <div className={`mt-4 ${seamClass}`} />
-                <p className="mt-4 break-words text-[15px] leading-relaxed text-foreground/85">
+                <p className="mt-4 break-words text-[0.9375rem] leading-relaxed text-foreground/85">
                   {order.service_description}
                 </p>
               </>
@@ -289,7 +289,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
                   currentUserId={user?.id ?? null}
                 />
               ) : (
-                <p className="text-[15px] text-muted">Sin actualizaciones todavía.</p>
+                <p className="text-[0.9375rem] text-muted">Sin actualizaciones todavía.</p>
               )}
             </div>
           </section>
@@ -297,7 +297,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
           {order.status === "entregado" ? (
             <section className={cardClass}>
               <SectionTitle size="sm">Quejas</SectionTitle>
-              <p className="mb-3 mt-2 text-[15px] text-muted">
+              <p className="mb-3 mt-2 text-[0.9375rem] text-muted">
                 Si el cliente reportó un problema por WhatsApp (no desde la página), regístralo aquí.
               </p>
               <StaffComplaintForm orderId={order.id} />
@@ -305,7 +305,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
           ) : null}
 
           <section className="rounded-2xl border-2 border-dashed border-brand-red/35 p-5">
-            <p className="text-[15px] font-semibold text-brand-red-dark dark:text-brand-red">Zona de cuidado</p>
+            <p className="text-[0.9375rem] font-semibold text-brand-red-dark dark:text-brand-red">Zona de cuidado</p>
             <p className="mb-3 mt-1 text-sm text-muted">
               Eliminar oculta el pedido al cliente. El historial se conserva.
             </p>

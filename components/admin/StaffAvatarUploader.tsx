@@ -94,11 +94,11 @@ export function StaffAvatarUploader({
       </div>
       <div className="text-center sm:text-left">
         <p className="text-lg font-semibold text-foreground">{fullName || "Sin nombre"}</p>
-        <p className="text-[13px] capitalize text-muted">{role}</p>
-        <p className="mt-1 text-[13px] text-muted">
+        <p className="text-[0.8125rem] capitalize text-muted">{role}</p>
+        <p className="mt-1 text-[0.8125rem] text-muted">
           {isUploading ? "Subiendo..." : "Click en la cámara para cambiar tu foto"}
         </p>
-        {error ? <p className="text-[13px] text-brand-red">{error}</p> : null}
+        {error ? <p className="text-[0.8125rem] text-brand-red">{error}</p> : null}
       </div>
     </div>
   );

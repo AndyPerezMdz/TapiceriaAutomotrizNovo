@@ -117,7 +117,7 @@ export function LoginForm({
 
             <div>
               <div className="mb-1.5 flex items-baseline justify-between gap-3">
-                <label htmlFor="password" className="text-[15px] font-semibold text-foreground">
+                <label htmlFor="password" className="text-[0.9375rem] font-semibold text-foreground">
                   Contraseña
                 </label>
                 <Link href="/recuperar" className="text-sm font-medium text-muted underline-offset-4 hover:text-foreground hover:underline">
@@ -157,7 +157,7 @@ export function LoginForm({
         </>
       ) : (
         <>
-          <p className="mb-4 text-[15px] text-muted">
+          <p className="mb-4 text-[0.9375rem] text-muted">
             Te mandamos un enlace a tu correo; ábrelo desde este dispositivo y entras sin
             contraseña.
           </p>
@@ -165,7 +165,7 @@ export function LoginForm({
           <button
             type="button"
             onClick={() => setMode("password")}
-            className="mt-4 inline-flex min-h-11 items-center text-[15px] font-semibold text-foreground underline-offset-4 hover:underline"
+            className="mt-4 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground underline-offset-4 hover:underline"
           >
             ← Usar mi contraseña
           </button>

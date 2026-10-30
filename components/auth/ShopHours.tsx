@@ -91,7 +91,7 @@ export function ShopHours({ hoursWeekday, hoursSaturday, tone = "ink" }: Props) 
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p
-          className={`font-display text-[22px] font-bold uppercase leading-none tracking-[0.04em] ${
+          className={`font-display text-[1.375rem] font-bold uppercase leading-none tracking-[0.04em] ${
             ink ? "text-on-ink" : "text-foreground"
           }`}
         >

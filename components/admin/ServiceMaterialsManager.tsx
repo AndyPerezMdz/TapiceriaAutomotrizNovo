@@ -22,7 +22,7 @@ interface MaterialType {
 }
 
 const inputClassName =
-  "rounded-xl border-[1.5px] border-field-border bg-surface px-2.5 py-1.5 text-[15px] text-foreground outline-none";
+  "rounded-xl border-[1.5px] border-field-border bg-surface px-2.5 py-1.5 text-[0.9375rem] text-foreground outline-none";
 
 export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
   const { confirm, dialog } = useConfirm();
@@ -128,13 +128,13 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
   }
 
   if (loading) {
-    return <p className="text-[15px] text-muted">Cargando materiales...</p>;
+    return <p className="text-[0.9375rem] text-muted">Cargando materiales...</p>;
   }
 
   return (
     <div className="space-y-4">
       {dialog}
-      <div className="rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-3 text-[13px] text-yellow-text">
+      <div className="rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight p-3 text-[0.8125rem] text-yellow-text">
         <strong>Regla para las fotos:</strong> la imagen debe mostrar únicamente el material, de
         punta a punta, sin fondo, personas, ni ningún otro objeto en la foto.
       </div>
@@ -160,7 +160,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
               />
               <button
                 onClick={() => saveEditMaterial(material.id)}
-                className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
+                className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
               >
                 Guardar
               </button>
@@ -183,7 +183,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
                 <div>
                   <p className="font-medium text-foreground">{material.name}</p>
                   {material.price_hint ? (
-                    <p className="text-[13px] text-muted">{material.price_hint}</p>
+                    <p className="text-[0.8125rem] text-muted">{material.price_hint}</p>
                   ) : null}
                 </div>
               </div>
@@ -228,7 +228,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
                       style={{ backgroundColor: color.hex_color }}
                     />
                   ) : null}
-                  <span className="text-[15px] text-foreground">{color.name}</span>
+                  <span className="text-[0.9375rem] text-foreground">{color.name}</span>
                 </div>
                 <button onClick={() => deleteColor(color.id)} className="text-muted hover:text-brand-red">
                   <X size={13} />
@@ -273,7 +273,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
 
       {/* Agregar nuevo material */}
       <div className="rounded-2xl border-2 border-dashed border-field-border p-4">
-        <p className="mb-2 text-[15px] font-medium text-foreground">Agregar material</p>
+        <p className="mb-2 text-[0.9375rem] font-medium text-foreground">Agregar material</p>
         <div className="flex flex-wrap gap-2">
           <input
             value={newMaterialName}
@@ -289,7 +289,7 @@ export function ServiceMaterialsManager({ serviceId }: { serviceId: string }) {
           />
           <button
             onClick={addMaterial}
-            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11"
+            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11"
           >
             <Plus size={14} /> Agregar
           </button>

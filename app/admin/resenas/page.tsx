@@ -42,7 +42,7 @@ export default async function AdminResenasPage({ searchParams }: Props) {
           <a
             key={f.value}
             href={f.value === "all" ? "/admin/resenas" : `/admin/resenas?rating=${f.value}`}
-            className={`rounded-full px-4 py-1.5 text-[15px] font-medium transition ${
+            className={`rounded-full px-4 py-1.5 text-[0.9375rem] font-medium transition ${
               activeFilter.value === f.value
                 ? "bg-brand-yellow hover:bg-[#e8b90f] text-ink"
                 : "border-[1.5px] border-field-border text-muted hover:border-foreground"
@@ -77,7 +77,7 @@ export default async function AdminResenasPage({ searchParams }: Props) {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-medium text-foreground">{client?.full_name}</p>
-                    {vehicle ? <p className="text-[13px] text-muted">{vehicle}</p> : null}
+                    {vehicle ? <p className="text-[0.8125rem] text-muted">{vehicle}</p> : null}
                     <div className="mt-1 flex gap-0.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
@@ -95,7 +95,7 @@ export default async function AdminResenasPage({ searchParams }: Props) {
                   <ReviewPublishToggle reviewId={review.id} isPublished={review.is_published} />
                 </div>
                 {review.comment ? (
-                  <p className="mt-2 break-words text-[15px] text-muted">{review.comment}</p>
+                  <p className="mt-2 break-words text-[0.9375rem] text-muted">{review.comment}</p>
                 ) : null}
               </div>
             );

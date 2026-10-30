@@ -45,16 +45,16 @@ export function OrderCard({
       className="group flex min-h-[76px] items-center justify-between gap-4 rounded-2xl bg-surface px-5 py-4 transition hover:ring-2 hover:ring-foreground/80 sm:px-6 dark:ring-1 dark:ring-white/5"
     >
       <div className="min-w-0">
-        <p className="flex flex-wrap items-center gap-2 text-[17px] font-semibold text-foreground">
+        <p className="flex flex-wrap items-center gap-2 text-[1.0625rem] font-semibold text-foreground">
           {vehicle || "Pedido sin detalle de vehículo"}
           {hasUpdate ? (
-            <span className="rounded-full bg-brand-red px-2 py-0.5 text-[11px] font-semibold text-white">
+            <span className="rounded-full bg-brand-red px-2 py-0.5 text-[0.6875rem] font-semibold text-white">
               Novedades
             </span>
           ) : null}
         </p>
-        <p className="mt-0.5 text-[15px] text-muted">
-          <span className="font-code text-[13px]">{order.id.slice(0, 8).toUpperCase()}</span> · {date}
+        <p className="mt-0.5 text-[0.9375rem] text-muted">
+          <span className="font-code text-[0.8125rem]">{order.id.slice(0, 8).toUpperCase()}</span> · {date}
           {total ? ` · $${Number(total).toLocaleString("es-MX")}` : ""}
         </p>
       </div>

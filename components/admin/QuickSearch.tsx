@@ -103,11 +103,11 @@ export function QuickSearch({ isAdmin }: { isAdmin: boolean }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex w-full items-center gap-2 rounded-xl border-[1.5px] border-field-border px-3 py-2 text-[15px] text-muted transition hover:border-foreground dark:hover:border-white/30"
+        className="flex w-full items-center gap-2 rounded-xl border-[1.5px] border-field-border px-3 py-2 text-[0.9375rem] text-muted transition hover:border-foreground dark:hover:border-white/30"
       >
         <Search size={14} />
         <span className="flex-1 text-left">Buscar...</span>
-        <span className="hidden rounded border-[1.5px] border-field-border px-1.5 py-0.5 text-[10px] sm:inline">
+        <span className="hidden rounded border-[1.5px] border-field-border px-1.5 py-0.5 text-[0.625rem] sm:inline">
           Ctrl K
         </span>
       </button>
@@ -129,23 +129,23 @@ export function QuickSearch({ isAdmin }: { isAdmin: boolean }) {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Buscar una sección..."
-                className="flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-muted"
+                className="flex-1 bg-transparent text-[0.9375rem] text-foreground outline-none placeholder:text-muted"
               />
-              <span className="rounded border-[1.5px] border-field-border px-1.5 py-0.5 text-[10px] text-muted">
+              <span className="rounded border-[1.5px] border-field-border px-1.5 py-0.5 text-[0.625rem] text-muted">
                 Esc
               </span>
             </div>
 
             <div className="max-h-80 overflow-y-auto p-2">
               {filtered.length === 0 ? (
-                <p className="px-3 py-6 text-center text-[15px] text-muted">Sin resultados.</p>
+                <p className="px-3 py-6 text-center text-[0.9375rem] text-muted">Sin resultados.</p>
               ) : (
                 filtered.map((item, index) => (
                   <button
                     key={item.href}
                     onClick={() => go(item.href)}
                     onMouseEnter={() => setActiveIndex(index)}
-                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-[15px] transition ${
+                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-[0.9375rem] transition ${
                       index === activeIndex
                         ? "bg-highlight text-yellow-text"
                         : "text-foreground hover:bg-black/5 dark:hover:bg-white/5"

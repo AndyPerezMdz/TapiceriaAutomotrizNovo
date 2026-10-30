@@ -148,7 +148,7 @@ export function StageStepper({ stages, currentStageId, completed = false, curren
           </div>
         </div>
       ) : (
-        <p className="mt-5 text-[15px] text-muted">Aún no empezamos este servicio.</p>
+        <p className="mt-5 text-[0.9375rem] text-muted">Aún no empezamos este servicio.</p>
       )}
     </div>
   );

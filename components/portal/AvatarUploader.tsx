@@ -92,10 +92,10 @@ export function AvatarUploader({
       </div>
       <div className="text-center sm:text-left">
         <p className="font-display text-3xl font-extrabold uppercase leading-none text-foreground">{fullName || "Sin nombre"}</p>
-        <p className="mt-1.5 text-[13px] text-muted opacity-80">
+        <p className="mt-1.5 text-[0.8125rem] text-muted opacity-80">
           {isUploading ? "Subiendo…" : "Toca la cámara para cambiar tu foto"}
         </p>
-        {error ? <p className="text-[13px] text-brand-red">{error}</p> : null}
+        {error ? <p className="text-[0.8125rem] text-brand-red">{error}</p> : null}
       </div>
     </div>
   );

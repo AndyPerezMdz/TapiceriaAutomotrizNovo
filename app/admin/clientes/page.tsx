@@ -67,13 +67,13 @@ export default async function AdminClientesPage({ searchParams }: Props) {
                 {client.avatar_url ? (
                   <StorageImage src={client.avatar_url} alt="" width={40} height={40} className="h-10 w-10 rounded-full object-cover" />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-highlight text-[15px] font-semibold text-yellow-text">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-highlight text-[0.9375rem] font-semibold text-yellow-text">
                     {client.full_name?.charAt(0).toUpperCase() ?? <User size={16} />}
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">{client.full_name}</p>
-                  <p className="truncate text-[13px] text-muted">
+                  <p className="truncate text-[0.8125rem] text-muted">
                     {client.email} {client.phone ? `· ${client.phone}` : ""}
                   </p>
                 </div>

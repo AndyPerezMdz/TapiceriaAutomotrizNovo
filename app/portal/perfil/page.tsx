@@ -2,7 +2,9 @@ import { AvatarUploader } from "@/components/portal/AvatarUploader";
 import { ChangePasswordForm } from "@/components/portal/ChangePasswordForm";
 import { ProfileForm } from "@/components/portal/ProfileForm";
 import { createClient } from "@/lib/supabase/server";
-import { Bell, BookOpen, KeyRound, UserRound } from "lucide-react";
+import { Accessibility, Bell, BookOpen, KeyRound, UserRound } from "lucide-react";
+import { AccessibilitySettings } from "@/components/a11y/AccessibilitySettings";
+import { prefsFromProfile } from "@/lib/a11y/preferences";
 import Link from "next/link";
 import { ChangeEmailForm } from "@/components/shared/ChangeEmailForm";
 import { DownloadManualCard } from "@/components/shared/DownloadManualCard";
@@ -13,6 +15,7 @@ const tabs = [
   { value: "datos", label: "Mis datos", icon: UserRound },
   { value: "seguridad", label: "Correo y contraseña", icon: KeyRound },
   { value: "avisos", label: "Notificaciones", icon: Bell },
+  { value: "accesibilidad", label: "Accesibilidad", icon: Accessibility },
   { value: "ayuda", label: "Ayuda", icon: BookOpen },
 ] as const;
 
@@ -35,7 +38,9 @@ export default async function PerfilPage({ searchParams }: Props) {
       user
         ? supabase
             .from("profiles")
-            .select("full_name, phone, email, avatar_url, created_at, marketing_opt_in")
+            .select(
+              "full_name, phone, email, avatar_url, created_at, marketing_opt_in, ui_mode, text_size, high_contrast, reduce_motion",
+            )
             .eq("id", user.id)
             .single()
         : Promise.resolve({ data: null }),
@@ -72,7 +77,7 @@ export default async function PerfilPage({ searchParams }: Props) {
     : null;
 
   const card = "rounded-[18px] bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5";
-  const h2 = "mb-5 font-display text-[28px] font-bold uppercase leading-none text-foreground";
+  const h2 = "mb-5 font-display text-[1.75rem] font-bold uppercase leading-none text-foreground";
 
   return (
     <div className="max-w-5xl space-y-6">
@@ -119,7 +124,7 @@ export default async function PerfilPage({ searchParams }: Props) {
                     href={`/portal/perfil?tab=${t.value}`}
                     scroll={false}
                     aria-current={active ? "page" : undefined}
-                    className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-xl px-4 text-[15px] transition ${
+                    className={`flex min-h-12 items-center gap-3 whitespace-nowrap rounded-xl px-4 text-[0.9375rem] transition ${
                       active
                         ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
                         : "bg-surface text-foreground hover:ring-1 hover:ring-foreground/30 dark:ring-1 dark:ring-white/5"
@@ -166,6 +171,13 @@ export default async function PerfilPage({ searchParams }: Props) {
               <PushNotificationToggle />
               <div className="border-t-2 border-dashed border-seam" />
               <MarketingOptInToggle initialValue={profile?.marketing_opt_in ?? false} />
+            </section>
+          ) : null}
+
+          {tab === "accesibilidad" ? (
+            <section className={card}>
+              <h2 className={h2}>Accesibilidad</h2>
+              <AccessibilitySettings initial={prefsFromProfile(profile)} showMode />
             </section>
           ) : null}
 

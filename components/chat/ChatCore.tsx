@@ -307,10 +307,10 @@ export function ChatCore() {
           onClick={() => handleSelectConversation(c)}
           className="flex min-h-12 min-w-0 flex-1 flex-col items-start justify-center px-3 py-2 text-left"
         >
-          <span className={`w-full truncate text-[15px] ${active ? "font-semibold text-on-ink" : "text-[#e6e3dc]"}`}>
+          <span className={`w-full truncate text-[0.9375rem] ${active ? "font-semibold text-on-ink" : "text-[#e6e3dc]"}`}>
             {c.title}
           </span>
-          <span className="text-[13px] text-on-ink-muted">{relativeDate(c.updatedAt)}</span>
+          <span className="text-[0.8125rem] text-on-ink-muted">{relativeDate(c.updatedAt)}</span>
         </button>
         <button
           type="button"
@@ -328,7 +328,7 @@ export function ChatCore() {
     <button
       type="button"
       onClick={handleNewChat}
-      className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-yellow px-4 text-[15px] font-bold text-ink transition hover:bg-[#e8b90f]"
+      className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-brand-yellow px-4 text-[0.9375rem] font-bold text-ink transition hover:bg-[#e8b90f]"
     >
       <Plus size={18} strokeWidth={2.4} /> Nueva conversación
     </button>
@@ -341,7 +341,7 @@ export function ChatCore() {
       {/* Historial (escritorio) */}
       <aside className="hidden w-72 shrink-0 flex-col bg-ink text-on-ink sm:flex">
         <div className="px-4 pb-3 pt-5">
-          <p className="font-display text-[13px] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
+          <p className="font-display text-[0.8125rem] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
             Conversaciones
           </p>
           <div className="mt-3">{newChatButton}</div>
@@ -367,7 +367,7 @@ export function ChatCore() {
               <p className="flex items-center gap-1.5 font-display text-2xl font-extrabold uppercase leading-none text-foreground">
                 Novi <Sparkles size={15} className="text-yellow-text" aria-hidden="true" />
               </p>
-              <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-muted">
+              <p className="mt-0.5 flex items-center gap-1.5 text-[0.8125rem] text-muted">
                 <span className="h-2 w-2 rounded-full bg-brand-yellow" aria-hidden="true" />
                 Asistente del taller · con IA
               </p>
@@ -401,7 +401,7 @@ export function ChatCore() {
                   <h1 className="mt-4 font-display text-4xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-5xl">
                     ¿En qué te ayudo?
                   </h1>
-                  <p className="mt-2 text-[15px] text-muted">
+                  <p className="mt-2 text-[0.9375rem] text-muted">
                     Pregúntame por servicios, precios de referencia, tu pedido o tus puntos.
                   </p>
                   <div className="mt-6 grid gap-2.5 text-left sm:grid-cols-2">
@@ -410,7 +410,7 @@ export function ChatCore() {
                         key={prompt}
                         type="button"
                         onClick={() => sendMessage(prompt)}
-                        className="flex min-h-[60px] items-center justify-between gap-3 rounded-2xl border-[1.5px] border-field-border bg-surface px-4 py-3 text-[15px] font-medium text-foreground transition hover:border-foreground"
+                        className="flex min-h-[60px] items-center justify-between gap-3 rounded-2xl border-[1.5px] border-field-border bg-surface px-4 py-3 text-[0.9375rem] font-medium text-foreground transition hover:border-foreground"
                       >
                         {prompt}
                         <ArrowRight size={16} className="shrink-0 text-muted" aria-hidden="true" />
@@ -426,7 +426,7 @@ export function ChatCore() {
                     <div key={i} className={`flex items-end gap-2.5 ${mine ? "justify-end" : "justify-start"}`}>
                       {!mine ? <NoviAvatar size={30} className="mb-0.5 shrink-0" /> : null}
                       <div
-                        className={`max-w-[82%] whitespace-pre-line px-4 py-3 text-[15px] leading-relaxed sm:max-w-[72%] ${
+                        className={`max-w-[82%] whitespace-pre-line px-4 py-3 text-[0.9375rem] leading-relaxed sm:max-w-[72%] ${
                           mine
                             ? "rounded-[18px] rounded-br-md bg-ink text-on-ink dark:ring-1 dark:ring-white/10"
                             : "rounded-[18px] rounded-bl-md bg-surface text-foreground ring-1 ring-black/5 dark:ring-white/10"
@@ -436,7 +436,7 @@ export function ChatCore() {
                         {parsed?.buttonHref && parsed?.buttonLabel ? (
                           <Link
                             href={parsed.buttonHref}
-                            className="mt-3 flex min-h-11 w-fit items-center gap-2 rounded-xl bg-brand-yellow px-4 text-[15px] font-semibold text-ink transition hover:bg-[#e8b90f]"
+                            className="mt-3 flex min-h-11 w-fit items-center gap-2 rounded-xl bg-brand-yellow px-4 text-[0.9375rem] font-semibold text-ink transition hover:bg-[#e8b90f]"
                           >
                             {parsed.buttonLabel} <ArrowRight size={16} />
                           </Link>
@@ -456,9 +456,9 @@ export function ChatCore() {
                       <span className="h-2 w-2 animate-bounce rounded-full bg-brand-yellow [animation-delay:-0.15s]" />
                       <span className="h-2 w-2 animate-bounce rounded-full bg-brand-yellow" />
                     </div>
-                    <p className="mt-2 text-[13px] text-muted">{waitingMessage}</p>
+                    <p className="mt-2 text-[0.8125rem] text-muted">{waitingMessage}</p>
                     {showSlowNotice ? (
-                      <p className="mt-1 text-[13px] text-muted">A veces tardo un poco más de lo normal; sigo aquí.</p>
+                      <p className="mt-1 text-[0.8125rem] text-muted">A veces tardo un poco más de lo normal; sigo aquí.</p>
                     ) : null}
                   </div>
                 </div>

@@ -8,7 +8,7 @@ import { useState } from "react";
 const fieldClassName =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 
-const labelClassName = "mb-1.5 block text-[15px] font-medium text-foreground";
+const labelClassName = "mb-1.5 block text-[0.9375rem] font-medium text-foreground";
 
 interface ExistingService {
   id: string;
@@ -96,7 +96,7 @@ export function ServiceForm({ service }: { service?: ExistingService }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-xl space-y-4">
       {formError ? (
-        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
+        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[0.9375rem] text-brand-red">
           {formError}
         </div>
       ) : null}
@@ -121,7 +121,7 @@ export function ServiceForm({ service }: { service?: ExistingService }) {
           disabled={isSaving}
         />
         {fieldErrors.title ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.title}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.title}</p>
         ) : null}
       </div>
 
@@ -140,11 +140,11 @@ export function ServiceForm({ service }: { service?: ExistingService }) {
           className={fieldClassName}
           disabled={isSaving}
         />
-        <p className="mt-1 text-[13px] text-muted">
+        <p className="mt-1 text-[0.8125rem] text-muted">
           Se genera solo, pero puedes editarlo. Aparecerá en la URL: /servicios/tu-slug
         </p>
         {fieldErrors.slug ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.slug}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.slug}</p>
         ) : null}
       </div>
 
@@ -160,7 +160,7 @@ export function ServiceForm({ service }: { service?: ExistingService }) {
           disabled={isSaving}
         />
         {fieldErrors.shortDescription ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.shortDescription}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.shortDescription}</p>
         ) : null}
       </div>
 
@@ -177,11 +177,11 @@ export function ServiceForm({ service }: { service?: ExistingService }) {
           disabled={isSaving}
         />
         {fieldErrors.fullDescription ? (
-          <p className="mt-1 text-[15px] text-brand-red">{fieldErrors.fullDescription}</p>
+          <p className="mt-1 text-[0.9375rem] text-brand-red">{fieldErrors.fullDescription}</p>
         ) : null}
       </div>
 
-      <label className="flex items-center gap-2 text-[15px] text-foreground">
+      <label className="flex items-center gap-2 text-[0.9375rem] text-foreground">
         <input
           type="checkbox"
           name="isActive"
@@ -194,7 +194,7 @@ export function ServiceForm({ service }: { service?: ExistingService }) {
       <button
         type="submit"
         disabled={isSaving}
-        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[0.9375rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Guardando..." : isEditing ? "Guardar cambios" : "Crear servicio"}
       </button>

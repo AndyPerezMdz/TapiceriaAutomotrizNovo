@@ -59,13 +59,13 @@ export default async function HomePage() {
         </div>
 
         <div className="relative mx-auto max-w-6xl animate-fade-up px-6 pb-20 pt-20 sm:pb-24 sm:pt-28">
-          <p className="font-display text-[15px] font-semibold uppercase tracking-[0.2em] text-brand-yellow sm:text-base">
+          <p className="font-display text-[0.9375rem] font-semibold uppercase tracking-[0.2em] text-brand-yellow sm:text-base">
             Tapicería automotriz · Mérida
           </p>
-          <h1 className="mt-4 max-w-3xl font-display text-[52px] font-extrabold uppercase leading-[0.9] sm:text-7xl lg:text-[96px]">
+          <h1 className="mt-4 max-w-3xl font-display text-[3.25rem] font-extrabold uppercase leading-[0.9] sm:text-7xl lg:text-[6rem]">
             Pasión por el detalle, en cada vehículo.
           </h1>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[#d9d5cc] sm:text-lg">
+          <p className="mt-6 max-w-xl text-[1.0625rem] leading-relaxed text-[#d9d5cc] sm:text-lg">
             Tapizado, restauración y personalización de interiores automotrices en Mérida,
             Yucatán. Materiales de calidad y seguimiento de tu pedido de principio a fin.
           </p>
@@ -111,10 +111,10 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6 py-20 sm:py-24">
         <div className="mb-9 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+            <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
               Nuestros servicios
             </h2>
-            <p className="mt-2.5 text-[17px] text-muted">
+            <p className="mt-2.5 text-[1.0625rem] text-muted">
               Tapicería automotriz para todo tipo de vehículo.
             </p>
           </div>
@@ -145,14 +145,14 @@ export default async function HomePage() {
                 ) : null}
               </div>
               <div className="p-6">
-                <h3 className="font-display text-[28px] font-bold uppercase leading-none text-foreground">
+                <h3 className="font-display text-[1.75rem] font-bold uppercase leading-none text-foreground">
                   {service.title}
                 </h3>
-                <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+                <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
                   {service.short_description}
                 </p>
                 <div className="mt-4 border-t-2 border-dashed border-seam" />
-                <span className="mt-3.5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-foreground transition group-hover:gap-2.5">
+                <span className="mt-3.5 inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold text-foreground transition group-hover:gap-2.5">
                   Ver más <ArrowRight size={15} />
                 </span>
               </div>
@@ -165,13 +165,13 @@ export default async function HomePage() {
       <section className="border-y-2 border-dashed border-seam bg-surface">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-12 px-6 py-20">
           <div className="min-w-0 flex-[1_1_380px] animate-fade-up-on-scroll">
-            <p className="font-display text-[15px] font-semibold uppercase tracking-[0.18em] text-yellow-text">
+            <p className="font-display text-[0.9375rem] font-semibold uppercase tracking-[0.18em] text-yellow-text">
               Nuevo
             </p>
-            <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+            <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
               Ve en qué va tu coche, sin llamar.
             </h2>
-            <p className="mt-4 text-[17px] leading-relaxed text-muted">
+            <p className="mt-4 text-[1.0625rem] leading-relaxed text-muted">
               Pide tu cotización en línea y sigue cada etapa: desmontaje, tapizado, montaje. Te
               avisamos cuando avanza.
             </p>
@@ -199,8 +199,8 @@ export default async function HomePage() {
             <span aria-hidden="true" className="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-surface" />
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-code text-[13px] text-on-ink-muted">FOLIO · INGRESÓ 12 OCT</p>
-                <p className="mt-1.5 font-display text-[32px] font-extrabold uppercase leading-none sm:text-4xl">
+                <p className="font-code text-[0.8125rem] text-on-ink-muted">FOLIO · INGRESÓ 12 OCT</p>
+                <p className="mt-1.5 font-display text-[2rem] font-extrabold uppercase leading-none sm:text-4xl">
                   Tu coche
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default async function HomePage() {
               </span>
             </div>
             <div className="mt-5 border-t-2 border-dashed border-brand-yellow/50" />
-            <p className="mt-4 text-[15px] text-[#d9d5cc]">
+            <p className="mt-4 text-[0.9375rem] text-[#d9d5cc]">
               Tapizado de asientos · Etapa 2 de 4 ·{" "}
               <span className="font-semibold text-brand-yellow">Tapizado</span>
             </p>
@@ -229,7 +229,7 @@ export default async function HomePage() {
       {/* Por qué elegirnos */}
       <section className="py-20 sm:py-24">
         <div className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6">
-          <h2 className="mb-12 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+          <h2 className="mb-12 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
             ¿Por qué elegirnos?
           </h2>
           <div className="grid gap-5 sm:grid-cols-3">
@@ -238,7 +238,7 @@ export default async function HomePage() {
                 <Sparkles size={24} />
               </div>
               <h3 className="font-display text-2xl font-bold uppercase leading-none text-foreground">Atención personalizada</h3>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+              <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
                 Cada vehículo es distinto, y así lo tratamos: revisamos tu caso
                 a detalle antes de cotizar.
               </p>
@@ -248,7 +248,7 @@ export default async function HomePage() {
                 <Clock size={24} />
               </div>
               <h3 className="font-display text-2xl font-bold uppercase leading-none text-foreground">Seguimiento en línea</h3>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+              <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
                 Da seguimiento a tu pedido paso a paso desde tu celular, sin
                 tener que llamar para preguntar.
               </p>
@@ -258,7 +258,7 @@ export default async function HomePage() {
                 <Award size={24} />
               </div>
               <h3 className="font-display text-2xl font-bold uppercase leading-none text-foreground">Materiales de calidad</h3>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-muted">
+              <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
                 Trabajamos con piel, vinil y telas seleccionadas, pensadas para
                 durar.
               </p>
@@ -272,10 +272,10 @@ export default async function HomePage() {
         <section className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6 py-20">
           <div className="mb-10 flex items-end justify-between">
             <div>
-              <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+              <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
                 Trabajos recientes
               </h2>
-              <p className="mt-2.5 text-[17px] text-muted">Antes y después de algunos proyectos.</p>
+              <p className="mt-2.5 text-[1.0625rem] text-muted">Antes y después de algunos proyectos.</p>
             </div>
             <Link
               href="/galeria"
@@ -311,7 +311,7 @@ export default async function HomePage() {
       {reviews && reviews.length > 0 ? (
         <section className="border-t-2 border-dashed border-seam bg-surface py-20">
           <div className="mx-auto max-w-6xl animate-fade-up-on-scroll px-6">
-            <h2 className="mb-9 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+            <h2 className="mb-9 font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
               Lo que dicen nuestros clientes
             </h2>
             <div className="grid gap-6 sm:grid-cols-3">
@@ -357,10 +357,10 @@ export default async function HomePage() {
         <div className="relative overflow-hidden rounded-[22px] bg-brand-yellow px-6 py-14 text-center text-ink sm:px-12">
           <span aria-hidden="true" className="pointer-events-none absolute inset-2.5 rounded-[15px] border-2 border-dashed border-ink/35" />
           <div className="relative animate-fade-up-on-scroll">
-            <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-[64px]">
+            <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-[4rem]">
               ¿Listo para renovar tu interior?
             </h2>
-            <p className="mx-auto mt-3.5 max-w-md text-[17px] text-[#2b2400]">
+            <p className="mx-auto mt-3.5 max-w-md text-[1.0625rem] text-[#2b2400]">
               Crea tu cuenta y pide tu cotización, o escríbenos directo por WhatsApp.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">

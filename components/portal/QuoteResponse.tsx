@@ -36,7 +36,7 @@ export function QuoteResponse({
 
   return (
     <div className="rounded-[18px] border-2 border-dashed border-brand-yellow-dark/60 bg-highlight p-5 sm:p-7 dark:border-brand-yellow/50">
-      <p className="font-display text-[28px] font-bold uppercase leading-none text-foreground">Tu cotización está lista</p>
+      <p className="font-display text-[1.75rem] font-bold uppercase leading-none text-foreground">Tu cotización está lista</p>
       {estimatedPrice ? (
         <p className="mt-3 font-display text-5xl font-extrabold leading-none text-foreground">
           ${estimatedPrice.toLocaleString("es-MX")}
@@ -47,7 +47,7 @@ export function QuoteResponse({
       </p>
 
       {error ? (
-        <p className="mt-3 text-[15px] text-brand-red-dark dark:text-brand-red">{error}</p>
+        <p className="mt-3 text-[0.9375rem] text-brand-red-dark dark:text-brand-red">{error}</p>
       ) : null}
 
       <div className="mt-5 flex flex-wrap gap-3">

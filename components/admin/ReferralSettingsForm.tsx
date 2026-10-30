@@ -11,7 +11,7 @@ interface Settings {
 
 const fieldClassName =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
-const labelClassName = "mb-1.5 block text-[15px] font-medium text-foreground";
+const labelClassName = "mb-1.5 block text-[0.9375rem] font-medium text-foreground";
 
 export function ReferralSettingsForm({ settings }: { settings: Settings }) {
   const router = useRouter();
@@ -39,7 +39,7 @@ export function ReferralSettingsForm({ settings }: { settings: Settings }) {
   return (
     <form onSubmit={handleSubmit} className="max-w-md space-y-4 rounded-2xl bg-surface p-5 sm:p-7 dark:ring-1 dark:ring-white/5">
       {success ? (
-        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[15px] text-green-700 dark:text-green-400">
+        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[0.9375rem] text-green-700 dark:text-green-400">
           Configuración guardada.
         </div>
       ) : null}
@@ -69,14 +69,14 @@ export function ReferralSettingsForm({ settings }: { settings: Settings }) {
         </div>
       </div>
 
-      <p className="text-[13px] text-muted">
+      <p className="text-[0.8125rem] text-muted">
         Se otorga cuando el referido entrega su primer pedido con precio.
       </p>
 
       <button
         type="submit"
         disabled={isSaving}
-        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[15px] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
+        className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-6 py-2.5 text-[0.9375rem] font-semibold text-ink transition disabled:opacity-60 min-h-11 inline-flex items-center justify-center"
       >
         {isSaving ? "Guardando..." : "Guardar cambios"}
       </button>

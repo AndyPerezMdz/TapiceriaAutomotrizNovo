@@ -1,7 +1,7 @@
 "use client";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Award, Gift, Tag, User, X } from "lucide-react";
+import { Award, CalendarDays, Gift, History, Tag, User, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { AlertTriangle, Lightbulb } from "lucide-react";
@@ -17,6 +17,8 @@ export function MoreSheet({ onClose }: { onClose: () => void }) {
   }, [onClose]);
 
   const items = [
+    { href: "/portal/pedidos", label: "Mis pedidos", icon: History },
+    { href: "/portal/mis-citas", label: "Mis citas", icon: CalendarDays },
     { href: "/portal/cupones", label: "Cupones", icon: Tag },
     { href: "/portal/puntos", label: "Puntos", icon: Award },
     { href: "/portal/perfil", label: "Mi perfil", icon: User },

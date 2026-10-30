@@ -15,7 +15,7 @@ interface Faq {
 
 const fieldClassName =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
-const labelClassName = "mb-1.5 block text-[15px] font-medium text-foreground";
+const labelClassName = "mb-1.5 block text-[0.9375rem] font-medium text-foreground";
 
 export function FaqManager() {
   const { confirm, dialog } = useConfirm();
@@ -104,7 +104,7 @@ export function FaqManager() {
     load();
   }
 
-  if (loading) return <p className="text-[15px] text-muted">Cargando...</p>;
+  if (loading) return <p className="text-[0.9375rem] text-muted">Cargando...</p>;
 
   return (
     <div className="space-y-4">
@@ -137,13 +137,13 @@ export function FaqManager() {
               <div className="flex gap-2">
                 <button
                   onClick={() => saveEdit(faq.id)}
-                  className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[13px] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
+                  className="rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-4 py-2 text-[0.8125rem] font-semibold text-ink min-h-11 inline-flex items-center justify-center"
                 >
                   Guardar
                 </button>
                 <button
                   onClick={() => setEditingId(null)}
-                  className="flex items-center gap-1 rounded-xl border-[1.5px] border-field-border px-4 py-2 text-[13px] font-medium text-foreground min-h-11"
+                  className="flex items-center gap-1 rounded-xl border-[1.5px] border-field-border px-4 py-2 text-[0.8125rem] font-medium text-foreground min-h-11"
                 >
                   <X size={13} /> Cancelar
                 </button>
@@ -153,7 +153,7 @@ export function FaqManager() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-medium text-foreground">{faq.question}</p>
-                <p className="mt-1 text-[15px] text-muted">{faq.answer}</p>
+                <p className="mt-1 text-[0.9375rem] text-muted">{faq.answer}</p>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1.5">
                 <div className="flex gap-1">
@@ -186,7 +186,7 @@ export function FaqManager() {
                 </div>
                 <button
                   onClick={() => toggleActive(faq)}
-                  className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${
+                  className={`rounded-full px-2.5 py-0.5 text-[0.625rem] font-medium ${
                     faq.is_active
                       ? "bg-ink text-brand-yellow dark:ring-1 dark:ring-brand-yellow/40"
                       : "border-[1.5px] border-muted text-muted"
@@ -201,7 +201,7 @@ export function FaqManager() {
       ))}
 
       <div className="rounded-2xl border-2 border-dashed border-field-border p-4">
-        <p className="mb-2 text-[15px] font-medium text-foreground">Agregar pregunta</p>
+        <p className="mb-2 text-[0.9375rem] font-medium text-foreground">Agregar pregunta</p>
         <div className="space-y-2">
           <input
             value={newQuestion}
@@ -218,7 +218,7 @@ export function FaqManager() {
           />
           <button
             onClick={addFaq}
-            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[13px] font-semibold text-ink min-h-11"
+            className="flex items-center gap-1 rounded-xl bg-brand-yellow hover:bg-[#e8b90f] px-3 py-1.5 text-[0.8125rem] font-semibold text-ink min-h-11"
           >
             <Plus size={14} /> Agregar
           </button>

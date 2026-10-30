@@ -10,7 +10,7 @@ interface Props {
 
 const sizes = {
   sm: "text-2xl",
-  md: "text-[28px]",
+  md: "text-[1.75rem]",
   lg: "text-4xl",
   xl: "text-5xl sm:text-6xl",
 };

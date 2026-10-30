@@ -59,7 +59,7 @@ export function QuoteReminderButton({ orderId, lastReminderAt = null, size = "md
           type="button"
           onClick={() => send(["push", "email"])}
           disabled={busy}
-          className={`inline-flex ${height} items-center gap-2 px-4 text-[15px] font-semibold text-foreground transition hover:bg-black/5 disabled:opacity-60 dark:hover:bg-white/5`}
+          className={`inline-flex ${height} items-center gap-2 px-4 text-[0.9375rem] font-semibold text-foreground transition hover:bg-black/5 disabled:opacity-60 dark:hover:bg-white/5`}
         >
           <BellRing size={17} />
           {busy ? "Enviando…" : "Recordar al cliente"}
@@ -83,21 +83,21 @@ export function QuoteReminderButton({ orderId, lastReminderAt = null, size = "md
           <button
             type="button"
             onClick={() => send(["push"])}
-            className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-left text-[15px] text-foreground hover:bg-black/5 dark:hover:bg-white/5"
+            className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-left text-[0.9375rem] text-foreground hover:bg-black/5 dark:hover:bg-white/5"
           >
             <BellRing size={16} /> Solo notificación
           </button>
           <button
             type="button"
             onClick={() => send(["email"])}
-            className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-left text-[15px] text-foreground hover:bg-black/5 dark:hover:bg-white/5"
+            className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 text-left text-[0.9375rem] text-foreground hover:bg-black/5 dark:hover:bg-white/5"
           >
             <Mail size={16} /> Solo correo
           </button>
         </div>
       ) : null}
 
-      {last ? <p className="text-[13px] text-muted">Último recordatorio {agoLabel(last)}</p> : null}
+      {last ? <p className="text-[0.8125rem] text-muted">Último recordatorio {agoLabel(last)}</p> : null}
     </div>
   );
 }

@@ -78,7 +78,7 @@ export function AddPhotoButton({ orderId }: { orderId: string }) {
           onChange={handleUpload}
         />
       </label>
-      {error ? <p className="mt-1.5 text-[15px] text-brand-red-dark dark:text-brand-red">{error}</p> : null}
+      {error ? <p className="mt-1.5 text-[0.9375rem] text-brand-red-dark dark:text-brand-red">{error}</p> : null}
     </div>
   );
 }

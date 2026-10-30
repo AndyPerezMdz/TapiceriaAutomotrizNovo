@@ -45,10 +45,10 @@ export default async function NosotrosPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink from-[5%] to-ink/60" />
         <div className="relative mx-auto max-w-6xl animate-fade-up px-6 pb-16 pt-20 sm:pb-20 sm:pt-24">
-          <p className="font-display text-[15px] font-semibold uppercase tracking-[0.2em] text-brand-yellow">
+          <p className="font-display text-[0.9375rem] font-semibold uppercase tracking-[0.2em] text-brand-yellow">
             Nuestra historia
           </p>
-          <h1 className="mt-3.5 max-w-3xl font-display text-6xl font-extrabold uppercase leading-[0.9] sm:text-[88px]">
+          <h1 className="mt-3.5 max-w-3xl font-display text-6xl font-extrabold uppercase leading-[0.9] sm:text-[5.5rem]">
             Cada costura, hecha a mano.
           </h1>
         </div>
@@ -56,7 +56,7 @@ export default async function NosotrosPage() {
 
       {/* Historia */}
       <section className="mx-auto flex max-w-6xl flex-wrap gap-12 px-6 pb-6 pt-16 sm:pt-20">
-        <div className="min-w-0 flex-[1_1_520px] animate-fade-up-on-scroll space-y-5 text-[17px] leading-[1.7] text-foreground/80">
+        <div className="min-w-0 flex-[1_1_520px] animate-fade-up-on-scroll space-y-5 text-[1.0625rem] leading-[1.7] text-foreground/80">
           <p>
             En <span className="font-semibold text-foreground">Tapicería Automotriz by NOVO</span>{" "}
             nos dedicamos a la tapicería automotriz con un enfoque en la calidad y el detalle. Desde
@@ -77,28 +77,28 @@ export default async function NosotrosPage() {
           </p>
         </div>
         <blockquote className="m-0 min-w-0 flex-[1_1_340px] self-start border-t-[3px] border-dashed border-brand-yellow-dark pt-6 dark:border-brand-yellow">
-          <p className="font-display text-[44px] font-extrabold uppercase leading-[0.98] text-foreground">
+          <p className="font-display text-[2.75rem] font-extrabold uppercase leading-[0.98] text-foreground">
             “Que tu vehículo se sienta como nuevo.”
           </p>
-          <p className="mt-3.5 text-[15px] text-muted">Nuestro objetivo, desde el primer día</p>
+          <p className="mt-3.5 text-[0.9375rem] text-muted">Nuestro objetivo, desde el primer día</p>
         </blockquote>
       </section>
 
       {/* Valores */}
       <section className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[56px]">
+        <h2 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-[3.5rem]">
           Lo que nos define
         </h2>
         <div className="mt-7 grid gap-5 sm:grid-cols-3">
           {values.map((value, i) => (
             <article key={value.title} className="rounded-[18px] bg-surface p-7 dark:ring-1 dark:ring-white/5">
-              <p className="font-display text-[56px] font-extrabold leading-none text-yellow-text">
+              <p className="font-display text-[3.5rem] font-extrabold leading-none text-yellow-text">
                 {String(i + 1).padStart(2, "0")}
               </p>
-              <h3 className="mt-3.5 font-display text-[28px] font-bold uppercase leading-none text-foreground">
+              <h3 className="mt-3.5 font-display text-[1.75rem] font-bold uppercase leading-none text-foreground">
                 {value.title}
               </h3>
-              <p className="mt-2.5 text-[15px] leading-relaxed text-muted">{value.description}</p>
+              <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">{value.description}</p>
             </article>
           ))}
         </div>
@@ -110,10 +110,10 @@ export default async function NosotrosPage() {
           <p className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-brand-yellow">
             Visítanos
           </p>
-          <p className="mt-2 font-display text-[44px] font-extrabold uppercase leading-[0.95]">El taller</p>
+          <p className="mt-2 font-display text-[2.75rem] font-extrabold uppercase leading-[0.95]">El taller</p>
           <p className="mt-4 max-w-lg text-base leading-relaxed text-[#d9d5cc]">{businessInfo.address}</p>
           <div className="mt-5 max-w-lg border-t-2 border-dashed border-brand-yellow/45" />
-          <p className="mt-4 text-[15px] text-[#d9d5cc]">
+          <p className="mt-4 text-[0.9375rem] text-[#d9d5cc]">
             Lunes a viernes {settings.hoursWeekday} · Sábado {settings.hoursSaturday}
           </p>
           <div className="mt-6 flex flex-wrap gap-2.5">
@@ -121,7 +121,7 @@ export default async function NosotrosPage() {
               href={mapsHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center rounded-xl bg-brand-yellow px-6 text-[15px] font-bold text-ink transition hover:bg-[#e8b90f]"
+              className="inline-flex min-h-12 items-center rounded-xl bg-brand-yellow px-6 text-[0.9375rem] font-bold text-ink transition hover:bg-[#e8b90f]"
             >
               Cómo llegar
             </a>
@@ -129,13 +129,13 @@ export default async function NosotrosPage() {
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center rounded-xl border-[1.5px] border-white/40 px-5 text-[15px] font-semibold text-white transition hover:bg-white/10"
+              className="inline-flex min-h-12 items-center rounded-xl border-[1.5px] border-white/40 px-5 text-[0.9375rem] font-semibold text-white transition hover:bg-white/10"
             >
               WhatsApp
             </a>
             <Link
               href="/contacto"
-              className="inline-flex min-h-12 items-center px-3 text-[15px] font-semibold text-brand-yellow hover:underline"
+              className="inline-flex min-h-12 items-center px-3 text-[0.9375rem] font-semibold text-brand-yellow hover:underline"
             >
               Contacto →
             </Link>

@@ -31,7 +31,7 @@ export default async function AdminSugerenciasPage() {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Sugerencias de la página
       </h1>
-      <p className="mb-6 text-[15px] text-muted">
+      <p className="mb-6 text-[0.9375rem] text-muted">
         Comentarios de los clientes sobre la página web (no sobre pedidos).
       </p>
 
@@ -59,7 +59,7 @@ export default async function AdminSugerenciasPage() {
                       {typeLabels[f.type] ?? f.type}
                     </span>
                   </div>
-                  <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-muted">
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[0.8125rem] text-muted">
                     <Calendar size={11} />
                     {new Date(f.created_at).toLocaleDateString("es-MX", {
                       day: "numeric",
@@ -67,7 +67,7 @@ export default async function AdminSugerenciasPage() {
                       year: "numeric",
                     })}
                   </p>
-                  <p className="mt-2 whitespace-pre-line text-[15px] text-foreground">{f.message}</p>
+                  <p className="mt-2 whitespace-pre-line text-[0.9375rem] text-foreground">{f.message}</p>
                 </div>
                 <SiteFeedbackStatusButton id={f.id} status={f.status} />
               </div>

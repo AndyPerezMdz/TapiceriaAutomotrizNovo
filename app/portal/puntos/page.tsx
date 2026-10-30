@@ -37,12 +37,12 @@ export default async function PortalPuntosPage() {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Mis puntos
       </h1>
-      <p className="mb-6 text-[15px] text-muted">
+      <p className="mb-6 text-[0.9375rem] text-muted">
         Gana puntos con cada pedido entregado y canjéalos por descuentos.
       </p>
 
       <div className="relative mb-8 overflow-hidden rounded-[20px] bg-ink px-6 py-7 text-on-ink sm:px-9 sm:py-8 dark:ring-1 dark:ring-white/10">
-        <p className="font-display text-[13px] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
+        <p className="font-display text-[0.8125rem] font-semibold uppercase tracking-[0.18em] text-brand-yellow">
           Tus puntos
         </p>
         <p className="mt-2 font-display text-7xl font-extrabold leading-none text-brand-yellow">
@@ -54,7 +54,7 @@ export default async function PortalPuntosPage() {
             <div className="h-full rounded-full bg-brand-yellow transition-all" style={{ width: `${progress}%` }} />
           </div>
         </div>
-        <p className="mt-2.5 text-[15px] text-[#d9d5cc]">
+        <p className="mt-2.5 text-[0.9375rem] text-[#d9d5cc]">
           {balance} de {goal} puntos para tu próxima recompensa · {rewardLabel}
         </p>
         <div className="mt-5">

@@ -52,7 +52,7 @@ export function GalleryGrid({
   }
 
   const pill = (active: boolean) =>
-    `inline-flex min-h-11 items-center rounded-full px-[18px] text-[15px] transition ${
+    `inline-flex min-h-11 items-center rounded-full px-[18px] text-[0.9375rem] transition ${
       active
         ? "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10"
         : "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground"
@@ -91,7 +91,7 @@ export function GalleryGrid({
                 <div className="relative aspect-[4/3] bg-seam">
                   <Image src={single} alt={item.caption ?? ""} fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
                   {item.image_after_url ? (
-                    <span className="absolute right-3.5 top-3.5 -rotate-[5deg] rounded-[7px] border-2 border-brand-yellow bg-ink/70 px-2.5 py-1 font-display text-[15px] font-extrabold uppercase leading-none tracking-[0.06em] text-brand-yellow">
+                    <span className="absolute right-3.5 top-3.5 -rotate-[5deg] rounded-[7px] border-2 border-brand-yellow bg-ink/70 px-2.5 py-1 font-display text-[0.9375rem] font-extrabold uppercase leading-none tracking-[0.06em] text-brand-yellow">
                       Terminado
                     </span>
                   ) : null}

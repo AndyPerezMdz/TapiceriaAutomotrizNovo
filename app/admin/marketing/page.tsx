@@ -26,7 +26,7 @@ export default async function AdminMarketingPage() {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Correo promocional
       </h1>
-      <p className="mb-8 text-[15px] text-muted">
+      <p className="mb-8 text-[0.9375rem] text-muted">
         {count ?? 0} cliente(s) suscritos actualmente para recibir promociones.
       </p>
       <MarketingBlastForm />

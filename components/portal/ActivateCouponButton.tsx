@@ -42,7 +42,7 @@ export function ActivateCouponButton({
     <button
       onClick={handleClick}
       disabled={isSaving}
-      className={`mt-4 inline-flex min-h-11 items-center rounded-xl px-5 text-[15px] font-semibold transition disabled:opacity-60 ${
+      className={`mt-4 inline-flex min-h-11 items-center rounded-xl px-5 text-[0.9375rem] font-semibold transition disabled:opacity-60 ${
         isActive
           ? "border-[1.5px] border-ink bg-transparent text-ink"
           : "bg-ink text-brand-yellow hover:bg-ink-soft"

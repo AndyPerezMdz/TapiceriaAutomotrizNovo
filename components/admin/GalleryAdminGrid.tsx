@@ -89,7 +89,7 @@ export function GalleryAdminGrid({
               ) : null}
             </div>
             <div className="flex items-center justify-between p-3">
-              <p className="truncate text-[15px] text-muted">
+              <p className="truncate text-[0.9375rem] text-muted">
                 {item.caption ?? "Sin descripción"}
               </p>
               {isAdmin ? (

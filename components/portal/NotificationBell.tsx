@@ -101,7 +101,7 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
       >
         <Bell size={20} />
         {unread.length > 0 ? (
-          <span className="absolute right-1 top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-red px-1 text-[11px] font-bold text-white ring-2 ring-background">
+          <span className="absolute right-1 top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-brand-red px-1 text-[0.6875rem] font-bold text-white ring-2 ring-background">
             {unread.length > 9 ? "9+" : unread.length}
           </span>
         ) : null}
@@ -163,7 +163,7 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
           {visible.length === 0 ? (
             <div className="px-6 py-10 text-center">
               <Bell size={26} className="mx-auto text-muted" aria-hidden="true" />
-              <p className="mt-3 text-[15px] text-muted">
+              <p className="mt-3 text-[0.9375rem] text-muted">
                 {filter === "unread" ? "Ya leíste todo. ¡Bien!" : "Estás al día, no tienes nada pendiente."}
               </p>
             </div>
@@ -190,11 +190,11 @@ export function NotificationBell({ notifications }: { notifications: Notificatio
                         <Icon size={17} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className={`block text-[15px] leading-snug text-foreground ${isUnread ? "font-semibold" : ""}`}>
+                        <span className={`block text-[0.9375rem] leading-snug text-foreground ${isUnread ? "font-semibold" : ""}`}>
                           {n.title}
                         </span>
                         <span className="block truncate text-sm text-muted">{n.description}</span>
-                        <time dateTime={n.date} title={exact(n.date)} className="mt-1 block text-[13px] text-muted">
+                        <time dateTime={n.date} title={exact(n.date)} className="mt-1 block text-[0.8125rem] text-muted">
                           {relative(n.date)} · {exact(n.date)}
                         </time>
                       </span>

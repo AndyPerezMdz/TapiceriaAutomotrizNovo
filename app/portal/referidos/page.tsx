@@ -33,7 +33,7 @@ export default async function PortalReferidosPage() {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Refiere y gana
       </h1>
-      <p className="mb-6 text-[15px] text-muted">
+      <p className="mb-6 text-[0.9375rem] text-muted">
         Por cada amigo que refieras y complete su primer pedido, ambos reciben{" "}
         {rewardLabel}.
       </p>
@@ -57,8 +57,8 @@ export default async function PortalReferidosPage() {
                 >
                   <Gift size={16} className="shrink-0 text-yellow-text" />
                   <div>
-                    <p className="text-[15px] text-foreground">{referred?.full_name ?? "Cliente"}</p>
-                    <p className="text-[13px] text-muted">
+                    <p className="text-[0.9375rem] text-foreground">{referred?.full_name ?? "Cliente"}</p>
+                    <p className="text-[0.8125rem] text-muted">
                       Completó su primer pedido — cupón entregado a ambos
                     </p>
                   </div>

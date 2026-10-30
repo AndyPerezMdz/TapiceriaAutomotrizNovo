@@ -28,7 +28,7 @@ function StyledCheckbox({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex min-h-11 cursor-pointer items-start gap-3 text-[15px] text-foreground">
+    <label className="flex min-h-11 cursor-pointer items-start gap-3 text-[0.9375rem] text-foreground">
       <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center">
         <input
           type="checkbox"
@@ -210,7 +210,7 @@ export function RegisterForm() {
           ].map((text, i) => (
             <li key={text} className="flex items-start gap-3.5">
               <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-[17px] font-extrabold ${
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-[1.0625rem] font-extrabold ${
                   i === 0 ? "bg-brand-yellow text-ink" : "border-2 border-dashed border-brand-yellow text-brand-yellow"
                 }`}
               >
@@ -228,7 +228,7 @@ export function RegisterForm() {
       }
     >
       {refId ? (
-        <div className="mb-5 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-4 py-3 text-[15px] text-foreground dark:border-brand-yellow/40">
+        <div className="mb-5 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-4 py-3 text-[0.9375rem] text-foreground dark:border-brand-yellow/40">
           Vienes invitado: los dos ganan puntos cuando tu primer pedido se entregue.
         </div>
       ) : null}

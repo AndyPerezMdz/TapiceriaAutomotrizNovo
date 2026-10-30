@@ -30,7 +30,7 @@ export function AdminOrderRow({ order }: { order: Order }) {
         {order.client_avatar_url ? (
           <StorageImage src={order.client_avatar_url} alt="" width={36} height={36} className="h-9 w-9 shrink-0 rounded-full object-cover" />
         ) : (
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-highlight text-[13px] font-semibold text-yellow-text">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-highlight text-[0.8125rem] font-semibold text-yellow-text">
             {order.client_name?.charAt(0).toUpperCase() ?? "?"}
           </div>
         )}
@@ -38,7 +38,7 @@ export function AdminOrderRow({ order }: { order: Order }) {
           <p className="font-medium text-foreground">
             {order.client_name ?? "Cliente"}
           </p>
-          <p className="mt-0.5 text-[13px] text-muted">
+          <p className="mt-0.5 text-[0.8125rem] text-muted">
             {vehicle || "Sin detalle de vehículo"} · {date}
           </p>
         </div>

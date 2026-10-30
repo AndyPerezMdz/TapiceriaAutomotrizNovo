@@ -41,7 +41,7 @@ export default function ChatPage() {
         <button
           type="button"
           onClick={() => router.back()}
-          className="mb-2 inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
+          className="mb-2 inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
         >
           <ArrowLeft size={18} /> Volver
         </button>

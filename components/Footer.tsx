@@ -26,26 +26,26 @@ export async function Footer() {
   );
 
   const heading = "font-display text-lg font-bold uppercase tracking-[0.08em] text-brand-yellow";
-  const link = "inline-flex min-h-9 items-center text-[15px] text-[#e6e3dc] transition hover:text-brand-yellow";
+  const link = "inline-flex min-h-9 items-center text-[0.9375rem] text-[#e6e3dc] transition hover:text-brand-yellow";
 
   return (
     <footer className="bg-ink text-on-ink">
       <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-10 px-6 pt-14">
         <div className="min-w-0 flex-[1_1_260px]">
           <Link href="/" className="block w-fit">
-            <p className="font-display text-[40px] font-extrabold uppercase leading-none">Novo</p>
-            <p className="mt-1.5 text-[13px] uppercase tracking-[0.16em] text-on-ink-muted">
+            <p className="font-display text-[2.5rem] font-extrabold uppercase leading-none">Novo</p>
+            <p className="mt-1.5 text-[0.8125rem] uppercase tracking-[0.16em] text-on-ink-muted">
               Tapicería automotriz · Mérida
             </p>
           </Link>
-          <p className="mt-5 max-w-xs text-[15px] leading-relaxed text-[#d9d5cc]">
+          <p className="mt-5 max-w-xs text-[0.9375rem] leading-relaxed text-[#d9d5cc]">
             Tapizado, restauración y personalización de interiores, hecho a mano.
           </p>
         </div>
 
         <div className="min-w-0 flex-[0_1_220px]">
           <p className={heading}>Horario</p>
-          <p className="mt-3 text-[15px] leading-[1.8] text-[#d9d5cc]">
+          <p className="mt-3 text-[0.9375rem] leading-[1.8] text-[#d9d5cc]">
             Lun a vie · {settings.hoursWeekday}
             <br />
             Sábado · {settings.hoursSaturday}
@@ -60,7 +60,7 @@ export async function Footer() {
             href={mapsHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 block text-[15px] leading-relaxed text-[#d9d5cc] transition hover:text-brand-yellow"
+            className="mt-3 block text-[0.9375rem] leading-relaxed text-[#d9d5cc] transition hover:text-brand-yellow"
           >
             {businessInfo.address}
           </a>

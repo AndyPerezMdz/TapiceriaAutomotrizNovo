@@ -49,7 +49,7 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
 
   if (success) {
     return (
-      <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[15px] text-green-700 dark:text-green-400">
+      <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-3.5 py-2.5 text-[0.9375rem] text-green-700 dark:text-green-400">
         Revisa tu correo — te enviamos un enlace para iniciar sesión sin
         contraseña.
       </div>
@@ -59,7 +59,7 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       {error ? (
-        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[15px] text-brand-red">
+        <div className="rounded-xl border border-brand-red/30 bg-brand-red/5 px-3.5 py-2.5 text-[0.9375rem] text-brand-red">
           {error}
         </div>
       ) : null}
@@ -78,7 +78,7 @@ export function MagicLinkForm({ redirectPath }: { redirectPath: string }) {
       <button
         type="submit"
         disabled={isSending}
-        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[17px] font-bold text-ink transition hover:bg-[#e8b90f] disabled:opacity-60"
+        className="inline-flex min-h-[52px] w-full items-center justify-center rounded-xl bg-brand-yellow px-6 text-[1.0625rem] font-bold text-ink transition hover:bg-[#e8b90f] disabled:opacity-60"
       >
         {isSending ? "Enviando…" : "Mandarme el enlace"}
       </button>

@@ -41,7 +41,7 @@ export default async function SugerenciasPage() {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Sugerencias y quejas
       </h1>
-      <p className="mb-6 text-[15px] text-muted">
+      <p className="mb-6 text-[0.9375rem] text-muted">
         ¿Algo de la página web te pareció confuso o se te ocurre cómo mejorarla? Cuéntanos. Si tu
         comentario es sobre un pedido específico, repórtalo desde el detalle de ese pedido.
       </p>
@@ -53,7 +53,7 @@ export default async function SugerenciasPage() {
       {!feedback || feedback.length === 0 ? (
         <div className="flex flex-col items-center rounded-2xl border-2 border-dashed border-field-border bg-surface p-10 text-center">
           <Lightbulb size={24} className="mb-2 text-muted" />
-          <p className="text-[15px] text-muted">Aún no nos has enviado comentarios sobre la página.</p>
+          <p className="text-[0.9375rem] text-muted">Aún no nos has enviado comentarios sobre la página.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -66,11 +66,11 @@ export default async function SugerenciasPage() {
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[15px] font-bold uppercase leading-none tracking-[0.08em] ${typeColors[f.type]}`}
+                      className={`inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[0.9375rem] font-bold uppercase leading-none tracking-[0.08em] ${typeColors[f.type]}`}
                     >
                       {typeLabels[f.type] ?? f.type}
                     </span>
-                    <span className="flex items-center gap-1.5 text-[13px] text-muted">
+                    <span className="flex items-center gap-1.5 text-[0.8125rem] text-muted">
                       <Calendar size={11} />
                       {new Date(f.created_at).toLocaleDateString("es-MX", {
                         day: "numeric",
@@ -79,10 +79,10 @@ export default async function SugerenciasPage() {
                       })}
                     </span>
                   </div>
-                  <p className="mt-2 whitespace-pre-line text-[15px] text-foreground">{f.message}</p>
+                  <p className="mt-2 whitespace-pre-line text-[0.9375rem] text-foreground">{f.message}</p>
                 </div>
                 <span
-                  className={`shrink-0 inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[15px] font-bold uppercase leading-none tracking-[0.08em] ${statusColors[f.status]}`}
+                  className={`shrink-0 inline-flex items-center whitespace-nowrap rounded-xl px-2.5 py-1 font-display text-[0.9375rem] font-bold uppercase leading-none tracking-[0.08em] ${statusColors[f.status]}`}
                 >
                   {statusLabels[f.status] ?? f.status}
                 </span>

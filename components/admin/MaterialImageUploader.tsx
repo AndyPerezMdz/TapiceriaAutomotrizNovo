@@ -83,9 +83,9 @@ export function MaterialImageUploader({ table, recordId, currentImageUrl, onUplo
           />
         </label>
       )}
-      {isUploading ? <span className="text-[13px] text-muted">Subiendo...</span> : null}
+      {isUploading ? <span className="text-[0.8125rem] text-muted">Subiendo...</span> : null}
       {error ? (
-        <span className="flex items-center gap-1 text-[13px] text-brand-red">
+        <span className="flex items-center gap-1 text-[0.8125rem] text-brand-red">
           <AlertTriangle size={11} /> {error}
         </span>
       ) : null}

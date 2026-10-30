@@ -9,7 +9,7 @@ interface Props {
 }
 
 const base =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[15px] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[0.9375rem] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow";
 const on = "bg-ink font-semibold text-brand-yellow dark:ring-1 dark:ring-white/10";
 const off =
   "border-[1.5px] border-field-border bg-surface text-foreground hover:border-foreground";

@@ -96,7 +96,7 @@ export default async function PedidoDetallePage({ params }: Props) {
       <div className="mx-auto max-w-md text-center">
         <Link
           href="/portal/pedidos"
-          className="mb-6 inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
+          className="mb-6 inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
         >
           <ArrowLeft size={18} /> Volver al historial
         </Link>
@@ -104,7 +104,7 @@ export default async function PedidoDetallePage({ params }: Props) {
           <p className="font-display text-2xl font-bold uppercase text-foreground">
             Este pedido fue eliminado
           </p>
-          <p className="mt-2 text-[15px] text-muted">
+          <p className="mt-2 text-[0.9375rem] text-muted">
             Ya no se puede consultar la información de este pedido.
           </p>
         </div>
@@ -207,7 +207,7 @@ export default async function PedidoDetallePage({ params }: Props) {
 
       <Link
         href="/portal"
-        className="inline-flex min-h-11 items-center gap-2 text-[15px] font-medium text-muted transition hover:text-foreground"
+        className="inline-flex min-h-11 items-center gap-2 text-[0.9375rem] font-medium text-muted transition hover:text-foreground"
       >
         <ArrowLeft size={18} /> Mis pedidos
       </Link>
@@ -217,13 +217,13 @@ export default async function PedidoDetallePage({ params }: Props) {
         stub={
           <dl className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-6">
             <div>
-              <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">Folio</dt>
+              <dt className="text-[0.8125rem] uppercase tracking-[0.14em] text-on-ink-muted">Folio</dt>
               <dd className="mt-1.5 font-code text-base sm:text-lg">
                 {order.id.slice(0, 8).toUpperCase()}
               </dd>
             </div>
             <div>
-              <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">Ingresó</dt>
+              <dt className="text-[0.8125rem] uppercase tracking-[0.14em] text-on-ink-muted">Ingresó</dt>
               <dd className="mt-1.5 text-base font-medium sm:text-lg">
                 {new Date(order.created_at).toLocaleDateString("es-MX", {
                   day: "numeric",
@@ -233,7 +233,7 @@ export default async function PedidoDetallePage({ params }: Props) {
             </div>
             {order.delivered_at ? (
               <div>
-                <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">Entregado</dt>
+                <dt className="text-[0.8125rem] uppercase tracking-[0.14em] text-on-ink-muted">Entregado</dt>
                 <dd className="mt-1.5 text-base font-medium sm:text-lg">
                   {new Date(order.delivered_at).toLocaleDateString("es-MX", {
                     day: "numeric",
@@ -244,10 +244,10 @@ export default async function PedidoDetallePage({ params }: Props) {
             ) : null}
             {total ? (
               <div>
-                <dt className="text-[13px] uppercase tracking-[0.14em] text-on-ink-muted">
+                <dt className="text-[0.8125rem] uppercase tracking-[0.14em] text-on-ink-muted">
                   {order.status === "entregado" ? "Total" : "Total estimado"}
                 </dt>
-                <dd className="mt-1 font-display text-[26px] font-bold leading-none">
+                <dd className="mt-1 font-display text-[1.625rem] font-bold leading-none">
                   {money(total)}
                 </dd>
               </div>
@@ -257,10 +257,10 @@ export default async function PedidoDetallePage({ params }: Props) {
       >
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div className="min-w-0">
-            <p className="font-display text-[13px] font-semibold uppercase tracking-[0.18em] text-brand-yellow sm:text-[15px]">
+            <p className="font-display text-[0.8125rem] font-semibold uppercase tracking-[0.18em] text-brand-yellow sm:text-[0.9375rem]">
               Orden de trabajo
             </p>
-            <h1 className={`${displayClass} mt-2 text-[44px] sm:text-[72px]`}>
+            <h1 className={`${displayClass} mt-2 text-[2.75rem] sm:text-[4.5rem]`}>
               {vehicle || "Pedido"}
             </h1>
           </div>
@@ -284,7 +284,7 @@ export default async function PedidoDetallePage({ params }: Props) {
           <SectionTitle
             size="lg"
             action={
-              <p className="text-[15px] text-muted">
+              <p className="text-[0.9375rem] text-muted">
                 {itemsWithStages.length} {itemsWithStages.length === 1 ? "servicio" : "servicios"} ·{" "}
                 {doneStages} de {totalStages} etapas terminadas
               </p>
@@ -298,9 +298,9 @@ export default async function PedidoDetallePage({ params }: Props) {
               <article key={item.id} className={cardClass}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-foreground sm:text-[22px]">{item.title}</h3>
+                    <h3 className="text-xl font-semibold text-foreground sm:text-[1.375rem]">{item.title}</h3>
                     {item.materialLabel ? (
-                      <p className="mt-1 text-[15px] text-muted">{item.materialLabel}</p>
+                      <p className="mt-1 text-[0.9375rem] text-muted">{item.materialLabel}</p>
                     ) : null}
                   </div>
                   {item.price !== null ? (
@@ -345,7 +345,7 @@ export default async function PedidoDetallePage({ params }: Props) {
                 ))}
               </div>
             ) : (
-              <p className="mt-3 text-[15px] text-muted">Aún no hay fotos en este pedido.</p>
+              <p className="mt-3 text-[0.9375rem] text-muted">Aún no hay fotos en este pedido.</p>
             )}
           </section>
 
@@ -364,7 +364,7 @@ export default async function PedidoDetallePage({ params }: Props) {
                   <div className="min-w-0">
                     <p className="text-base text-foreground">{item.title}</p>
                     {item.materialLabel ? (
-                      <p className="text-[15px] text-muted">{item.materialLabel}</p>
+                      <p className="text-[0.9375rem] text-muted">{item.materialLabel}</p>
                     ) : null}
                   </div>
                   {item.price !== null ? (
@@ -427,14 +427,14 @@ export default async function PedidoDetallePage({ params }: Props) {
                   currentUserId={user?.id ?? null}
                 />
               ) : (
-                <p className="text-[15px] text-muted">Sin actualizaciones todavía.</p>
+                <p className="text-[0.9375rem] text-muted">Sin actualizaciones todavía.</p>
               )}
             </div>
           </section>
 
           <section className={cardClass}>
             <p className={eyebrowClass}>Compartir</p>
-            <p className="mt-2 text-[15px] text-muted">
+            <p className="mt-2 text-[0.9375rem] text-muted">
               Manda un enlace para que alguien más vea cómo va tu coche, sin iniciar sesión.
             </p>
             <div className="mt-3">
@@ -445,7 +445,7 @@ export default async function PedidoDetallePage({ params }: Props) {
           {isApprovedOrLater && !isFinalState ? (
             <section className="rounded-2xl border-2 border-dashed border-brand-yellow-dark/50 p-5 sm:p-6 dark:border-brand-yellow/40">
               <p className="text-base font-semibold text-foreground">¿Quieres agregar otro servicio?</p>
-              <p className="mt-1.5 text-[15px] leading-relaxed text-foreground/80">
+              <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-foreground/80">
                 Tu cotización ya está aprobada. Visítanos en el taller o escríbenos y lo sumamos a
                 este pedido.
               </p>
@@ -456,7 +456,7 @@ export default async function PedidoDetallePage({ params }: Props) {
           ) : null}
 
           <details className="group rounded-2xl px-1">
-            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[15px] text-muted underline underline-offset-4 hover:text-foreground">
+            <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[0.9375rem] text-muted underline underline-offset-4 hover:text-foreground">
               Más opciones del pedido
             </summary>
             <div className="mt-2 rounded-2xl border-2 border-dashed border-brand-red/30 p-4">

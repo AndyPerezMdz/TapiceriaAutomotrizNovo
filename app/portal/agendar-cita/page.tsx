@@ -46,7 +46,7 @@ export default async function AgendarCitaPage({ searchParams }: Props) {
       <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-2 text-foreground">
         Agendar visita
       </h1>
-      <p className="mb-8 text-[15px] text-muted">
+      <p className="mb-8 text-[0.9375rem] text-muted">
         Para colores de piel personalizados, necesitamos ver tu vehículo en
         persona y tomar una muestra del asiento.
       </p>
