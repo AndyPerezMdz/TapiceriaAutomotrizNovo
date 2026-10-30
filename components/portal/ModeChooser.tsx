@@ -1,9 +1,9 @@
 "use client";
 
+import { ModePreview } from "@/components/a11y/ModePreview";
 import { useToast } from "@/components/shared/ToastProvider";
 import { applyA11yPrefs, type A11yPrefs, type UiMode } from "@/lib/a11y/preferences";
 import { createClient } from "@/lib/supabase/client";
-import { LayoutGrid, MousePointerClick } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -49,7 +49,7 @@ export function ModeChooser({ current }: { current: A11yPrefs }) {
           onClick={() => choose("sencillo")}
           className={`${card} border-brand-yellow bg-brand-yellow text-ink hover:bg-[#e8b90f]`}
         >
-          <MousePointerClick size={30} />
+          <ModePreview mode="sencillo" />
           <span className="font-display text-[2rem] font-extrabold uppercase leading-none">Sencilla</span>
           <span className="text-[1.0625rem]">Letra grande, botones grandes y solo lo importante.</span>
           <span className="mt-1 text-[0.9375rem] font-bold underline underline-offset-4">
@@ -62,7 +62,7 @@ export function ModeChooser({ current }: { current: A11yPrefs }) {
           onClick={() => choose("normal")}
           className={`${card} border-white/25 hover:border-white/60`}
         >
-          <LayoutGrid size={30} className="text-brand-yellow" />
+          <ModePreview mode="normal" />
           <span className="font-display text-[2rem] font-extrabold uppercase leading-none">Completa</span>
           <span className="text-[1.0625rem] text-[#d9d5cc]">Todo a la mano: etapas, cupones, puntos y referidos.</span>
           <span className="mt-1 text-[0.9375rem] font-bold text-brand-yellow underline underline-offset-4">

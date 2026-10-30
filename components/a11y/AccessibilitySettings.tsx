@@ -1,5 +1,6 @@
 "use client";
 
+import { ModePreview } from "@/components/a11y/ModePreview";
 import { useToast } from "@/components/shared/ToastProvider";
 import { applyA11yPrefs, textSizeLabels, type A11yPrefs, type TextSize, type UiMode } from "@/lib/a11y/preferences";
 import { createClient } from "@/lib/supabase/client";
@@ -118,6 +119,9 @@ export function AccessibilitySettings({ initial, showMode = false }: Props) {
                       <Check size={16} strokeWidth={3} />
                     </span>
                   ) : null}
+                  <span className="mb-3 block pr-9">
+                    <ModePreview mode={m.value} />
+                  </span>
                   <span className="block font-display text-[1.75rem] font-extrabold uppercase leading-none text-foreground">
                     {m.title}
                   </span>

@@ -139,11 +139,14 @@ export default async function PortalDashboardPage() {
   }
 
   const firstName = profile?.full_name?.split(" ")[0];
-  const todayLabel = new Date().toLocaleDateString("es-MX", {
+  const todayRaw = new Date().toLocaleDateString("es-MX", {
     weekday: "long",
     day: "numeric",
     month: "long",
+    timeZone: "America/Merida",
   });
+  // Solo la primera letra en mayúscula: "Viernes, 30 de octubre".
+  const todayLabel = todayRaw.charAt(0).toUpperCase() + todayRaw.slice(1);
 
   const balance = points?.balance ?? 0;
   const goal = loyalty?.points_for_reward ?? 0;
@@ -198,7 +201,7 @@ export default async function PortalDashboardPage() {
     <div className="space-y-10">
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div>
-          <p className="text-[0.9375rem] capitalize text-muted">{todayLabel}</p>
+          <p className="text-[0.9375rem] text-muted">{todayLabel}</p>
           <h1 className={`${displayClass} mt-1.5 text-5xl text-foreground sm:text-[4rem]`}>
             Hola{firstName ? `, ${firstName}` : ""}
           </h1>
@@ -296,76 +299,87 @@ export default async function PortalDashboardPage() {
         </>
       )}
 
-      <section className="grid gap-4 sm:grid-cols-3 sm:gap-5">
-        <article className={cardClass}>
+      {/* Tira de resumen: cita, puntos y cupón en una sola tarjeta compacta */}
+      <section
+        aria-label="Resumen"
+        className="grid overflow-hidden rounded-[18px] bg-surface sm:grid-cols-3 dark:ring-1 dark:ring-white/5"
+      >
+        <Link
+          href="/portal/mis-citas"
+          className="group flex flex-col justify-between gap-3 p-5 transition hover:bg-black/[0.03] sm:p-6 dark:hover:bg-white/[0.03]"
+        >
           <p className={eyebrowClass}>Próxima cita</p>
           {nextAppointment ? (
-            <>
-              <p className={`${displayClass} mt-2.5 text-[2.5rem] text-foreground`}>
-                {new Date(`${nextAppointment.appointment_date}T12:00:00`).toLocaleDateString(
-                  "es-MX",
-                  { weekday: "short", day: "numeric", month: "short" },
-                )}
+            <div>
+              <p className={`${displayClass} text-[2rem] text-foreground`}>
+                {new Date(`${nextAppointment.appointment_date}T12:00:00`).toLocaleDateString("es-MX", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                })}
               </p>
-              <p className="mt-1.5 text-[0.9375rem] text-muted">
+              <p className="mt-1 text-[0.9375rem] text-muted">
                 {nextAppointment.appointment_time?.slice(0, 5)}
-                {nextAppointment.status === "pendiente" ? " · por confirmar" : ""}
+                {nextAppointment.status === "pendiente" ? " · por confirmar" : " · confirmada"}
               </p>
-            </>
+            </div>
           ) : (
-            <p className="mt-2.5 text-[0.9375rem] leading-relaxed text-muted">
-              No tienes citas. Solo se agenda una si eliges una piel que necesita muestra de color.
+            <p className="text-[1.0625rem] font-semibold text-foreground">
+              Sin citas
+              <span className="mt-0.5 block text-[0.8125rem] font-normal text-muted">
+                Solo se agendan para ver pieles
+              </span>
             </p>
           )}
-          {nextAppointment ? (
-            <Link href="/portal/mis-citas" className="mt-2 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
-              Ver mis citas
-            </Link>
-          ) : null}
-        </article>
+        </Link>
 
-        <article className={cardClass}>
-          <p className={eyebrowClass}>Tus puntos</p>
-          <p className={`${displayClass} mt-2.5 text-[2.5rem] text-foreground`}>
-            {balance.toLocaleString("es-MX")}
-          </p>
+        <Link
+          href="/portal/puntos"
+          className="group flex flex-col justify-between gap-3 border-t-2 border-dashed border-seam p-5 transition hover:bg-black/[0.03] sm:border-l-2 sm:border-t-0 sm:p-6 dark:hover:bg-white/[0.03]"
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className={eyebrowClass}>Tus puntos</p>
+            <p className={`${displayClass} text-[2rem] text-foreground`}>{balance.toLocaleString("es-MX")}</p>
+          </div>
           {goal > 0 ? (
-            <>
-              <div className="mt-3 h-2 rounded-full bg-seam">
-                <div className="h-2 rounded-full bg-foreground" style={{ width: `${progress}%` }} />
+            <div>
+              <div className="h-2 rounded-full bg-seam">
+                <div className="h-2 rounded-full bg-brand-yellow" style={{ width: `${Math.max(progress, 3)}%` }} />
               </div>
-              <p className="mt-2 text-[0.9375rem] text-muted">
+              <p className="mt-1.5 text-[0.8125rem] text-muted">
                 {balance >= goal
-                  ? "Ya puedes canjear un cupón"
-                  : `Te faltan ${(goal - balance).toLocaleString("es-MX")} para tu próximo cupón`}
+                  ? "¡Ya puedes canjear un cupón!"
+                  : `${(goal - balance).toLocaleString("es-MX")} más para tu próximo cupón`}
               </p>
-            </>
+            </div>
           ) : null}
-          <Link href="/portal/puntos" className="mt-1 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
-            Ver puntos
-          </Link>
-        </article>
+        </Link>
 
         {couponLabel ? (
-          <article className="relative overflow-hidden rounded-[18px] bg-brand-yellow p-5 text-ink sm:p-7">
+          <Link
+            href="/portal/cupones"
+            className="relative flex flex-col justify-between gap-3 bg-brand-yellow p-5 text-ink sm:p-6"
+          >
             <span aria-hidden="true" className="absolute inset-2 rounded-xl border-2 border-dashed border-ink/35" />
+            <p className="relative text-xs uppercase tracking-[0.14em] text-[#3d3200]">Cupón activo</p>
             <div className="relative">
-              <p className="text-[0.8125rem] uppercase tracking-[0.14em] text-[#3d3200]">Cupón activo</p>
-              <p className={`${displayClass} mt-2.5 text-[2.5rem]`}>{couponLabel}</p>
-              <p className="mt-1.5 text-[0.9375rem] text-[#2b2400]">{coupon?.title}</p>
-              <Link href="/portal/cupones" className="mt-1 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold">
-                Ver cupones
-              </Link>
+              <p className={`${displayClass} text-[2rem]`}>{couponLabel}</p>
+              <p className="mt-0.5 truncate text-[0.8125rem] text-[#2b2400]">{coupon?.title}</p>
             </div>
-          </article>
+          </Link>
         ) : (
-          <article className="relative overflow-hidden rounded-[18px] border-2 border-dashed border-field-border p-5 sm:p-7">
+          <Link
+            href="/portal/cupones"
+            className="group flex flex-col justify-between gap-3 border-t-2 border-dashed border-seam p-5 transition hover:bg-black/[0.03] sm:border-l-2 sm:border-t-0 sm:p-6 dark:hover:bg-white/[0.03]"
+          >
             <p className={eyebrowClass}>Cupones</p>
-            <p className="mt-2.5 text-[0.9375rem] text-muted">No tienes un cupón activo.</p>
-            <Link href="/portal/cupones" className="mt-2 inline-flex min-h-11 items-center text-[0.9375rem] font-semibold text-foreground">
-              Ver cupones disponibles
-            </Link>
-          </article>
+            <p className="text-[1.0625rem] font-semibold text-foreground">
+              Sin cupón activo
+              <span className="mt-0.5 block text-[0.8125rem] font-normal text-muted group-hover:underline">
+                Ver los disponibles →
+              </span>
+            </p>
+          </Link>
         )}
       </section>
 
