@@ -36,6 +36,7 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
     service_title: string | null;
     expires_at: string | null;
     is_personal: boolean;
+    requires_deposit: boolean;
     status: "activo" | "canjeado" | "caducado";
     redeemed_at: string | null;
     order_id: string | null;
@@ -152,6 +153,11 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
                       ? ` · ${c.status === "caducado" ? "Venció" : "Vence"} ${shortDate(`${c.expires_at}T00:00:00`)}`
                       : ""}
                   </p>
+                  {c.requires_deposit && c.status === "activo" ? (
+                    <p className="mt-2 text-[0.9375rem] font-semibold">
+                      Válido si dejas el 50% de anticipo al agendar.
+                    </p>
+                  ) : null}
                   {c.status === "canjeado" && c.redeemed_at ? (
                     <p className="mt-2 border-t-2 border-dashed border-seam pt-2 text-[0.9375rem] text-foreground">
                       Usado el {shortDate(c.redeemed_at)}

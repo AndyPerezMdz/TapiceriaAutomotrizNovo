@@ -6,6 +6,10 @@ import { OrderTimeline } from "@/components/portal/OrderTimeline";
 import { DeleteOrderButton } from "@/components/shared/DeleteOrderButton";
 import { DownloadPdfButton } from "@/components/shared/DownloadPdfButton";
 import { StaffComplaintForm } from "@/components/admin/ComplaintForm";
+import { DepositPanel } from "@/components/admin/DepositPanel";
+import { DropoffScheduler, type DropoffProposal } from "@/components/shared/DropoffScheduler";
+import { buildWhatsAppLink } from "@/lib/constants/business";
+import { getCalendarAvailability } from "@/lib/data/calendar";
 import { statusLabels } from "@/lib/validations/admin-order";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft, Phone } from "lucide-react";
@@ -36,7 +40,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
       supabase
         .from("orders")
         .select(
-          "*, profiles!orders_client_id_fkey(full_name, phone), coupons(title, discount_type, discount_value, service_id), deleted_at",
+          "*, profiles!orders_client_id_fkey(full_name, phone), coupons(title, discount_type, discount_value, service_id, requires_deposit), deleted_at",
         )
         .eq("id", id)
         .single(),
@@ -93,6 +97,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
     discount_type: string;
     discount_value: number;
     service_id: string | null;
+    requires_deposit: boolean;
   } | null;
 
   const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
@@ -132,6 +137,25 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
     order.status === "cotizado"
       ? Math.floor((Date.now() - new Date(order.updated_at ?? order.created_at).getTime()) / 86400000)
       : 0;
+  // Fecha para traer el coche y anticipo
+  const schedulable = !["entregado", "cancelado", "rechazado"].includes(order.status);
+  const [{ data: proposals }, availability] = await Promise.all([
+    supabase
+      .from("dropoff_proposals")
+      .select("id, proposed_by, proposed_date, proposed_time, status, created_at")
+      .eq("order_id", order.id)
+      .order("created_at", { ascending: true }),
+    schedulable ? getCalendarAvailability(supabase) : Promise.resolve({ blockedDates: [], takenSlots: {} }),
+  ]);
+  const folio = order.id.slice(0, 8).toUpperCase();
+  const clientWhatsapp = client?.phone
+    ? buildWhatsAppLink(
+        `Hola ${client.full_name?.split(" ")[0] ?? ""}, te escribimos de Tapicería NOVO para acordar el día en que traes tu ${vehicle || "vehículo"} (pedido ${folio}). Cuando lo acordemos queda en tu pedido: https://tapiceriaautomotrizbynovo.com/portal/pedidos/${order.id}`,
+        client.phone.replace(/\D/g, "").slice(-10),
+      )
+    : null;
+  const showDeposit = order.estimated_price !== null && !["cancelado", "rechazado"].includes(order.status);
+
   const daysInShop = Math.floor((Date.now() - new Date(order.created_at).getTime()) / 86400000);
   const showDays = !["entregado", "cancelado", "rechazado"].includes(order.status);
 
@@ -220,6 +244,27 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
 
           {order.status === "en_proceso" ? <OrderStagesPanel items={formattedItems} /> : null}
 
+          {schedulable || (proposals ?? []).some((p) => p.status === "aceptada") ? (
+            <DropoffScheduler
+              side="staff"
+              orderId={order.id}
+              proposals={(proposals ?? []) as DropoffProposal[]}
+              availability={availability}
+              whatsappHref={clientWhatsapp}
+            />
+          ) : null}
+
+          {showDeposit ? (
+            <DepositPanel
+              orderId={order.id}
+              total={Number(order.estimated_price)}
+              depositAmount={order.deposit_amount !== null ? Number(order.deposit_amount) : null}
+              depositPaidAt={order.deposit_paid_at}
+              couponRequiresDeposit={Boolean(coupon?.requires_deposit)}
+              locked={order.status === "entregado"}
+            />
+          ) : null}
+
           <OrderStaffPanel
             orderId={order.id}
             currentStatus={order.status}
@@ -229,6 +274,7 @@ export default async function AdminPedidoDetallePage({ params }: Props) {
             clientName={client?.full_name ?? null}
             vehicleLabel={vehicle}
             coupon={coupon}
+            depositAmount={order.deposit_amount !== null ? Number(order.deposit_amount) : null}
           />
         </div>
 

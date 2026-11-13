@@ -1,5 +1,7 @@
 import { CouponForm } from "@/components/admin/CouponForm";
 import { CouponRow } from "@/components/admin/CouponRow";
+import { ClientSegmentsButton } from "@/components/admin/ClientSegmentsButton";
+import type { SegmentedClient } from "@/lib/coupons/audience";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -20,7 +22,7 @@ export default async function AdminCuponesPage() {
     supabase
       .from("coupons")
       .select(
-        "id, title, description, discount_type, discount_value, audience, is_active, expires_at, services(title)",
+        "id, title, description, discount_type, discount_value, audience, is_active, expires_at, requires_deposit, services(title)",
       )
       // Los cupones personales (canje de puntos) no se administran aquí.
       .is("client_id", null)
@@ -28,6 +30,8 @@ export default async function AdminCuponesPage() {
     supabase.from("services").select("id, title").eq("is_active", true).order("order", { ascending: true }),
     supabase.from("coupon_redemptions").select("coupon_id"),
   ]);
+  const { data: segmentRows } = await supabase.rpc("get_client_segments");
+  const clients = (segmentRows ?? []) as SegmentedClient[];
 
   const usesByCoupon = new Map<string, number>();
   for (const r of redemptions ?? []) {
@@ -45,17 +49,21 @@ export default async function AdminCuponesPage() {
       is_active: c.is_active,
       expires_at: c.expires_at,
       uses: usesByCoupon.get(c.id) ?? 0,
+      requires_deposit: Boolean(c.requires_deposit),
       service_title: (c.services as unknown as { title: string } | null)?.title ?? null,
     })) ?? [];
 
   return (
     <div>
-      <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] sm:text-6xl mb-8 text-foreground">
-        Cupones de descuento
-      </h1>
+      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <h1 className="font-display text-5xl font-extrabold uppercase leading-[0.95] text-foreground sm:text-6xl">
+          Cupones de descuento
+        </h1>
+        <ClientSegmentsButton clients={clients} />
+      </div>
 
       <div className="mb-8">
-        <CouponForm services={services ?? []} />
+        <CouponForm services={services ?? []} clients={clients} />
       </div>
 
       <h2 className="font-display text-2xl font-bold uppercase mb-3 text-foreground">Cupones existentes</h2>

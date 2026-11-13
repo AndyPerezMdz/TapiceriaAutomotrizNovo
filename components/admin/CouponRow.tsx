@@ -3,6 +3,7 @@
 import { useConfirm } from "@/lib/hooks/useConfirm";
 import { createClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react";
+import { audienceShort } from "@/lib/coupons/audience";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -17,14 +18,9 @@ interface Coupon {
   service_title: string | null;
   expires_at: string | null;
   uses: number;
+  requires_deposit: boolean;
 }
 
-const audienceLabels: Record<string, string> = {
-  clientes: "Clientes regulares",
-  frecuentes: "Frecuentes",
-  ambos: "Todos",
-  nuevos: "Clientes nuevos",
-};
 
 export function CouponRow({ coupon }: { coupon: Coupon }) {
   const router = useRouter();
@@ -79,11 +75,16 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
             ) : null}
             <div className="mt-2 flex flex-wrap gap-1.5">
               <span className="inline-block rounded-full bg-black/5 px-2.5 py-0.5 text-[0.8125rem] text-muted dark:bg-white/5">
-                {audienceLabels[coupon.audience]}
+                {audienceShort[coupon.audience] ?? coupon.audience}
               </span>
               <span className="inline-block rounded-full bg-brand-yellow text-ink px-2.5 py-0.5 text-[0.8125rem]">
                 {coupon.service_title ?? "General"}
               </span>
+              {coupon.requires_deposit ? (
+                <span className="inline-block rounded-full bg-ink px-2.5 py-0.5 text-[0.8125rem] text-brand-yellow">
+                  Con anticipo 50%
+                </span>
+              ) : null}
               <span className="inline-block rounded-full border-[1.5px] border-field-border px-2.5 py-0.5 text-[0.8125rem] text-foreground">
                 {coupon.uses === 0 ? "Sin usar" : `Usado ${coupon.uses} ${coupon.uses === 1 ? "vez" : "veces"}`}
               </span>

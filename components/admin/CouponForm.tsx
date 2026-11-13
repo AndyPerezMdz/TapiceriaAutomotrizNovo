@@ -2,7 +2,14 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { ClientSegmentsDialog } from "@/components/admin/ClientSegmentsDialog";
+import {
+  audienceIncludes,
+  audienceOptions,
+  type CouponAudience,
+  type SegmentedClient,
+} from "@/lib/coupons/audience";
 
 interface Service {
   id: string;
@@ -13,19 +20,23 @@ const fieldClassName =
   "block w-full min-h-12 rounded-[10px] border-[1.5px] border-field-border bg-field px-3.5 py-2.5 text-base text-foreground placeholder:text-muted/70 transition focus:border-foreground focus:bg-surface focus:outline-none";
 const labelClassName = "mb-1.5 block text-[0.9375rem] font-medium text-foreground";
 
-export function CouponForm({ services }: { services: Service[] }) {
+export function CouponForm({ services, clients }: { services: Service[]; clients: SegmentedClient[] }) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [discountType, setDiscountType] = useState<"percentage" | "fixed">("percentage");
   const [discountValue, setDiscountValue] = useState("");
-  const [audience, setAudience] = useState<"clientes" | "frecuentes" | "ambos" | "nuevos">("ambos");
+  const [audience, setAudience] = useState<CouponAudience>("ambos");
   const [serviceId, setServiceId] = useState<string>("");
   const [expiresAt, setExpiresAt] = useState("");
   const [notifySubscribers, setNotifySubscribers] = useState(false);
+  const [requiresDeposit, setRequiresDeposit] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [notifyResult, setNotifyResult] = useState<string | null>(null);
+  const [showSegments, setShowSegments] = useState(false);
+  const closeSegments = useCallback(() => setShowSegments(false), []);
+  const reach = clients.filter((c) => audienceIncludes(audience, c.segment)).length;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,6 +70,7 @@ export function CouponForm({ services }: { services: Service[] }) {
         audience,
         service_id: serviceId || null,
         expires_at: expiresAt || null,
+        requires_deposit: requiresDeposit,
       })
       .select("id")
       .single();
@@ -196,20 +208,32 @@ export function CouponForm({ services }: { services: Service[] }) {
           <label className={labelClassName}>¿Para quién es?</label>
           <select
             value={audience}
-            onChange={(e) => setAudience(e.target.value as typeof audience)}
+            onChange={(e) => setAudience(e.target.value as CouponAudience)}
             className={fieldClassName}
             disabled={isSaving}
           >
-            <option value="ambos">Todos los clientes</option>
-            <option value="nuevos">Clientes nuevos (su primer pedido)</option>
-            <option value="clientes">Clientes regulares (menos de 5 pedidos)</option>
-            <option value="frecuentes">Solo clientes frecuentes (5+ pedidos entregados)</option>
+            {audienceOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
           </select>
-          {audience === "nuevos" ? (
-            <p className="mt-1.5 text-[0.8125rem] text-muted">
-              Lo ven quienes aún no tienen pedidos. Sirve para atraer gente nueva (Buen Fin, promociones en redes).
-            </p>
-          ) : null}
+          <p className="mt-1.5 text-[0.8125rem] text-muted">
+            {audienceOptions.find((o) => o.value === audience)?.help}{" "}
+            <button
+              type="button"
+              onClick={() => setShowSegments(true)}
+              className="font-semibold text-foreground underline underline-offset-4"
+            >
+              Hoy son {reach} {reach === 1 ? "cliente" : "clientes"} · ver quiénes
+            </button>
+          </p>
+          <ClientSegmentsDialog
+            clients={clients}
+            open={showSegments}
+            initialAudience={audience}
+            onClose={closeSegments}
+          />
         </div>
 
         <div>
@@ -223,6 +247,23 @@ export function CouponForm({ services }: { services: Service[] }) {
           />
         </div>
       </div>
+
+      <label className="flex items-start gap-2 rounded-xl border-2 border-dashed border-seam p-3 text-[0.9375rem] text-foreground">
+        <input
+          type="checkbox"
+          checked={requiresDeposit}
+          onChange={(e) => setRequiresDeposit(e.target.checked)}
+          disabled={isSaving}
+          className="mt-1 h-4 w-4 accent-[#1a1a1a]"
+        />
+        <span>
+          <strong>Solo válido con anticipo del 50%</strong>
+          <span className="block text-muted">
+            El descuento aplica únicamente si el cliente deja al menos la mitad del total (ya con descuento) como
+            anticipo. Si se entrega sin anticipo, se cobra sin descuento y el cupón le regresa.
+          </span>
+        </span>
+      </label>
 
       <label className="flex items-start gap-2 text-[0.9375rem] text-foreground">
         <input

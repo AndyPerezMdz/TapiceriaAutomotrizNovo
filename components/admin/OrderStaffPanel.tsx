@@ -34,6 +34,7 @@ interface Coupon {
   discount_type: string;
   discount_value: number;
   service_id: string | null;
+  requires_deposit?: boolean;
 }
 
 interface Props {
@@ -45,6 +46,8 @@ interface Props {
   clientName: string | null;
   vehicleLabel: string;
   coupon?: Coupon | null;
+  /** Anticipo registrado (para los cupones que solo valen con anticipo). */
+  depositAmount?: number | null;
 }
 
 export function OrderStaffPanel({
@@ -56,6 +59,7 @@ export function OrderStaffPanel({
   clientName,
   vehicleLabel,
   coupon,
+  depositAmount = null,
 }: Props) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
@@ -122,6 +126,9 @@ export function OrderStaffPanel({
 
   total = Math.max(total, 0);
 
+  // Cupón con anticipo: el descuento solo vale si dejó al menos el 50% del total con descuento.
+  const depositEarned = !coupon?.requires_deposit || (total > 0 && (depositAmount ?? 0) >= total * 0.5);
+
   async function handleSave() {
     setIsSaving(true);
     setSaveError(null);
@@ -147,10 +154,11 @@ export function OrderStaffPanel({
     const updatePayload: Record<string, unknown> = { status: finalStatus };
 
     if (isAdmin) {
-      const numericTotal = hasAnyPrice ? total : null;
-      updatePayload.estimated_price = numericTotal;
-      if (finalStatus === "entregado") {
-        updatePayload.final_price = numericTotal;
+      updatePayload.estimated_price = hasAnyPrice ? total : null;
+      if (finalStatus === "entregado" && hasAnyPrice) {
+        // Sin el anticipo requerido, se cobra sin el descuento del cupón.
+        // (Si entrega un empleado, el precio final lo pone la base de datos.)
+        updatePayload.final_price = depositEarned ? total : rawTotal;
       }
     }
 
@@ -211,10 +219,19 @@ export function OrderStaffPanel({
       </h2>
 
       {coupon ? (
-        <div className="mb-4 flex items-center gap-1.5 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-3.5 py-2.5 text-[0.9375rem] text-yellow-text">
-          <Tag size={14} />
-          Cupón &quot;{coupon.title}&quot; aplicado
-          {coupon.service_id === null ? " (descuento al total)" : " (descuento a un servicio)"}.
+        <div className="mb-4 flex items-start gap-1.5 rounded-xl border-2 border-dashed border-brand-yellow-dark/50 bg-highlight px-3.5 py-2.5 text-[0.9375rem] text-yellow-text">
+          <Tag size={14} className="mt-1 shrink-0" />
+          <span>
+            Cupón &quot;{coupon.title}&quot; aplicado
+            {coupon.service_id === null ? " (descuento al total)" : " (descuento a un servicio)"}.
+            {coupon.requires_deposit ? (
+              <strong className="block">
+                {depositEarned
+                  ? "Anticipo del 50% recibido: el descuento ya es válido."
+                  : `Solo vale con anticipo del 50% ($${Math.ceil(total * 0.5).toLocaleString("es-MX")}). Si se entrega sin anticipo, se cobra sin descuento.`}
+              </strong>
+            ) : null}
+          </span>
         </div>
       ) : null}
 

@@ -16,6 +16,9 @@ import { buildWhatsAppLink } from "@/lib/constants/business";
 import { getBusinessSettings } from "@/lib/data/business-settings";
 import { WhatsAppLink } from "@/components/shared/WhatsAppLink";
 import { ComplaintForm } from "@/components/portal/ComplaintForm";
+import { DepositCard } from "@/components/portal/DepositCard";
+import { DropoffScheduler, type DropoffProposal } from "@/components/shared/DropoffScheduler";
+import { getCalendarAvailability } from "@/lib/data/calendar";
 import {
   SectionTitle,
   Stamp,
@@ -142,6 +145,33 @@ export default async function PedidoDetallePage({ params }: Props) {
   const vehicle = [order.vehicle_make, order.vehicle_model, order.vehicle_year]
     .filter(Boolean)
     .join(" ");
+
+  // Fecha para traer el coche, anticipo y cupón del pedido
+  const schedulable = !["entregado", "cancelado", "rechazado"].includes(order.status);
+  const [{ data: proposals }, availability, { data: orderCoupon }] = await Promise.all([
+    supabase
+      .from("dropoff_proposals")
+      .select("id, proposed_by, proposed_date, proposed_time, status, created_at")
+      .eq("order_id", order.id)
+      .order("created_at", { ascending: true }),
+    schedulable ? getCalendarAvailability(supabase) : Promise.resolve({ blockedDates: [], takenSlots: {} }),
+    order.coupon_id
+      ? supabase.from("coupons").select("title, requires_deposit").eq("id", order.coupon_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+  const folio = order.id.slice(0, 8).toUpperCase();
+  const orderUrl = `https://tapiceriaautomotrizbynovo.com/portal/pedidos/${order.id}`;
+  const dropoffWhatsapp = buildWhatsAppLink(
+    `Hola, quiero acordar el día para llevar mi ${vehicle || "vehículo"} al taller (pedido ${folio}). Mi pedido: ${orderUrl}`,
+    settings.whatsapp,
+  );
+  const itemsTotal = (items ?? []).reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+  const showDeposit =
+    order.estimated_price !== null && ["cotizado", "aprobado", "en_proceso", "listo_para_entrega"].includes(order.status);
+  const depositWhatsapp = buildWhatsAppLink(
+    `Hola, les mando el comprobante del anticipo de $${Math.ceil(Number(order.estimated_price ?? 0) * 0.5).toLocaleString("es-MX")} del pedido ${folio} (${vehicle || "mi vehículo"}). Adjunto la captura. Mi pedido: ${orderUrl}`,
+    settings.whatsapp,
+  );
 
   const isFinalState = order.status === "entregado" || order.status === "cancelado";
   const isApprovedOrLater = !["pendiente_revision", "cotizado", "rechazado"].includes(
@@ -275,6 +305,26 @@ export default async function PedidoDetallePage({ params }: Props) {
 
       {order.status === "cotizado" ? (
         <QuoteResponse orderId={order.id} estimatedPrice={order.estimated_price} />
+      ) : null}
+
+      <DropoffScheduler
+        side="cliente"
+        orderId={order.id}
+        proposals={(proposals ?? []) as DropoffProposal[]}
+        availability={availability}
+        whatsappHref={dropoffWhatsapp}
+      />
+
+      {showDeposit ? (
+        <DepositCard
+          total={Number(order.estimated_price)}
+          totalWithoutCoupon={itemsTotal}
+          depositAmount={order.deposit_amount !== null ? Number(order.deposit_amount) : null}
+          depositPaidAt={order.deposit_paid_at}
+          couponTitle={orderCoupon?.title ?? null}
+          couponRequiresDeposit={Boolean(orderCoupon?.requires_deposit)}
+          whatsappHref={depositWhatsapp}
+        />
       ) : null}
 
       {order.status === "entregado" && !review ? <ReviewForm orderId={order.id} /> : null}

@@ -10,6 +10,7 @@ interface Coupon {
   discount_type: string;
   discount_value: number;
   service_id: string | null;
+  requires_deposit?: boolean;
 }
 
 export function CouponSelector({
@@ -93,6 +94,9 @@ export function CouponSelector({
                 {c.title}
                 {c.service_id === null ? " · general" : ""}
               </span>
+              {c.requires_deposit ? (
+                <span className="relative mt-1 block text-[0.8125rem] font-semibold">Requiere 50% de anticipo</span>
+              ) : null}
               <span className="relative mt-1 block text-[0.8125rem] font-semibold">
                 {isSelected ? "Aplicado ✓ (toca para quitarlo)" : "Usar este cupón"}
               </span>
