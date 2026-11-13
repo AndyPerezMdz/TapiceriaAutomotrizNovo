@@ -1,6 +1,7 @@
 import { CouponForm } from "@/components/admin/CouponForm";
 import { CouponRow } from "@/components/admin/CouponRow";
 import { ClientSegmentsButton } from "@/components/admin/ClientSegmentsButton";
+import { WelcomeCouponForm, type WelcomeCouponSettings } from "@/components/admin/WelcomeCouponForm";
 import type { SegmentedClient } from "@/lib/coupons/audience";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
@@ -30,13 +31,35 @@ export default async function AdminCuponesPage() {
     supabase.from("services").select("id, title").eq("is_active", true).order("order", { ascending: true }),
     supabase.from("coupon_redemptions").select("coupon_id"),
   ]);
-  const { data: segmentRows } = await supabase.rpc("get_client_segments");
+  const [{ data: segmentRows }, { data: welcomeSettings }, { data: welcomeCoupons }] = await Promise.all([
+    supabase.rpc("get_client_segments"),
+    supabase.from("welcome_coupon_settings").select("*").eq("id", 1).maybeSingle(),
+    supabase.from("coupons").select("id, is_active").eq("kind", "bienvenida"),
+  ]);
   const clients = (segmentRows ?? []) as SegmentedClient[];
 
   const usesByCoupon = new Map<string, number>();
   for (const r of redemptions ?? []) {
     usesByCoupon.set(r.coupon_id, (usesByCoupon.get(r.coupon_id) ?? 0) + 1);
   }
+
+  const welcomeIssued = welcomeCoupons ?? [];
+  const welcomeUsed = welcomeIssued.filter((c) => usesByCoupon.has(c.id)).length;
+  const welcomeStats = {
+    issued: welcomeIssued.length,
+    used: welcomeUsed,
+    unused: welcomeIssued.filter((c) => c.is_active && !usesByCoupon.has(c.id)).length,
+  };
+  const welcome: WelcomeCouponSettings = {
+    is_enabled: welcomeSettings?.is_enabled ?? true,
+    title: welcomeSettings?.title ?? "10% de bienvenida",
+    description: welcomeSettings?.description ?? "Válido en tu primer pedido",
+    discount_type: welcomeSettings?.discount_type === "fixed" ? "fixed" : "percentage",
+    discount_value: Number(welcomeSettings?.discount_value ?? 10),
+    first_order_only: welcomeSettings?.first_order_only ?? true,
+    valid_days: welcomeSettings?.valid_days ?? null,
+    requires_deposit: welcomeSettings?.requires_deposit ?? false,
+  };
 
   const formattedCoupons =
     coupons?.map((c) => ({
@@ -60,6 +83,10 @@ export default async function AdminCuponesPage() {
           Cupones de descuento
         </h1>
         <ClientSegmentsButton clients={clients} />
+      </div>
+
+      <div className="mb-8">
+        <WelcomeCouponForm settings={welcome} stats={welcomeStats} />
       </div>
 
       <div className="mb-8">
