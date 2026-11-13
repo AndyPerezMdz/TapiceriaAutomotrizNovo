@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from "@/components/shared/ToastProvider";
+
 import { StorageImage } from "@/components/shared/StorageImage";
 
 import {
@@ -72,6 +74,7 @@ const emptySelection: MaterialSelection = {
 };
 
 export function NewOrderForm({ services }: { services: Service[] }) {
+  const { showToast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
   const repeatOrderId = searchParams.get("repeat");
@@ -288,10 +291,14 @@ export function NewOrderForm({ services }: { services: Service[] }) {
     await supabase.from("order_items").insert(itemsToInsert);
 
     if (selectedCouponId) {
-      await supabase.rpc("apply_coupon_to_order", {
+      const { error: couponError } = await supabase.rpc("apply_coupon_to_order", {
         p_coupon_id: selectedCouponId,
         p_order_id: order.id,
       });
+      if (couponError) {
+        // El pedido sí se creó; solo avisamos que el descuento no entró.
+        showToast(`Tu pedido se envió, pero el cupón no se aplicó: ${couponError.message}`, "error");
+      }
     }
 
     for (const photo of photos) {

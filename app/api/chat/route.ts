@@ -81,7 +81,7 @@ export async function POST(request: Request) {
             ? `${c.discount_value}%`
             : `$${c.discount_value}`;
         const service = (c.services as unknown as { title: string } | null)?.title;
-        contextText += `- "${c.title}": ${discount} de descuento${service ? ` (solo en ${service})` : " (aplica a cualquier servicio)"}${c.audience === "frecuentes" ? " — solo para clientes frecuentes" : ""}${c.expires_at ? ` — vence el ${c.expires_at}` : ""}.\n`;
+        contextText += `- "${c.title}": ${discount} de descuento${service ? ` (solo en ${service})` : " (aplica a cualquier servicio)"}${c.audience === "frecuentes" ? " — solo para clientes frecuentes" : c.audience === "nuevos" ? " — solo para el primer pedido de clientes nuevos" : ""}${c.expires_at ? ` — vence el ${c.expires_at}` : ""}.\n`;
       });
     }
 

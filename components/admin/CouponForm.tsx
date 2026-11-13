@@ -19,7 +19,7 @@ export function CouponForm({ services }: { services: Service[] }) {
   const [description, setDescription] = useState("");
   const [discountType, setDiscountType] = useState<"percentage" | "fixed">("percentage");
   const [discountValue, setDiscountValue] = useState("");
-  const [audience, setAudience] = useState<"clientes" | "frecuentes" | "ambos">("ambos");
+  const [audience, setAudience] = useState<"clientes" | "frecuentes" | "ambos" | "nuevos">("ambos");
   const [serviceId, setServiceId] = useState<string>("");
   const [expiresAt, setExpiresAt] = useState("");
   const [notifySubscribers, setNotifySubscribers] = useState(false);
@@ -200,10 +200,16 @@ export function CouponForm({ services }: { services: Service[] }) {
             className={fieldClassName}
             disabled={isSaving}
           >
-            <option value="clientes">Clientes (no frecuentes)</option>
-            <option value="frecuentes">Solo clientes frecuentes</option>
-            <option value="ambos">Ambos</option>
+            <option value="ambos">Todos los clientes</option>
+            <option value="nuevos">Clientes nuevos (su primer pedido)</option>
+            <option value="clientes">Clientes regulares (menos de 5 pedidos)</option>
+            <option value="frecuentes">Solo clientes frecuentes (5+ pedidos entregados)</option>
           </select>
+          {audience === "nuevos" ? (
+            <p className="mt-1.5 text-[0.8125rem] text-muted">
+              Lo ven quienes aún no tienen pedidos. Sirve para atraer gente nueva (Buen Fin, promociones en redes).
+            </p>
+          ) : null}
         </div>
 
         <div>

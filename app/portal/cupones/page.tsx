@@ -3,6 +3,7 @@ import { ActivateCouponButton } from "@/components/portal/ActivateCouponButton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { createClient } from "@/lib/supabase/server";
 import { Tag } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
   searchParams: Promise<{ tab?: string }>;
@@ -19,37 +20,36 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
 
   if (!user) return null;
 
-  const { data: isFrequent } = await supabase.rpc("is_frequent_client", {
-    p_client_id: user.id,
-  });
+  const [{ data: isFrequent }, { data: myCoupons }, { data: activeCoupon }] = await Promise.all([
+    supabase.rpc("is_frequent_client", { p_client_id: user.id }),
+    supabase.rpc("get_my_coupons"),
+    supabase.from("active_coupons").select("coupon_id").eq("client_id", user.id).maybeSingle(),
+  ]);
 
-  const audienceFilter = isFrequent ? ["frecuentes", "ambos"] : ["clientes", "ambos"];
-  const today = new Date().toISOString().slice(0, 10);
-
-  const [{ data: allCoupons }, { data: redemptions }, { data: activeCoupon }] =
-    await Promise.all([
-      supabase
-        .from("coupons")
-        .select(
-          "id, title, description, discount_type, discount_value, expires_at, service_id, services(title)",
-        )
-        .in("audience", audienceFilter),
-      supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
-      supabase.from("active_coupons").select("coupon_id").eq("client_id", user.id).maybeSingle(),
-    ]);
-
-  const redeemedIds = new Set(redemptions?.map((r) => r.coupon_id) ?? []);
+  type MyCoupon = {
+    id: string;
+    title: string;
+    description: string | null;
+    discount_type: string;
+    discount_value: number;
+    audience: string;
+    service_title: string | null;
+    expires_at: string | null;
+    is_personal: boolean;
+    status: "activo" | "canjeado" | "caducado";
+    redeemed_at: string | null;
+    order_id: string | null;
+  };
+  const all = (myCoupons ?? []) as MyCoupon[];
   const activeCouponId = activeCoupon?.coupon_id ?? null;
 
-  const activos =
-    allCoupons?.filter(
-      (c) => !redeemedIds.has(c.id) && (!c.expires_at || c.expires_at >= today),
-    ) ?? [];
-  const canjeados = allCoupons?.filter((c) => redeemedIds.has(c.id)) ?? [];
-  const caducados =
-    allCoupons?.filter(
-      (c) => !redeemedIds.has(c.id) && c.expires_at && c.expires_at < today,
-    ) ?? [];
+  const activos = all.filter((c) => c.status === "activo");
+  const canjeados = all
+    .filter((c) => c.status === "canjeado")
+    .sort((a, b) => (b.redeemed_at ?? "").localeCompare(a.redeemed_at ?? ""));
+  const caducados = all
+    .filter((c) => c.status === "caducado")
+    .sort((a, b) => (b.expires_at ?? "").localeCompare(a.expires_at ?? ""));
 
   const tabs = [
     { value: "activos", label: "Activos", items: activos },
@@ -106,7 +106,9 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
           ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {currentItems.map((c) => {
-            const service = (c.services as unknown as { title: string } | null)?.title;
+            const service = c.service_title;
+            const shortDate = (iso: string) =>
+              new Date(iso).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" });
             const discountLabel =
               c.discount_type === "percentage"
                 ? `${c.discount_value}% menos`
@@ -131,7 +133,14 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
                   <p className="font-display text-4xl font-extrabold uppercase leading-none">
                     {discountLabel}
                   </p>
-                  <p className="mt-2 text-base font-semibold">{c.title}</p>
+                  <p className="mt-2 text-base font-semibold">
+                    {c.title}
+                    {c.audience === "nuevos" ? (
+                      <span className="ml-2 inline-block rounded-md border-[1.5px] border-current px-1.5 py-0.5 align-middle text-[0.6875rem] font-bold uppercase tracking-wide">
+                        Primer pedido
+                      </span>
+                    ) : null}
+                  </p>
                   {c.description ? (
                     <p className={`mt-1 text-[0.9375rem] ${activeTab === "activos" ? "text-[#2b2400]" : "text-muted"}`}>
                       {c.description}
@@ -139,10 +148,23 @@ export default async function PortalCuponesPage({ searchParams }: Props) {
                   ) : null}
                   <p className={`mt-2 text-[0.9375rem] ${activeTab === "activos" ? "text-[#3d3200]" : "text-muted"}`}>
                     Válido en: {service ?? "cualquier servicio"}
-                    {c.expires_at
-                      ? ` · Vence ${new Date(`${c.expires_at}T00:00:00`).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`
+                    {c.expires_at && c.status !== "canjeado"
+                      ? ` · ${c.status === "caducado" ? "Venció" : "Vence"} ${shortDate(`${c.expires_at}T00:00:00`)}`
                       : ""}
                   </p>
+                  {c.status === "canjeado" && c.redeemed_at ? (
+                    <p className="mt-2 border-t-2 border-dashed border-seam pt-2 text-[0.9375rem] text-foreground">
+                      Usado el {shortDate(c.redeemed_at)}
+                      {c.order_id ? (
+                        <>
+                          {" · "}
+                          <Link href={`/portal/pedidos/${c.order_id}`} className="font-semibold underline underline-offset-4">
+                            Pedido {c.order_id.slice(0, 8).toUpperCase()}
+                          </Link>
+                        </>
+                      ) : null}
+                    </p>
+                  ) : null}
                 </div>
 
                 {activeTab === "activos" ? (

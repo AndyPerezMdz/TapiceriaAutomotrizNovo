@@ -34,36 +34,12 @@ export function CouponSelector({
     }
 
     const supabase = createClient();
-    const today = new Date().toISOString().slice(0, 10);
 
     async function load() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: isFrequent } = await supabase.rpc("is_frequent_client", {
-        p_client_id: user.id,
-      });
-
-      const audienceFilter = isFrequent ? ["frecuentes", "ambos"] : ["clientes", "ambos"];
-
-      const [{ data: availableCoupons }, { data: redemptions }] = await Promise.all([
-        supabase
-          .from("coupons")
-          .select("id, title, discount_type, discount_value, service_id, expires_at")
-          .eq("is_active", true)
-          .in("audience", audienceFilter),
-        supabase.from("coupon_redemptions").select("coupon_id").eq("client_id", user.id),
-      ]);
-
-      const usedIds = new Set(redemptions?.map((r) => r.coupon_id) ?? []);
-
-      const valid = (availableCoupons ?? []).filter(
-        (c) =>
-          !usedIds.has(c.id) &&
-          (!c.expires_at || c.expires_at >= today) &&
-          (c.service_id === null || validIds.includes(c.service_id)),
+      // La base de datos ya filtra por audiencia, vigencia y si ya lo usó.
+      const { data } = await supabase.rpc("get_my_coupons");
+      const valid = ((data ?? []) as (Coupon & { status: string })[]).filter(
+        (c) => c.status === "activo" && (c.service_id === null || validIds.includes(c.service_id)),
       );
       setCoupons(valid);
     }

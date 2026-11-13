@@ -16,15 +16,23 @@ export default async function AdminCuponesPage() {
     redirect("/admin");
   }
 
-  const [{ data: coupons }, { data: services }] = await Promise.all([
+  const [{ data: coupons }, { data: services }, { data: redemptions }] = await Promise.all([
     supabase
       .from("coupons")
       .select(
         "id, title, description, discount_type, discount_value, audience, is_active, expires_at, services(title)",
       )
+      // Los cupones personales (canje de puntos) no se administran aquí.
+      .is("client_id", null)
       .order("created_at", { ascending: false }),
     supabase.from("services").select("id, title").eq("is_active", true).order("order", { ascending: true }),
+    supabase.from("coupon_redemptions").select("coupon_id"),
   ]);
+
+  const usesByCoupon = new Map<string, number>();
+  for (const r of redemptions ?? []) {
+    usesByCoupon.set(r.coupon_id, (usesByCoupon.get(r.coupon_id) ?? 0) + 1);
+  }
 
   const formattedCoupons =
     coupons?.map((c) => ({
@@ -36,6 +44,7 @@ export default async function AdminCuponesPage() {
       audience: c.audience,
       is_active: c.is_active,
       expires_at: c.expires_at,
+      uses: usesByCoupon.get(c.id) ?? 0,
       service_title: (c.services as unknown as { title: string } | null)?.title ?? null,
     })) ?? [];
 

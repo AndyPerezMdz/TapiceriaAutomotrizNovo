@@ -16,12 +16,14 @@ interface Coupon {
   is_active: boolean;
   service_title: string | null;
   expires_at: string | null;
+  uses: number;
 }
 
 const audienceLabels: Record<string, string> = {
-  clientes: "Clientes",
+  clientes: "Clientes regulares",
   frecuentes: "Frecuentes",
-  ambos: "Ambos",
+  ambos: "Todos",
+  nuevos: "Clientes nuevos",
 };
 
 export function CouponRow({ coupon }: { coupon: Coupon }) {
@@ -81,6 +83,9 @@ export function CouponRow({ coupon }: { coupon: Coupon }) {
               </span>
               <span className="inline-block rounded-full bg-brand-yellow text-ink px-2.5 py-0.5 text-[0.8125rem]">
                 {coupon.service_title ?? "General"}
+              </span>
+              <span className="inline-block rounded-full border-[1.5px] border-field-border px-2.5 py-0.5 text-[0.8125rem] text-foreground">
+                {coupon.uses === 0 ? "Sin usar" : `Usado ${coupon.uses} ${coupon.uses === 1 ? "vez" : "veces"}`}
               </span>
               {coupon.expires_at ? (
                 <span
